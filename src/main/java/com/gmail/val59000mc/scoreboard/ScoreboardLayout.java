@@ -3,6 +3,7 @@ package com.gmail.val59000mc.scoreboard;
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.utils.FileUtils;
 import com.gmail.val59000mc.configuration.YamlFile;
+import com.gmail.val59000mc.utils.RandomUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,7 +41,7 @@ public class ScoreboardLayout {
         playing = getOpsideDownLines(cfg.getStringList("playing"));
         deathmatch = getOpsideDownLines(cfg.getStringList("deathmatch"));
         spectating = getOpsideDownLines(cfg.getStringList("spectating"));
-        title = ChatColor.translateAlternateColorCodes('&', cfg.getString("title", ""));
+        title = RandomUtils.color(cfg.getString("title", ""));
     }
 
     public List<String> getLines(ScoreboardType scoreboardType){
@@ -95,7 +96,7 @@ public class ScoreboardLayout {
                 Bukkit.getLogger().warning("[UhcCore] Scoreboard lines can't have more than 15 lines!");
                 break;
             }
-            newList.add(ChatColor.translateAlternateColorCodes('&',list.get(i)));
+            newList.add(RandomUtils.color(list.get(i)));
         }
 
         return newList;

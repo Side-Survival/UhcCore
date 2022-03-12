@@ -1,6 +1,7 @@
 package com.gmail.val59000mc.customitems;
 
 import com.gmail.val59000mc.players.UhcPlayer;
+import com.gmail.val59000mc.utils.RandomUtils;
 import com.gmail.val59000mc.utils.VersionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,14 +32,14 @@ public class Craft {
 
 		if (!defaultName){
 			ItemMeta im = craft.getItemMeta();
-			im.setDisplayName(ChatColor.GREEN + ChatColor.translateAlternateColorCodes('&', name));
+			im.setDisplayName(ChatColor.GREEN + RandomUtils.color(name));
 			craft.setItemMeta(im);
 		}
 
 		displayItem = craft.clone();
 
 		ItemMeta im = displayItem.getItemMeta();
-		im.setDisplayName(ChatColor.GREEN + ChatColor.translateAlternateColorCodes('&', name));
+		im.setDisplayName(ChatColor.GREEN + RandomUtils.color(name));
 		displayItem.setItemMeta(im);
 
 		register();

@@ -4,6 +4,7 @@ import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.YamlFile;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.utils.FileUtils;
+import com.gmail.val59000mc.utils.RandomUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -456,7 +457,7 @@ public class Lang{
 	}
 
 	private String getString(FileConfiguration lang, String path, String def, int maxLenth){
-		String string = ChatColor.translateAlternateColorCodes('&', lang.getString(path, def));
+		String string = RandomUtils.color(lang.getString(path, def));
 
 		if (maxLenth != -1 && string.length() > maxLenth){
 			Bukkit.getLogger().severe("[UhcCore] The message " + path + " is too long, max length is " + maxLenth + " characters!");
@@ -479,7 +480,7 @@ public class Lang{
 
 		// Translate color codes.
 		for (int i = 0; i < list.size(); i++) {
-			list.set(i, ChatColor.translateAlternateColorCodes('&', list.get(i)));
+			list.set(i, RandomUtils.color(list.get(i)));
 		}
 
 		return list;

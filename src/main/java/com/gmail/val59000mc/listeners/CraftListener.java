@@ -6,6 +6,7 @@ import com.gmail.val59000mc.customitems.CraftsManager;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcPlayer;
+import com.gmail.val59000mc.utils.RandomUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,13 +39,13 @@ public class CraftListener implements Listener{
 
 		String permission = "uhc-core.craft." + craft.getName().toLowerCase().replaceAll(" ", "-");
 		if(gm.getConfig().get(MainConfig.ENABLE_CRAFTS_PERMISSIONS) && !player.hasPermission(permission)){
-			uhcPlayer.sendMessage(Lang.ITEMS_CRAFT_NO_PERMISSION.replace("%craft%", ChatColor.translateAlternateColorCodes('&', craft.getName())));
+			uhcPlayer.sendMessage(Lang.ITEMS_CRAFT_NO_PERMISSION.replace("%craft%", RandomUtils.color(craft.getName())));
 			event.setCancelled(true);
 			return;
 		}
 
 		if(craft.getLimit() != -1 && (event.isShiftClick() || event.isRightClick())){
-			uhcPlayer.sendMessage(Lang.ITEMS_CRAFT_LEFT_CLICK.replace("%craft%", ChatColor.translateAlternateColorCodes('&', craft.getName())));
+			uhcPlayer.sendMessage(Lang.ITEMS_CRAFT_LEFT_CLICK.replace("%craft%", RandomUtils.color(craft.getName())));
 			event.setCancelled(true);
 			return;
 		}

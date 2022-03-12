@@ -244,7 +244,7 @@ public class JsonItemUtils{
         Iterator<JsonElement> lines = jsonArray.iterator();
         List<String> lore = new ArrayList<>();
         while (lines.hasNext()){
-            lore.add(ChatColor.translateAlternateColorCodes('&', lines.next().getAsString()));
+            lore.add(RandomUtils.color(lines.next().getAsString()));
         }
         meta.setLore(lore);
         return meta;

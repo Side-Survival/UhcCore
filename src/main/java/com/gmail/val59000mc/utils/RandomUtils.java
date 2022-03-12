@@ -1,5 +1,6 @@
 package com.gmail.val59000mc.utils;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -8,6 +9,8 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RandomUtils {
 	private final static Random r = new Random();
@@ -36,5 +39,19 @@ public class RandomUtils {
 		double z = 2*maxDistance*r.nextDouble()-maxDistance;
 		return new Location(world,x,250,z);
 	}
-	
+
+	private static Pattern HEX_PATTERN = Pattern.compile("&(#[a-f0-9]{6})", 2);
+
+	public static String color(String input) {
+		Matcher m = HEX_PATTERN.matcher(input);
+		try {
+			ChatColor.class.getDeclaredMethod("of", new Class[] { String.class });
+			while (m.find())
+				input = input.replace(m.group(), ChatColor.of(m.group(1)).toString());
+		} catch (Exception e) {
+			while (m.find())
+				input = input.replace(m.group(), "");
+		}
+		return ChatColor.translateAlternateColorCodes('&', input);
+	}
 }
