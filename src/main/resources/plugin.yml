@@ -1,10 +1,10 @@
 name: UhcCore
 main: com.gmail.val59000mc.UhcCore
-version: "@version@"
+version: "1.20"
 description: Automates UHC games on a dedicated server
 author: val59000mc, Mezy
-softdepend: [WorldEdit,Vault,ProtocolLib]
-api-version: 1.13
+softdepend: [WorldEdit, Vault, ProtocolLib, PlaceholderAPI]
+api-version: 1.17
 commands:
   uhccore:
     description: "Type '/uhccore help' to see a list of commands"

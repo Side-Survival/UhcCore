@@ -1,10 +1,13 @@
 package com.gmail.val59000mc.utils;
 
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -53,5 +56,13 @@ public class RandomUtils {
 				input = input.replace(m.group(), "");
 		}
 		return ChatColor.translateAlternateColorCodes('&', input);
+	}
+
+	public static ItemStack getColoredChestPlate(int r, int g, int b) {
+		ItemStack item = new ItemStack(Material.LEATHER_CHESTPLATE);
+		LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+		meta.setColor(Color.fromRGB(r, g, b));
+		item.setItemMeta(meta);
+		return item;
 	}
 }

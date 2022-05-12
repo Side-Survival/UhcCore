@@ -6,6 +6,8 @@ import com.gmail.val59000mc.adapters.VersionAdapter;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.utils.FileUtils;
 
+import com.gmail.val59000mc.utils.Placeholders;
+import libs.fr.minuskube.inv.InventoryManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +20,7 @@ public class UhcCore extends JavaPlugin{
 	private static VersionAdapter versionAdapter;
 	private static int version;
 	private GameManager gameManager;
-	private Updater updater;
+	private InventoryManager inventoryManager;
 
 	@Override
 	public void onEnable(){
@@ -29,18 +31,22 @@ public class UhcCore extends JavaPlugin{
 		try {
 			versionAdapter = VersionAdapter.instantiate();
 			getLogger().info("Successfully loaded version adapter: " + versionAdapter.getClass().getName());
-		} catch (VersionAdapter.InstantiationException e) {
+		} catch (Exception e) {
 			getLogger().log(Level.SEVERE, "Unable to start plugin", e);
 			return;
 		}
 
+		inventoryManager = new InventoryManager(this);
+		inventoryManager.init();
+
 		gameManager = new GameManager();
 		Bukkit.getScheduler().runTaskLater(this, () -> gameManager.loadNewGame(), 1);
 
-		updater = new Updater(this);
-
 		// Delete files that are scheduled for deletion
 		FileUtils.removeScheduledDeletionFiles();
+
+		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+			new Placeholders(this).register();
 	}
 
 	// Load the Minecraft version.
@@ -77,9 +83,11 @@ public class UhcCore extends JavaPlugin{
 	@Override
 	public void onDisable(){
 		gameManager.getScenarioManager().disableAllScenarios();
-		
-		updater.runAutoUpdate();
+
 		Bukkit.getLogger().info("[UhcCore] Plugin disabled");
 	}
 
+	public InventoryManager getInventoryManager() {
+		return inventoryManager;
+	}
 }

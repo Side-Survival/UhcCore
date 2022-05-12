@@ -169,7 +169,7 @@ public class UhcCommandExecutor implements CommandExecutor{
 
 		for(UhcTeam team : gameManager.getPlayerManager().listUhcTeams()){
 			str = new StringBuilder();
-			str.append("Team ").append(team.getLeader().getName()).append(" : ");
+			str.append("Team ").append(team.getPrefix()).append(" : ");
 			for(UhcPlayer player : team.getMembers()){
 				str.append(player.getName()).append(" ");
 			}

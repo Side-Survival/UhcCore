@@ -57,11 +57,7 @@ public class SpectateCommandExecutor implements CommandExecutor{
         player.getInventory().clear();
 
         if (!uhcPlayer.getTeam().isSolo()){
-            try {
-                uhcPlayer.getTeam().leave(uhcPlayer);
-            }catch (UhcTeamException ex){
-                ex.printStackTrace();
-            }
+            uhcPlayer.getTeam().leave(uhcPlayer);
         }
 
         scoreboardHandler.updatePlayerOnTab(uhcPlayer);

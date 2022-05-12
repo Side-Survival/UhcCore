@@ -265,16 +265,7 @@ public class PlayerManager {
 	private void autoAssignPlayerToTeam(UhcPlayer uhcPlayer) {
 		GameManager gm = GameManager.getGameManager();
 
-		if (gm.getScenarioManager().isEnabled(Scenario.LOVE_AT_FIRST_SIGHT)){
-			return;
-		}
-
 		for(UhcTeam team : listUhcTeams()){
-			// Don't assign player to spectating team.
-			if (team.isSpectating()){
-				continue;
-			}
-
 			if(team != uhcPlayer.getTeam() && team.getMembers().size() < gm.getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)){
 				try {
 					team.join(uhcPlayer);
@@ -436,13 +427,7 @@ public class PlayerManager {
 	}
 
 	public List<UhcTeam> listUhcTeams(){
-		List<UhcTeam> teams = new ArrayList<>();
-		for(UhcPlayer player : getPlayersList()){
-			UhcTeam team = player.getTeam();
-			if(!teams.contains(team))
-				teams.add(team);
-		}
-		return teams;
+		return GameManager.getGameManager().getTeamManager().getUhcTeams();
 	}
 
 	public void randomTeleportTeams() {
@@ -474,11 +459,6 @@ public class PlayerManager {
 		long delayTeleportByTeam = 0;
 
 		for(UhcTeam team : listUhcTeams()){
-
-			if (team.isSpectating()){
-				gm.getPlayerManager().setPlayerSpectateAtLobby(team.getLeader());
-				continue;
-			}
 
 			for(UhcPlayer uhcPlayer : team.getMembers()){
 				gm.getPlayerManager().setPlayerStartPlaying(uhcPlayer);

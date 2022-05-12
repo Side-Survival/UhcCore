@@ -73,7 +73,7 @@ public class GameManager{
 		customEventHandler = new CustomEventHandler(config);
 		scoreboardHandler = new ScoreboardHandler(gameManager, config, scoreboardLayout);
 		playerManager = new PlayerManager(customEventHandler, scoreboardHandler);
-		teamManager = new TeamManager(playerManager, scoreboardHandler);
+		teamManager = new TeamManager();
 		scoreboardManager = new ScoreboardManager(scoreboardHandler, scoreboardLayout);
 		scenarioManager = new ScenarioManager();
 		mapLoader = new MapLoader(config);
@@ -181,6 +181,7 @@ public class GameManager{
 
 		loadConfig();
 		setGameState(GameState.LOADING);
+		teamManager.init();
 
 		registerListeners();
 		registerCommands();

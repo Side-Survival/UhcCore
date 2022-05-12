@@ -8,7 +8,6 @@ import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.*;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.scenarios.scenariolisteners.SilentNightListener;
-import com.gmail.val59000mc.scoreboard.placeholders.BlocksToTeamLeader;
 import com.gmail.val59000mc.scoreboard.placeholders.ScenariosPlaceholder;
 import com.gmail.val59000mc.scoreboard.placeholders.TeamMembersPlaceholder;
 import com.gmail.val59000mc.scoreboard.placeholders.TimersPlaceholder;
@@ -32,7 +31,6 @@ public class ScoreboardManager {
 
         scoreboardLayout.loadFile();
         placeholders = new ArrayList<>();
-        placeholders.add(new BlocksToTeamLeader());
         placeholders.add(new TeamMembersPlaceholder());
         placeholders.add(new ScenariosPlaceholder());
         placeholders.add(new TimersPlaceholder());
@@ -69,7 +67,7 @@ public class ScoreboardManager {
         }
 
         if (returnString.contains("%teamColor%")){
-            returnString = returnString.replace("%teamColor%",uhcPlayer.getTeam().getPrefix());
+            returnString = returnString.replace("%teamColor%",uhcPlayer.getTeam().getPrefix() + "\u25A0 ");
         }
 
         if (returnString.contains("%border%")){

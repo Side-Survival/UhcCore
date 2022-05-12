@@ -47,7 +47,7 @@ public class UhcPlayer {
 		this.uuid = uuid;
 		this.name = name;
 
-		team = new UhcTeam(this);
+		team = null;
 		setState(PlayerState.WAITING);
 		globalChat = false;
 		kills = 0;
@@ -115,7 +115,7 @@ public class UhcPlayer {
 	 */
 	public String getDisplayName(){
 		if (GameManager.getGameManager().getConfig().get(MainConfig.TEAM_COLORS)){
-			return team.getColor() + getName() + ChatColor.RESET;
+			return team.getPrefix() + "\u25A0 " + getName() + ChatColor.RESET;
 		}
 		return getName();
 	}
@@ -229,32 +229,8 @@ public class UhcPlayer {
 		return false;
 	}
 
-	public boolean isInTeamWith(UhcPlayer player){
-		return team.contains(player);
-	}
-
-	public boolean isTeamLeader(){
-		return getTeam().getMembers().get(0).equals(this);
-	}
-
-	public boolean canJoinATeam(){
-		return (getTeam().getMembers().get(0).equals(this) && getTeam().getMembers().size() == 1);
-	}
-
-	public boolean canLeaveTeam(){
-		return (getTeam().getMembers().size() > 1);
-	}
-
-	public void inviteToTeam(UhcTeam team){
-		teamInvites.add(team);
-
-		String message = Lang.TEAM_MESSAGE_INVITE_RECEIVE.replace("%name%", team.getTeamName());
-
-		if (PaperLib.isSpigot()){
-			SpigotUtils.sendMessage(this, message, Lang.TEAM_MESSAGE_INVITE_RECEIVE_HOVER, "/team invite-reply " + team.getLeader().getName(), SpigotUtils.Action.COMMAND);
-		}else {
-			sendMessage(message);
-		}
+	public boolean isInTeamWith(UhcPlayer player) {
+		return team != null && team.contains(player);
 	}
 
 	public void sendPrefixedMessage(String message){

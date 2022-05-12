@@ -5,7 +5,6 @@ import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.exceptions.UhcTeamException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
-import com.gmail.val59000mc.scoreboard.ScoreboardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,22 +20,21 @@ import java.util.stream.Collectors;
 
 public class UhcTeam {
 
-	private final List<UhcPlayer> members;
-	private boolean readyToStart;
+	private final List<UhcPlayer> members = new ArrayList<>();
+	private boolean readyToStart = false;
 	private Location startingLocation;
 	private final int teamNumber;
 	private String teamName;
+	private String teamColor;
 	private String prefix;
 	private final Inventory teamInventory;
 
-	public UhcTeam(UhcPlayer uhcPlayer) {
-		members = new ArrayList<>();
-		members.add(uhcPlayer);
-		readyToStart = false;
-		teamNumber = GameManager.getGameManager().getTeamManager().getNewTeamNumber();
-		teamName = "Team " + teamNumber;
-		prefix = GameManager.getGameManager().getTeamManager().getTeamPrefix();
-		teamInventory = Bukkit.createInventory(null, 9*3, ChatColor.GOLD + "Team Inventory");
+	public UhcTeam(int teamNumber, String prefix) {
+		this.teamNumber = teamNumber;
+		teamName = Lang.TEAM_NAMES.get(teamNumber);
+		teamColor = Lang.TEAM_COLORS.get(teamNumber);
+		this.prefix = prefix;
+		teamInventory = Bukkit.createInventory(null, 27, ChatColor.BOLD + "Komandas lāde");
 	}
 
 	public int getTeamNumber() {
@@ -47,28 +45,20 @@ public class UhcTeam {
 		return teamName;
 	}
 
-	public void setTeamName(String teamName) {
-		this.teamName = teamName;
+	public String getTeamColor() {
+		return teamColor;
 	}
 
 	public String getPrefix() {
-		return prefix + "\u25A0 ";
-	}
-
-	public String getColor(){
 		return prefix;
 	}
 
-	public void setPrefix(String prefix){
-		this.prefix = prefix;
+	public String getFullPrefix() {
+		return teamColor + prefix;
 	}
 
 	public Inventory getTeamInventory() {
 		return teamInventory;
-	}
-
-	public void sendChatMessageToTeamMembers(UhcPlayer sender, String message){
-		sendMessage(ChatColor.GREEN+"[Team] "+ChatColor.RESET+sender.getRealName()+": "+message);
 	}
 
 	public void sendMessage(String message){
@@ -99,10 +89,6 @@ public class UhcTeam {
 		return getMembers(UhcPlayer::isPlaying).size();
 	}
 
-	public boolean isSpectating(){
-		return isSolo() && getLeader().getState() == PlayerState.DEAD;
-	}
-
 	public int getKills(){
 		return members.stream()
 				.mapToInt(UhcPlayer::getKills)
@@ -125,20 +111,19 @@ public class UhcTeam {
 	}
 
 	public void join(UhcPlayer player) throws UhcTeamException {
-		if(player.canJoinATeam()){
-			if(isFull()){
-				player.sendMessage(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%leader%", getLeader().getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
-				throw new UhcTeamException(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%leader%", getLeader().getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
-			}else{
-				player.sendMessage(Lang.TEAM_MESSAGE_JOIN_AS_PLAYER.replace("%leader%", getLeader().getName()));
-				for(UhcPlayer teamMember : getMembers()){
-					teamMember.sendMessage(Lang.TEAM_MESSAGE_PLAYER_JOINS.replace("%player%",player.getName()));
-				}
-				getMembers().add(player);
-				player.setTeam(this);
-			}
+		if(isFull()){
+			player.sendMessage(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
+			throw new UhcTeamException(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
 		}else{
-			throw new UhcTeamException(Lang.TEAM_MESSAGE_PLAYER_ALREADY_IN_TEAM.replace("%player%", player.getName()));
+			if (player.getTeam() != null)
+				player.getTeam().leave(player);
+
+			player.sendMessage(Lang.TEAM_MESSAGE_JOIN_AS_PLAYER);
+			for(UhcPlayer teamMember : getMembers()){
+				teamMember.sendMessage(Lang.TEAM_MESSAGE_PLAYER_JOINS.replace("%player%",player.getName()));
+			}
+			getMembers().add(player);
+			player.setTeam(this);
 		}
 	}
 
@@ -147,33 +132,14 @@ public class UhcTeam {
 		return (cfg.get(MainConfig.MAX_PLAYERS_PER_TEAM) == getMembers().size());
 	}
 
-	public void leave(UhcPlayer player) throws UhcTeamException {
-		if(player.canLeaveTeam()){
+	public void leave(UhcPlayer player) {
+		getMembers().remove(player);
+		player.setTeam(null);
 
-			boolean isLeader = player.isTeamLeader();
-			getMembers().remove(player);
-			player.setTeam(new UhcTeam(player));
-
-			UhcPlayer newLeader = getMembers().get(0);
-
-			if(isLeader){
-				player.sendMessage(Lang.TEAM_MESSAGE_LEAVE_AS_LEADER.replace("%newleader%", newLeader.getName()));
-				for(UhcPlayer uhcPlayer : getMembers()){
-					uhcPlayer.sendMessage(Lang.TEAM_MESSAGE_LEADER_LEAVES.replace("%leader%", player.getName()).replace("%newleader%", newLeader.getName()));
-				}
-			}else{
-				player.sendMessage(Lang.TEAM_MESSAGE_LEAVE_AS_PLAYER);
-				for(UhcPlayer teamMember : getMembers()){
-					teamMember.sendMessage(Lang.TEAM_MESSAGE_PLAYER_LEAVES.replace("%player%", player.getName()));
-				}
-			}
-		}else{
-			throw new UhcTeamException(Lang.TEAM_MESSAGE_CANT_LEAVE);
+		player.sendMessage(Lang.TEAM_MESSAGE_LEAVE_AS_PLAYER);
+		for(UhcPlayer teamMember : getMembers()){
+			teamMember.sendMessage(Lang.TEAM_MESSAGE_PLAYER_LEAVES.replace("%player%", player.getName()));
 		}
-	}
-
-	public UhcPlayer getLeader(){
-		return getMembers().get(0);
 	}
 
 	public boolean isReadyToStart(){
@@ -182,13 +148,6 @@ public class UhcTeam {
 
 	public boolean isOnline(){
 		return members.stream().anyMatch(UhcPlayer::isOnline);
-	}
-
-	public void changeReadyState(){
-		readyToStart = !readyToStart;
-
-		String message = readyToStart ? Lang.TEAM_MESSAGE_NOW_READY : Lang.TEAM_MESSAGE_NOW_NOT_READY;
-		sendMessage(message);
 	}
 
 	public void regenTeam(boolean doubleRegen) {
@@ -211,5 +170,4 @@ public class UhcTeam {
 	public Location getStartingLocation(){
 		return startingLocation;
 	}
-
 }

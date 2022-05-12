@@ -87,11 +87,7 @@ public class Schematic {
 
         ArrayList<Integer> dimensions;
         try {
-            if (UhcCore.getVersion() < 13){
-                dimensions = SchematicHandler8.pasteSchematic(location, schematicFile.getPath());
-            }else {
-                dimensions = SchematicHandler13.pasteSchematic(location, schematicFile.getPath());
-            }
+            dimensions = SchematicHandler13.pasteSchematic(location, schematicFile.getPath());
 
             build = true;
         } catch (Exception e) {

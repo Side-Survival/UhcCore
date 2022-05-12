@@ -10,14 +10,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Lang{
 
@@ -200,6 +198,12 @@ public class Lang{
 	public static String SCENARIO_NOGOINGBACK_ERROR;
 	public static String SCENARIO_MONSTERSINC_ERROR;
 	public static String SCENARIO_TIMEBOMB_CHEST;
+
+	public static String TEAM_FULL_NAME;
+	public static String TEAM_GUI_TITLE;
+	public static List<String> TEAM_GUI_LORE;
+	public static Map<Integer, String> TEAM_NAMES = new HashMap<>();
+	public static Map<Integer, String> TEAM_COLORS = new HashMap<>();
 
 	public Lang(){
 		loadLangConfig();
@@ -445,6 +449,14 @@ public class Lang{
 		SCENARIO_NOGOINGBACK_ERROR = getString(lang, "scenarios.no_going_back.error", "&4[No Going Back] &cYou are stuck in the nether!");
 		SCENARIO_MONSTERSINC_ERROR = getString(lang, "scenarios.monsters_inc.error", "&4[Monsters Inc.] &cStop that!");
 		SCENARIO_TIMEBOMB_CHEST = getString(lang, "scenarios.timebomb.chest", "&6&l%player%'s Timebomb");
+
+		TEAM_FULL_NAME = getString(lang, "team.name_full", "%color%&7 Team");
+		TEAM_GUI_TITLE = getString(lang, "team.gui_title", "Choose team");
+		TEAM_GUI_LORE = getStringList(lang, "team.gui_lore", new ArrayList<>(List.of("&7Members:")));
+		for (int i = 1; i < 25; i++) {
+			TEAM_NAMES.put(i, getString(lang, "team.names." + i, "Team " + i));
+			TEAM_COLORS.put(i, getString(lang, "team.colors." + i, "&f"));
+		}
 
 		if (lang.addedDefaultValues() || pathChanges) {
 			try {

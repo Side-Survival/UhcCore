@@ -38,7 +38,6 @@ public class Scenario {
     public static final Scenario SWITCHEROO = new Scenario("switcheroo", UniversalMaterial.ARROW, SwitcherooListener.class);
     public static final Scenario VEIN_MINER = new Scenario("vein_miner", UniversalMaterial.COAL_ORE, VeinMinerListener.class);
     public static final Scenario DRAGON_RUSH = new Scenario("dragon_rush", UniversalMaterial.DRAGON_EGG, DragonRushListener.class);
-    public static final Scenario LOVE_AT_FIRST_SIGHT = new Scenario("love_at_first_sight", UniversalMaterial.POPPY, LoveAtFirstSightListener.class);
     public static final Scenario FAST_LEAVES_DECAY = new Scenario("fast_leaves_decay", UniversalMaterial.ACACIA_LEAVES, FastLeavesDecayListener.class);
     public static final Scenario SKY_HIGH = new Scenario("sky_high", UniversalMaterial.FEATHER, SkyHighListener.class);
     public static final Scenario FAST_SMELTING = new Scenario("fast_smelting", UniversalMaterial.FURNACE, FastSmeltingListener.class);
@@ -63,53 +62,53 @@ public class Scenario {
     public static final Scenario NETHER_START = new Scenario("nether_start", UniversalMaterial.LAVA_BUCKET, NetherStartListener.class);
 
     public static final Scenario[] BUILD_IN_SCENARIOS = new Scenario[]{
-            CUTCLEAN,
+//            CUTCLEAN, todo: auto enabled
             FIRELESS,
             BOWLESS,
             RODLESS,
-            SHIELDLESS,
+//            SHIELDLESS,
             BLOOD_DIAMONDS,
-            TIMBER,
+//            TIMBER, todo: auto enabled
             HORSELESS,
-            TIMEBOMB,
+//            TIMEBOMB, todo: maybe implement with graves?
             NO_FALL,
-            BEST_PVE,
+//            BEST_PVE, // kinda-good idea, could be recoded
             TRIPLE_ORES,
-            DOUBLE_ORES,
-            TEAM_INVENTORY,
+//            DOUBLE_ORES, todo: auto enabled, except for gold
+            TEAM_INVENTORY, // todo: add a chest item to access more easily
             NO_CLEAN,
             HASTEY_BOYS,
             LUCKY_LEAVES,
             BLEEDING_SWEETS,
             DOUBLE_GOLD,
-            GOLDLESS,
-            FLOWER_POWER,
+//            GOLDLESS,
+//            FLOWER_POWER,
             SWITCHEROO,
             VEIN_MINER,
-            DRAGON_RUSH,
-            LOVE_AT_FIRST_SIGHT,
-            FAST_LEAVES_DECAY,
-            SKY_HIGH,
-            FAST_SMELTING,
+//            DRAGON_RUSH, // might be cool in fiture
+//            LOVE_AT_FIRST_SIGHT,
+//            FAST_LEAVES_DECAY, todo: auto enabled
+            SKY_HIGH, // todo: change timer from 30 minutes to 15 minutes
+//            FAST_SMELTING,
             SUPERHEROES,
-            ANONYMOUS,
+//            ANONYMOUS,
             GONE_FISHING,
             INFINITE_ENCHANTS,
-            CHILDREN_LEFT_UNATTENDED,
-            SILENT_NIGHT,
-            PERMAKILL,
-            WEAKEST_LINK,
-            EGGS,
-            NO_GOING_BACK,
-            DOUBLE_DATES,
+            CHILDREN_LEFT_UNATTENDED, // todo: change name
+//            SILENT_NIGHT,
+//            PERMAKILL,
+            WEAKEST_LINK, /// todo: change timer to every 2 minutes
+            EGGS, // todo: limit mob types
+//            NO_GOING_BACK,
+//            DOUBLE_DATES,
             FLY_HIGH,
-            RANDOMIZED_DROPS,
+//            RANDOMIZED_DROPS,
             UPSIDE_DOWN_CRAFTING,
-            RANDOMIZED_CRAFTS,
+//            RANDOMIZED_CRAFTS,
             MONSTERS_INC,
             ACHIEVEMENT_HUNTER,
             NINE_SLOTS,
-            NETHER_START
+//            NETHER_START
     };
 
     private final String key;

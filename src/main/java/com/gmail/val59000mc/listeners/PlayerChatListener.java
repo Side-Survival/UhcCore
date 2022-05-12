@@ -55,7 +55,8 @@ public class PlayerChatListener implements Listener{
 				uhcPlayer.getState() == PlayerState.PLAYING && isTeamMessage(e, uhcPlayer)
 		){
 			e.setCancelled(true);
-			uhcPlayer.getTeam().sendChatMessageToTeamMembers(uhcPlayer, e.getMessage());
+			// todo: change formatting
+//			uhcPlayer.getTeam().sendChatMessageToTeamMembers(uhcPlayer, e.getMessage());
         }
 
 	}

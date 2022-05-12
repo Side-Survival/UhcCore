@@ -75,15 +75,12 @@ public class PlayerConnectionListener implements Listener{
 				}
 			}
 
-			try{
+			// todo: leave if correct state
+			if (uhcPlayer.getTeam() != null)
 				uhcPlayer.getTeam().leave(uhcPlayer);
 
-				// Update player tab
-				scoreboardHandler.updatePlayerOnTab(uhcPlayer);
-			}catch (UhcTeamException e){
-				// Nothing
-			}
-
+			// Update player tab
+			scoreboardHandler.updatePlayerOnTab(uhcPlayer);
 			playerManager.getPlayersList().remove(uhcPlayer);
 		}
 
