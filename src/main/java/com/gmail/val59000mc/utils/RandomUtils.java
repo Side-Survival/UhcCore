@@ -11,6 +11,8 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,6 +58,25 @@ public class RandomUtils {
 				input = input.replace(m.group(), "");
 		}
 		return ChatColor.translateAlternateColorCodes('&', input);
+	}
+
+	public static List<String> color(List<String> input) {
+		List<String> result = new ArrayList<>();
+
+		for (String s : input) {
+			Matcher m = HEX_PATTERN.matcher(s);
+			try {
+				ChatColor.class.getDeclaredMethod("of", new Class[] { String.class });
+				while (m.find())
+					s = s.replace(m.group(), ChatColor.of(m.group(1)).toString());
+			} catch (Exception e) {
+				while (m.find())
+					s = s.replace(m.group(), "");
+			}
+			result.add(ChatColor.translateAlternateColorCodes('&', s));
+		}
+
+		return result;
 	}
 
 	public static ItemStack getColoredChestPlate(int r, int g, int b) {

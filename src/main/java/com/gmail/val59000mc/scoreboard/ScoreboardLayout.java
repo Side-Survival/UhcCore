@@ -4,8 +4,6 @@ import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.utils.FileUtils;
 import com.gmail.val59000mc.configuration.YamlFile;
 import com.gmail.val59000mc.utils.RandomUtils;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 
@@ -37,10 +35,10 @@ public class ScoreboardLayout {
             return;
         }
 
-        waiting = getOpsideDownLines(cfg.getStringList("waiting"));
-        playing = getOpsideDownLines(cfg.getStringList("playing"));
-        deathmatch = getOpsideDownLines(cfg.getStringList("deathmatch"));
-        spectating = getOpsideDownLines(cfg.getStringList("spectating"));
+        waiting = RandomUtils.color(cfg.getStringList("waiting"));
+        playing = RandomUtils.color(cfg.getStringList("playing"));
+        deathmatch = RandomUtils.color(cfg.getStringList("deathmatch"));
+        spectating = RandomUtils.color(cfg.getStringList("spectating"));
         title = RandomUtils.color(cfg.getString("title", ""));
     }
 
@@ -60,46 +58,7 @@ public class ScoreboardLayout {
         return null;
     }
 
-    /**
-     * This method can be used by third party plugins to edit the scoreboard lines.
-     * @param scoreboardType The type the lines should be edited for.
-     * @param lines A list with strings that should be displayed on the scoreboard, can't be more than 15 lines!
-     */
-    public void setLines(ScoreboardType scoreboardType, List<String> lines){
-        Validate.isTrue(lines.size() <= 15, "Scoreboards can't have more than 15 lines!");
-
-        switch (scoreboardType){
-            case WAITING:
-                waiting = getOpsideDownLines(lines);
-                break;
-            case PLAYING:
-                playing = getOpsideDownLines(lines);
-                break;
-            case DEATHMATCH:
-                deathmatch = getOpsideDownLines(lines);
-                break;
-            case SPECTATING:
-                spectating = getOpsideDownLines(lines);
-                break;
-        }
-    }
-
     public String getTitle(){
         return title;
     }
-
-    private List<String> getOpsideDownLines(List<String> list){
-        List<String> newList = new ArrayList<>();
-
-        for (int i = list.size()-1; i >= 0; i--){
-            if (newList.size() == 15){
-                Bukkit.getLogger().warning("[UhcCore] Scoreboard lines can't have more than 15 lines!");
-                break;
-            }
-            newList.add(RandomUtils.color(list.get(i)));
-        }
-
-        return newList;
-    }
-
 }

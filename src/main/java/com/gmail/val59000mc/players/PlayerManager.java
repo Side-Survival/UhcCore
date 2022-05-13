@@ -3,7 +3,6 @@ package com.gmail.val59000mc.players;
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.customitems.GameItem;
-import com.gmail.val59000mc.customitems.KitsManager;
 import com.gmail.val59000mc.customitems.UhcItems;
 import com.gmail.val59000mc.events.*;
 import com.gmail.val59000mc.exceptions.UhcPlayerDoesNotExistException;
@@ -269,9 +268,6 @@ public class PlayerManager {
 			if(team != uhcPlayer.getTeam() && team.getMembers().size() < gm.getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)){
 				try {
 					team.join(uhcPlayer);
-
-					// Update player tab
-					scoreboardHandler.updatePlayerOnTab(uhcPlayer);
 				} catch (UhcTeamException ignored) {
 				}
 				break;
@@ -326,8 +322,6 @@ public class PlayerManager {
 					player.setHealth(20+((double) cfg.get(MainConfig.EXTRA_HALF_HEARTS)));
 				}
 				UhcItems.giveGameItemTo(player, GameItem.COMPASS_ITEM);
-				UhcItems.giveGameItemTo(player, GameItem.CUSTOM_CRAFT_BOOK);
-				KitsManager.giveKitTo(player);
 
 				if (!uhcPlayer.getStoredItems().isEmpty()){
 					uhcPlayer.getStoredItems().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
@@ -443,7 +437,7 @@ public class PlayerManager {
 					continue;
 				}
 
-				if(uhcPlayer.getTeam().getMembers().size() == 1){
+				if (uhcPlayer.getTeam() == null){
 					autoAssignPlayerToTeam(uhcPlayer);
 				}
 			}
@@ -458,19 +452,20 @@ public class PlayerManager {
 
 		long delayTeleportByTeam = 0;
 
-		for(UhcTeam team : listUhcTeams()){
-
-			for(UhcPlayer uhcPlayer : team.getMembers()){
+		for (UhcTeam team : listUhcTeams()) {
+			for (UhcPlayer uhcPlayer : team.getMembers()){
 				gm.getPlayerManager().setPlayerStartPlaying(uhcPlayer);
 			}
+
+			if (!team.isOnline())
+				continue;
 
 			Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), new TeleportPlayersThread(GameManager.getGameManager(), team), delayTeleportByTeam);
 			Bukkit.getLogger().info("[UhcCore] Teleporting a team in "+delayTeleportByTeam+" ticks");
 			delayTeleportByTeam += 10; // ticks
 		}
 
-		Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), () -> GameManager.getGameManager().startWatchingEndOfGame(), delayTeleportByTeam + 20);
-
+		Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), () -> GameManager.getGameManager().startWatchingEndOfGame(), delayTeleportByTeam + 60);
 	}
 
 	public void strikeLightning(UhcPlayer uhcPlayer) {

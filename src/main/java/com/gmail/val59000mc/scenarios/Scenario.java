@@ -3,6 +3,7 @@ package com.gmail.val59000mc.scenarios;
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.scenarios.scenariolisteners.*;
+import com.gmail.val59000mc.utils.RandomUtils;
 import com.gmail.val59000mc.utils.UniversalMaterial;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,7 +44,6 @@ public class Scenario {
     public static final Scenario SKY_HIGH = new Scenario("sky_high", UniversalMaterial.FEATHER, SkyHighListener.class);
     public static final Scenario FAST_SMELTING = new Scenario("fast_smelting", UniversalMaterial.FURNACE, FastSmeltingListener.class);
     public static final Scenario SUPERHEROES = new Scenario("superheroes", UniversalMaterial.NETHER_STAR, SuperHeroesListener.class);
-    public static final Scenario ANONYMOUS = new Scenario("anonymous", UniversalMaterial.NAME_TAG, AnonymousListener.class);
     public static final Scenario GONE_FISHING = new Scenario("gone_fishing", UniversalMaterial.FISHING_ROD, GoneFishingListener.class);
     public static final Scenario INFINITE_ENCHANTS = new Scenario("infinite_enchants", UniversalMaterial.ENCHANTING_TABLE, InfiniteEnchantsListener.class);
     public static final Scenario CHILDREN_LEFT_UNATTENDED = new Scenario("children_left_unattended", UniversalMaterial.WOLF_SPAWN_EGG, ChildrenLeftUnattended.class);
@@ -91,7 +92,6 @@ public class Scenario {
             SKY_HIGH, // todo: change timer from 30 minutes to 15 minutes
 //            FAST_SMELTING,
             SUPERHEROES,
-//            ANONYMOUS,
             GONE_FISHING,
             INFINITE_ENCHANTS,
             CHILDREN_LEFT_UNATTENDED, // todo: change name
@@ -172,7 +172,12 @@ public class Scenario {
 
         meta.setDisplayName(Lang.SCENARIO_GLOBAL_ITEM_COLOR + getInfo().getName());
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        meta.setLore(Collections.singletonList(Lang.SCENARIO_GLOBAL_ITEM_INFO));
+
+        List<String> lore = new ArrayList<>();
+        for (String s : info.description) {
+            lore.add(RandomUtils.color("&7&o" + s));
+        }
+        meta.setLore(lore);
 
         item.setItemMeta(meta);
         return item;

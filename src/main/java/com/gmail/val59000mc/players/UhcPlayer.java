@@ -1,15 +1,12 @@
 package com.gmail.val59000mc.players;
 
 import com.gmail.val59000mc.configuration.MainConfig;
-import com.gmail.val59000mc.customitems.Kit;
 import com.gmail.val59000mc.events.UhcPlayerStateChangedEvent;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.scenarios.Scenario;
-import com.gmail.val59000mc.utils.SpigotUtils;
 import com.gmail.val59000mc.utils.TimeUtils;
-import io.papermc.lib.PaperLib;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,7 +25,6 @@ public class UhcPlayer {
 	private PlayerState state;
 	private boolean globalChat;
 	private int kills;
-	private Kit kit;
 	private boolean hasBeenTeleportedToLocation;
 	private final Map<String,Integer> craftedItems;
 	private final Set<UhcTeam> teamInvites;
@@ -37,7 +33,7 @@ public class UhcPlayer {
 
 	private String nickName;
 	private Scoreboard scoreboard;
-	private Location freezeLocation;
+	private boolean frozen;
 	private UUID offlineZombieUuid;
 	private UhcPlayer compassPlayingCurrentPlayer;
 	private long compassPlayingLastUpdate;
@@ -51,7 +47,6 @@ public class UhcPlayer {
 		setState(PlayerState.WAITING);
 		globalChat = false;
 		kills = 0;
-		kit = null;
 		hasBeenTeleportedToLocation = false;
 		craftedItems = new HashMap<>();
 		teamInvites = new HashSet<>();
@@ -169,27 +164,15 @@ public class UhcPlayer {
 	}
 
 	public boolean isFrozen() {
-		return freezeLocation != null;
+		return frozen;
 	}
 
-	public Location getFreezeLocation(){
-		return freezeLocation;
-	}
-
-	public void freezePlayer(Location location){
-		freezeLocation = location;
+	public void freezePlayer(){
+		frozen = true;
 	}
 
 	public void releasePlayer(){
-		// Attempt at stopping players from getting stuck in a block at the start of the game.
-		if (freezeLocation != null){
-			try {
-				getPlayer().teleport(freezeLocation);
-			}catch (UhcPlayerNotOnlineException ex){
-				// Only teleport when online.
-			}
-		}
-		freezeLocation = null;
+		frozen = false;
 	}
 
 	public synchronized Set<Scenario> getScenarioVotes() {
@@ -333,18 +316,6 @@ public class UhcPlayer {
 			}
 		}
 
-	}
-
-	public boolean hasKitSelected(){
-		return kit != null;
-	}
-
-	public Kit getKit() {
-		return kit;
-	}
-
-	public void setKit(Kit kit) {
-		this.kit = kit;
 	}
 
 	public void selectDefaultGlobalChat() {

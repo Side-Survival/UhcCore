@@ -1,5 +1,6 @@
 package com.gmail.val59000mc.commands;
 
+import com.gmail.val59000mc.gui.ScenarioGUI;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,9 +19,8 @@ public class ScenarioCommandExecutor implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
         if (sender instanceof Player){
-            Player p = ((Player) sender).getPlayer();
-            // get inventory
-            p.openInventory(scenarioManager.getScenarioMainInventory(p.hasPermission("uhc-core.scenarios.edit")));
+            ScenarioGUI scenarioGUI = new ScenarioGUI();
+            scenarioGUI.open(((Player) sender).getPlayer(), scenarioManager.getEnabledScenarios().size());
         }else {
             sender.sendMessage("Only players can use this command.");
         }

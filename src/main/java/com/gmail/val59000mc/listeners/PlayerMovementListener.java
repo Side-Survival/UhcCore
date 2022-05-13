@@ -17,23 +17,6 @@ public class PlayerMovementListener implements Listener{
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event){
-        handleFrozenPlayers(event);
+        // todo: border warnings ?
     }
-
-    private void handleFrozenPlayers(PlayerMoveEvent e){
-        UhcPlayer uhcPlayer = playerManager.getUhcPlayer(e.getPlayer());
-        if (uhcPlayer.isFrozen()){
-            Location freezeLoc = uhcPlayer.getFreezeLocation();
-            Location toLoc = e.getTo();
-
-            if (toLoc.getBlockX() != freezeLoc.getBlockX() || toLoc.getBlockZ() != freezeLoc.getBlockZ()){
-                Location newLoc = toLoc.clone();
-                newLoc.setX(freezeLoc.getBlockX() + .5);
-                newLoc.setZ(freezeLoc.getBlockZ() + .5);
-
-                e.getPlayer().teleport(newLoc);
-            }
-        }
-    }
-
 }

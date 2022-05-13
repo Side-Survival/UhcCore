@@ -5,10 +5,10 @@ import com.gmail.val59000mc.commands.*;
 import com.gmail.val59000mc.configuration.Dependencies;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.customitems.CraftsManager;
-import com.gmail.val59000mc.customitems.KitsManager;
 import com.gmail.val59000mc.events.UhcGameStateChangedEvent;
 import com.gmail.val59000mc.events.UhcStartingEvent;
 import com.gmail.val59000mc.events.UhcStartedEvent;
+import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.handlers.*;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.listeners.*;
@@ -16,6 +16,7 @@ import com.gmail.val59000mc.maploader.MapLoader;
 import com.gmail.val59000mc.players.PlayerManager;
 import com.gmail.val59000mc.players.TeamManager;
 import com.gmail.val59000mc.players.UhcPlayer;
+import com.gmail.val59000mc.players.UhcTeam;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
 import com.gmail.val59000mc.scoreboard.ScoreboardLayout;
 import com.gmail.val59000mc.scoreboard.ScoreboardManager;
@@ -28,6 +29,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffect;
 
 import java.io.File;
 import java.io.IOException;
@@ -232,6 +234,19 @@ public class GameManager{
 	public void startWatchingEndOfGame(){
 		setGameState(GameState.PLAYING);
 
+		for (UhcTeam team : playerManager.listUhcTeams()) {
+			Location location = team.getStartingLocation().clone().add(0, 6, 0);
+			CageUtils.removeCage(location);
+
+			for (UhcPlayer uhcPlayer : team.getOnlinePlayingMembers()) {
+				for(PotionEffect effect : gameManager.getConfig().get(MainConfig.POTION_EFFECT_ON_START)){
+					try {
+						uhcPlayer.getPlayer().addPotionEffect(effect);
+					} catch (UhcPlayerNotOnlineException ignored) {}
+				}
+			}
+		}
+
 		mapLoader.setWorldsStartGame();
 
 		playerManager.startWatchPlayerPlayingThread();
@@ -295,9 +310,6 @@ public class GameManager{
 		if(config.get(MainConfig.ENABLE_DEATHMATCH)){
 			setRemainingTime(config.get(MainConfig.DEATHMATCH_DELAY));
 		}
-
-		// Load kits
-		KitsManager.loadKits();
 
 		// Load crafts
 		CraftsManager.loadBannedCrafts();

@@ -59,13 +59,10 @@ public class SpectateCommandExecutor implements CommandExecutor{
         if (!uhcPlayer.getTeam().isSolo()){
             uhcPlayer.getTeam().leave(uhcPlayer);
         }
-
-        scoreboardHandler.updatePlayerOnTab(uhcPlayer);
     }
 
     private void setPlayerPlaying(Player player, UhcPlayer uhcPlayer){
         uhcPlayer.setState(PlayerState.WAITING);
-        scoreboardHandler.updatePlayerOnTab(uhcPlayer);
 
         // Give lobby items back
         UhcItems.giveLobbyItemsTo(player);

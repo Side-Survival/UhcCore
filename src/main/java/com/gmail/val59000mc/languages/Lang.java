@@ -127,6 +127,7 @@ public class Lang{
 	public static String TEAM_MESSAGE_NAME_CHANGED;
 	public static String TEAM_MESSAGE_NAME_CHANGED_ERROR;
 
+	public static String ITEMS_DEF_LORE;
 	public static String ITEMS_TEAM_LIST;
 	public static String ITEMS_SWORD;
 	public static String ITEMS_BUNGEE;
@@ -344,6 +345,7 @@ public class Lang{
 		TEAM_MESSAGE_NAME_CHANGED_ERROR = getString(lang, "team.message.name-changed-error", "&cThat team name is not allowed!");
 
 		// Items
+		ITEMS_DEF_LORE = getString(lang, "items.def-lore", "&7Click to open!");
 		ITEMS_TEAM_LIST = getString(lang, "items.team-list", "&9Right click to view teams");
 		ITEMS_SWORD = getString(lang, "items.sword", "&bRight click to choose your team");
 		ITEMS_BUNGEE = getString(lang, "items.bungee", "&cRight click to go back to the Hub");

@@ -80,7 +80,6 @@ public class PlayerConnectionListener implements Listener{
 				uhcPlayer.getTeam().leave(uhcPlayer);
 
 			// Update player tab
-			scoreboardHandler.updatePlayerOnTab(uhcPlayer);
 			playerManager.getPlayersList().remove(uhcPlayer);
 		}
 
@@ -100,6 +99,8 @@ public class PlayerConnectionListener implements Listener{
 			}
 			playerManager.checkIfRemainingPlayers();
 		}
+
+		scoreboardHandler.removePlayerScoreboard(event.getPlayer());
 	}
 
 }

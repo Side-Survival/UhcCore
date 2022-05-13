@@ -5,6 +5,7 @@ import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.players.UhcTeam;
+import com.gmail.val59000mc.utils.CageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -23,8 +24,11 @@ public class TeleportPlayersThread implements Runnable{
 
 	@Override
 	public void run() {
-		
-		for(UhcPlayer uhcPlayer : team.getMembers()){
+		Location location = team.getStartingLocation().clone().add(0, 6, 0);
+		CageUtils.placeCage(location);
+
+		boolean addedLoc = false;
+		for (UhcPlayer uhcPlayer : team.getMembers()){
 			Player player;
 			try {
 				player = uhcPlayer.getPlayer();
@@ -34,15 +38,12 @@ public class TeleportPlayersThread implements Runnable{
 
 			Bukkit.getLogger().info("[UhcCore] Teleporting "+player.getName());
 
-			for(PotionEffect effect : gameManager.getConfig().get(MainConfig.POTION_EFFECT_ON_START)){
-				player.addPotionEffect(effect);
-			}
+			uhcPlayer.freezePlayer();
 
-			uhcPlayer.freezePlayer(team.getStartingLocation());
-
+			Location finalLoc = addedLoc ? location.clone().add(1, 0, 1) : location;
+			addedLoc = !addedLoc;
 			// Add 2 blocks to the Y location to prevent players from spawning underground.
-			Location location = team.getStartingLocation().clone().add(0, 2, 0);
-			player.teleport(location);
+			player.teleport(finalLoc);
 
 			player.removePotionEffect(PotionEffectType.BLINDNESS);
 			player.setFireTicks(0);

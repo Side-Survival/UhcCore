@@ -47,7 +47,7 @@ public enum GameItem{
 
     UNKNOWN(UniversalMaterial.AIR);
 
-    private static final String LORE_PREFIX = ChatColor.DARK_GRAY + "UHC Item";
+    private static final String LORE_PREFIX = Lang.ITEMS_DEF_LORE;
     public static final GameItem[] LOBBY_ITEMS = new GameItem[]{
             TEAM_LIST,
             SCENARIO_VIEWER,
@@ -95,8 +95,6 @@ public enum GameItem{
                 return cfg.get(MainConfig.MAX_PLAYERS_PER_TEAM) > 1 || !cfg.get(MainConfig.TEAM_ALWAYS_READY);
             case TEAM_LIST:
                 return cfg.get(MainConfig.MAX_PLAYERS_PER_TEAM) > 1;
-            case KIT_SELECTION:
-                return KitsManager.isAtLeastOneKit();
             case CUSTOM_CRAFT_BOOK:
                 return CraftsManager.isAtLeastOneCraft();
             case TEAM_COLOR_SELECTION:

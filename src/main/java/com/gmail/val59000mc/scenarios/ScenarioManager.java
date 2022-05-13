@@ -184,6 +184,10 @@ public class ScenarioManager {
         return enabledScenarios.keySet();
     }
 
+    public List<Scenario> getRegisteredScenarios() {
+        return registeredScenarios;
+    }
+
     /**
      * Used to check if a scenario is enabled.
      * @param scenario Scenario to check.
@@ -215,85 +219,6 @@ public class ScenarioManager {
                 }
             }
         }
-    }
-
-    public Inventory getScenarioMainInventory(boolean editItem){
-
-        Inventory inv = Bukkit.createInventory(null,3*ROW, Lang.SCENARIO_GLOBAL_INVENTORY);
-
-        for (Scenario scenario : getEnabledScenarios()) {
-            if (scenario.isCompatibleWithVersion()) {
-                inv.addItem(scenario.getScenarioItem());
-            }
-        }
-
-        if (editItem){
-            // add edit item
-            ItemStack edit = new ItemStack(Material.BARRIER);
-            ItemMeta itemMeta = edit.getItemMeta();
-            itemMeta.setDisplayName(Lang.SCENARIO_GLOBAL_ITEM_EDIT);
-            edit.setItemMeta(itemMeta);
-
-            inv.setItem(26,edit);
-        }
-        return inv;
-    }
-
-    public Inventory getScenarioEditInventory(int page) {
-        Inventory inv = Bukkit.createInventory(null,6*ROW, Lang.SCENARIO_GLOBAL_INVENTORY_EDIT);
-        int scenariosPerPage = 5*ROW;
-        int first = page * scenariosPerPage;
-        int last = first + scenariosPerPage;
-
-        inv.setItem(5*ROW, GameItem.SCENARIOS_BACK.getItem());
-
-        boolean isFull = true;
-        for (int i = first; i < last; i++) {
-            if (registeredScenarios.size() == i) {
-                isFull = false;
-                break;
-            }
-            Scenario scenario = registeredScenarios.get(i);
-
-            if (!scenario.isCompatibleWithVersion()){
-                continue;
-            }
-
-            ItemStack scenarioItem = scenario.getScenarioItem();
-            if (isEnabled(scenario)){
-                scenarioItem.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-                scenarioItem.setAmount(2);
-            }
-            inv.addItem(scenarioItem);
-        }
-
-        if (isFull) {
-            inv.setItem(5*ROW+8, GameItem.SCENARIOS_NEXT.getItem());
-        }
-
-        return inv;
-    }
-
-    public Inventory getScenarioVoteInventory(UhcPlayer uhcPlayer){
-        Set<Scenario> playerVotes = uhcPlayer.getScenarioVotes();
-        List<String> blacklist = GameManager.getGameManager().getConfig().get(MainConfig.SCENARIO_VOTING_BLACKLIST);
-        Inventory inv = Bukkit.createInventory(null,6*ROW, Lang.SCENARIO_GLOBAL_INVENTORY_VOTE);
-
-        for (Scenario scenario : registeredScenarios){
-            // Don't add to menu when blacklisted / not compatible / already enabled.
-            if (blacklist.contains(scenario.getKey()) || !scenario.isCompatibleWithVersion() || isEnabled(scenario)){
-                continue;
-            }
-
-            ItemStack item = scenario.getScenarioItem();
-
-            if (playerVotes.contains(scenario)) {
-                item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-                item.setAmount(2);
-            }
-            inv.addItem(item);
-        }
-        return inv;
     }
 
     public void disableAllScenarios(){
