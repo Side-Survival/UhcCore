@@ -3,6 +3,7 @@ package com.gmail.val59000mc.customitems;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
+import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.utils.UniversalMaterial;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
@@ -18,7 +19,7 @@ public enum GameItem{
     TEAM_SELECTION(UniversalMaterial.IRON_SWORD),
     KIT_SELECTION(UniversalMaterial.IRON_PICKAXE),
     SCENARIO_VIEWER(UniversalMaterial.PAPER),
-    BUNGEE_ITEM(UniversalMaterial.BARRIER),
+    BUNGEE_ITEM(UniversalMaterial.BARREL),
 
     // Team Setting Items
     TEAM_SETTINGS(UniversalMaterial.ANVIL),
@@ -28,7 +29,7 @@ public enum GameItem{
     TEAM_NOT_READY(UniversalMaterial.RED_WOOL),
 
     // Team Items
-    TEAM_LEAVE(UniversalMaterial.BARRIER),
+    TEAM_LEAVE(UniversalMaterial.RED_STAINED_GLASS_PANE),
     TEAM_VIEW_INVITES(UniversalMaterial.BOOK),
     TEAM_INVITE_PLAYER(UniversalMaterial.PAPER),
     TEAM_INVITE_PLAYER_SEARCH(UniversalMaterial.NAME_TAG),
@@ -41,9 +42,11 @@ public enum GameItem{
     COMPASS_ITEM(UniversalMaterial.COMPASS),
 
     // Scenario GUI items
-    SCENARIOS_EDIT(UniversalMaterial.BARRIER),
+    SCENARIOS_EDIT(UniversalMaterial.RED_STAINED_GLASS_PANE),
     SCENARIOS_BACK(UniversalMaterial.ARROW),
     SCENARIOS_NEXT(UniversalMaterial.ARROW),
+
+    TEAM_CHEST(UniversalMaterial.CHEST),
 
     UNKNOWN(UniversalMaterial.AIR);
 
@@ -105,6 +108,8 @@ public enum GameItem{
                 return cfg.get(MainConfig.ENABLE_BUNGEE_SUPPORT) && cfg.get(MainConfig.ENABLE_BUNGEE_LOBBY_ITEM);
             case COMPASS_ITEM:
                 return cfg.get(MainConfig.ENABLE_PLAYING_COMPASS);
+            case TEAM_CHEST:
+                return gm.getScenarioManager().isEnabled(Scenario.TEAM_INVENTORY);
             case UNKNOWN:
                 return false;
         }
@@ -157,6 +162,8 @@ public enum GameItem{
                 return Lang.SCENARIO_GLOBAL_ITEM_BACK;
             case SCENARIOS_NEXT:
                 return Lang.SCENARIO_GLOBAL_ITEM_NEXT;
+            case TEAM_CHEST:
+                return Lang.SCENARIO_TEAMINVENTORY_ITEM;
         }
         return "Unknown item!";
     }

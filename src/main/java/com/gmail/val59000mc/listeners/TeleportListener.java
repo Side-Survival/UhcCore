@@ -43,13 +43,6 @@ public class TeleportListener implements Listener{
 				return;
 			}
 
-			// No Going back!
-			if (gm.getScenarioManager().isEnabled(Scenario.NO_GOING_BACK) && event.getFrom().getWorld().getEnvironment() == Environment.NETHER){
-				player.sendMessage(Lang.SCENARIO_NOGOINGBACK_ERROR);
-				event.setCancelled(true);
-				return;
-			}
-
 			// Handle event using versions utils as on 1.14+ PortalTravelAgent got removed.
 			VersionUtils.getVersionUtils().handleNetherPortalEvent(event);
 

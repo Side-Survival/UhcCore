@@ -131,6 +131,15 @@ public class ItemsListener implements Listener {
 			case COMPASS_ITEM:
 				uhcPlayer.pointCompassToNextPlayer(config.get(MainConfig.PLAYING_COMPASS_MODE), config.get(MainConfig.PLAYING_COMPASS_COOLDOWN));
 				break;
+			case TEAM_CHEST:
+				if (uhcPlayer.getState() != PlayerState.PLAYING){
+					player.sendMessage(Lang.SCENARIO_TEAMINVENTORY_ERROR);
+					return;
+				}
+
+				player.sendMessage(Lang.SCENARIO_TEAMINVENTORY_OPEN);
+				player.openInventory(uhcPlayer.getTeam().getTeamInventory());
+				break;
 		}
 	}
 

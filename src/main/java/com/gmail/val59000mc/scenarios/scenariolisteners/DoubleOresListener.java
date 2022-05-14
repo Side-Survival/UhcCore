@@ -31,7 +31,7 @@ public class DoubleOresListener extends ScenarioListener {
 
         if (oreType.isPresent()) {
             int xp = oreType.get().getXpPerBlock() * 2;
-            int count = 2;
+            int count = oreType.get() != OreType.GOLD ? 2 : 1;
 
             if (oreType.get() == OreType.GOLD && isEnabled(Scenario.DOUBLE_GOLD)) {
                 count *= 2;
@@ -52,5 +52,4 @@ public class DoubleOresListener extends ScenarioListener {
             loc.getWorld().dropItem(loc, drop);
         }
     }
-
 }

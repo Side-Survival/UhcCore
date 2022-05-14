@@ -55,10 +55,6 @@ public class SpectateCommandExecutor implements CommandExecutor{
 
         // Clear lobby items
         player.getInventory().clear();
-
-        if (!uhcPlayer.getTeam().isSolo()){
-            uhcPlayer.getTeam().leave(uhcPlayer);
-        }
     }
 
     private void setPlayerPlaying(Player player, UhcPlayer uhcPlayer){

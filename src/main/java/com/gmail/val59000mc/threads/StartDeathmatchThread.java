@@ -7,6 +7,7 @@ import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.World;
 
 public class StartDeathmatchThread implements Runnable{
@@ -44,7 +45,7 @@ public class StartDeathmatchThread implements Runnable{
 
 			if(timeBeforePVP <= 5 || (timeBeforePVP%5 == 0)){
 				gameManager.broadcastInfoMessage(Lang.PVP_START_IN+" "+timeBeforePVP+"s");
-				gameManager.getPlayerManager().playSoundToAll(UniversalSound.CLICK);
+				gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);
 			}
 
 			if(timeBeforePVP > 0){
@@ -52,5 +53,4 @@ public class StartDeathmatchThread implements Runnable{
 			}
 		}
 	}
-
 }

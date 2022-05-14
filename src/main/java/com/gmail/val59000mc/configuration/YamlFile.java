@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.gmail.val59000mc.configuration.options.MapOption;
 import com.gmail.val59000mc.configuration.options.Option;
 import com.google.common.io.Files;
 import org.apache.commons.lang.Validate;
@@ -393,6 +394,10 @@ public class YamlFile extends YamlConfiguration {
 
     public <T> T get(Option<T> option){
         return option.getValue(this);
+    }
+
+    public <T> Map<String, T> getMap(MapOption<T> option){
+        return option.getMapValue(this);
     }
 
     /**

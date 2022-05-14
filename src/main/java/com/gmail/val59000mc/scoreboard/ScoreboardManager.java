@@ -3,13 +3,15 @@ package com.gmail.val59000mc.scoreboard;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
+import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.*;
-import com.gmail.val59000mc.scenarios.Scenario;
-import com.gmail.val59000mc.scenarios.scenariolisteners.SilentNightListener;
 import com.gmail.val59000mc.scoreboard.placeholders.TimersPlaceholder;
 import com.gmail.val59000mc.utils.TimeUtils;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -75,10 +77,18 @@ public class ScoreboardManager {
             int distanceX = size - playerX;
             int distanceZ = size - playerZ;
 
-            if (distanceX <= 5 || distanceZ <= 5){
+            if (distanceX <= 15 || distanceZ <= 15){
                 borderString = ChatColor.RED + borderString;
+                if (bukkitPlayer.getGameMode() == GameMode.SURVIVAL) {
+                    int smallDistance = Math.min(distanceX, distanceZ);
+                    if (smallDistance > 0)
+                        bukkitPlayer.spigot().sendMessage(
+                                ChatMessageType.ACTION_BAR,
+                                new TextComponent(Lang.GAME_BORDER_NEAR.replace("%blocks%", String.valueOf(smallDistance)))
+                        );
+                }
             }else if (distanceX <= 50 || distanceZ <= 50){
-                borderString = ChatColor.YELLOW + borderString;
+                borderString = ChatColor.GOLD + borderString;
             }else {
                 borderString = ChatColor.GREEN + borderString;
             }
@@ -105,14 +115,7 @@ public class ScoreboardManager {
         }
 
         if (returnString.contains("%alive%")){
-            if (
-                    gm.getScenarioManager().isEnabled(Scenario.SILENT_NIGHT) &&
-                            ((SilentNightListener) gm.getScenarioManager().getScenarioListener(Scenario.SILENT_NIGHT)).isNightMode()
-            ){
-                returnString = returnString.replace("%alive%","?");
-            }else{
-                returnString = returnString.replace("%alive%",gm.getPlayerManager().getOnlinePlayingPlayers().size() + "");
-            }
+            returnString = returnString.replace("%alive%",gm.getPlayerManager().getOnlinePlayingPlayers().size() + "");
         }
 
         if (returnString.contains("%teamAlive%")){

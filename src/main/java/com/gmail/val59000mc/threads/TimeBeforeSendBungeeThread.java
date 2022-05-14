@@ -8,6 +8,7 @@ import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.utils.TimeUtils;
 import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class TimeBeforeSendBungeeThread implements Runnable{
@@ -32,7 +33,7 @@ public class TimeBeforeSendBungeeThread implements Runnable{
 
 			if(remainingTime <=10 || remainingTime%10 == 0){
 				player.sendMessage(Lang.PLAYERS_SEND_BUNGEE.replace("%time%",TimeUtils.getFormattedTime(remainingTime)));
-				playerManager.playsoundTo(uhcPlayer, UniversalSound.CLICK);
+//				playerManager.playSoundAll(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
 			}
 
 			if(remainingTime <= 0){

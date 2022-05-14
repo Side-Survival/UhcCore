@@ -17,6 +17,7 @@ public class ScoreboardLayout {
     private List<String> deathmatch;
     private List<String> spectating;
     private String title;
+    private String pointEntry;
 
     public void loadFile(){
         YamlFile cfg;
@@ -40,6 +41,7 @@ public class ScoreboardLayout {
         deathmatch = RandomUtils.color(cfg.getStringList("deathmatch"));
         spectating = RandomUtils.color(cfg.getStringList("spectating"));
         title = RandomUtils.color(cfg.getString("title", ""));
+        pointEntry = cfg.getString("point-entry", "");
     }
 
     public List<String> getLines(ScoreboardType scoreboardType){
@@ -60,5 +62,9 @@ public class ScoreboardLayout {
 
     public String getTitle(){
         return title;
+    }
+
+    public String getPointEntry() {
+        return pointEntry;
     }
 }

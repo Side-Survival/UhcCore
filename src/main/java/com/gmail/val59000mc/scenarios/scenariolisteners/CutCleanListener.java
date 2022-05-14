@@ -25,16 +25,8 @@ import java.util.Optional;
 
 public class CutCleanListener extends ScenarioListener{
 
-    private final ItemStack lapis;
-
-    @Option(key = "unlimited-lapis")
-    private boolean unlimitedLapis = true;
     @Option(key = "check-correct-tool")
     private boolean checkTool = false;
-
-    public CutCleanListener(){
-        lapis = UniversalMaterial.LAPIS_LAZULI.getStack(64);
-    }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
@@ -115,40 +107,4 @@ public class CutCleanListener extends ScenarioListener{
             loc.getWorld().dropItem(loc, drop);
         }
     }
-
-    @EventHandler
-    public void openInventoryEvent(InventoryOpenEvent e){
-        if (!unlimitedLapis) return;
-
-        if (e.getInventory() instanceof EnchantingInventory){
-            e.getInventory().setItem(1, lapis);
-        }
-    }
-
-    @EventHandler
-    public void closeInventoryEvent(InventoryCloseEvent e){
-        if (!unlimitedLapis) return;
-
-        if (e.getInventory() instanceof EnchantingInventory){
-            e.getInventory().setItem(1, null);
-        }
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent e){
-        Inventory inv = e.getInventory();
-        ItemStack item = e.getCurrentItem();
-        if (!unlimitedLapis) return;
-        if (inv == null || item == null) return;
-
-        if (inv instanceof EnchantingInventory){
-
-            if (item.getType().equals(lapis.getType())){
-                e.setCancelled(true);
-            }else {
-                e.getInventory().setItem(1, lapis);
-            }
-        }
-    }
-
 }

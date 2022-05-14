@@ -7,6 +7,7 @@ import com.gmail.val59000mc.game.handlers.DeathmatchHandler;
 import com.gmail.val59000mc.utils.TimeUtils;
 import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 
 public class TimeBeforeDeathmatchThread implements Runnable{
 
@@ -26,7 +27,7 @@ public class TimeBeforeDeathmatchThread implements Runnable{
 		gameManager.setRemainingTime(remainingTime);
 		
 		if(remainingTime >= 0 && remainingTime <= 60 && (remainingTime%10 == 0 || remainingTime <= 10)){
-			gameManager.getPlayerManager().playSoundToAll(UniversalSound.CLICK);
+			gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);
 		}
 
 		if (remainingTime == 0){

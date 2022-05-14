@@ -25,13 +25,23 @@ public class TeamManager{
     }
 
     public List<UhcTeam> getPlayingUhcTeams(){
-        List<UhcTeam> teams = new ArrayList<>();
-        for (UhcTeam team : teams){
+        List<UhcTeam> result = new ArrayList<>();
+        for (UhcTeam team : teams.values()){
             if (team.getPlayingMemberCount() != 0){
-                teams.add(team);
+                result.add(team);
             }
         }
-        return teams;
+        return result;
+    }
+
+    public List<UhcTeam> getNotEmptyUhcTeams(){
+        List<UhcTeam> result = new ArrayList<>();
+        for (UhcTeam team : teams.values()) {
+            if (!team.getMembers().isEmpty()) {
+                result.add(team);
+            }
+        }
+        return result;
     }
 
     public List<UhcTeam> getUhcTeams(){

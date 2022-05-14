@@ -13,9 +13,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
-public class UhcCommandExecutor implements CommandExecutor{
+import java.util.ArrayList;
+import java.util.List;
+
+public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 
 	private final GameManager gameManager;
 
@@ -41,20 +46,6 @@ public class UhcCommandExecutor implements CommandExecutor{
 			Bukkit.getServer().resetRecipes();
 			gameManager.loadConfig();
 			sender.sendMessage(ChatColor.GREEN + "config.yml, lang.yml and scoreboard.yml have been reloaded");
-			return true;
-		}
-
-		if (args.length == 1 && args[0].equalsIgnoreCase("update")){
-			if (!sender.hasPermission("uhc-core.commands.update")){
-				sender.sendMessage(ChatColor.RED + "You don't have the permission to use this command");
-				return true;
-			}
-
-			if (sender instanceof Player){
-				sender.sendMessage(ChatColor.RED + "Looks like no update is available, you may need to restart your server.");
-			}else{
-				sender.sendMessage("Only players can use the update command.");
-			}
 			return true;
 		}
 
@@ -146,6 +137,16 @@ public class UhcCommandExecutor implements CommandExecutor{
 					sender.sendMessage("Only players can use this sub-command.");
 				}
 				return true;
+
+			case "skiptime":
+				if (args.length == 2) {
+					int toSkip = Integer.parseInt(args[1]);
+					gameManager.setElapsedTime(gameManager.getElapsedTime() + toSkip);
+					sender.sendMessage("Skipped time by " + toSkip);
+				}else {
+					sender.sendMessage("Invalid skiptime command");
+				}
+				return true;
 		}
 
 		sender.sendMessage("Unknown sub command " + args[0]);
@@ -177,4 +178,26 @@ public class UhcCommandExecutor implements CommandExecutor{
 		}
 	}
 
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+		List<String> completions = new ArrayList<>();
+
+		if (args.length == 1) {
+			if (sender.hasPermission("uhc-core.commands.reload"))
+				completions.add("reload");
+			if (sender.hasPermission("uhc-core.commands.debug")) {
+				completions.add("gamestate");
+				completions.add("playerstate");
+				completions.add("pvp");
+				completions.add("listplayers");
+				completions.add("listteams");
+				completions.add("pause");
+				completions.add("force");
+				completions.add("location");
+				completions.add("skiptime");
+			}
+		}
+
+		return StringUtil.copyPartialMatches(args[args.length - 1], completions, new ArrayList<>());
+	}
 }

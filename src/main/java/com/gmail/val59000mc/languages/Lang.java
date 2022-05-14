@@ -24,11 +24,15 @@ public class Lang{
 	public static String GAME_PLEASE_WAIT_TELEPORTING;
 	public static String GAME_STARTING_IN;
 	public static String GAME_STARTING_CANCELLED;
+	public static String GAME_STARTED_TITLE;
+	public static String GAME_STARTED_SUBTITLE;
 	public static String GAME_FINISHED;
 	public static String GAME_END_STOPPED;
 	public static String GAME_SHUTDOWN;
 	public static String GAME_START_DEATHMATCH;
+	public static String GAME_BORDER_IN;
 	public static String GAME_BORDER_START_SHRINKING;
+	public static String GAME_BORDER_NEAR;
 	public static String GAME_FINAL_HEAL;
 
 	public static String PLAYERS_NETHER_OFF;
@@ -69,7 +73,7 @@ public class Lang{
 	public static String COMMAND_SPECTATING_TELEPORT;
 	public static String COMMAND_SPECTATING_HELP;
 	public static String COMMAND_RECIPES_ERROR;
-	public static String COMMAND_TOP_TELEPORT;
+	public static String COMMAND_TOP_HEADER;
 	public static String COMMAND_TOP_ERROR_PLAYING;
 	public static String COMMAND_TOP_ERROR_NETHER;
 	public static String COMMAND_SPECTATE_ERROR;
@@ -176,6 +180,8 @@ public class Lang{
 	public static String SCENARIO_GLOBAL_ITEM_COLOR;
 	public static String SCENARIO_GLOBAL_ITEM_INFO;
 	public static String SCENARIO_GLOBAL_VOTE_MAX;
+	public static String SCENARIO_GLOBAL_TITLE;
+	public static String SCENARIO_GLOBAL_SUBTITLE;
 
 	public static String SCENARIO_BESTPVE_ADDED;
 	public static String SCENARIO_BESTPVE_REMOVED;
@@ -194,6 +200,7 @@ public class Lang{
 	public static String SCENARIO_TEAMINVENTORY_ERROR;
 	public static String SCENARIO_TEAMINVENTORY_DISABLED;
 	public static String SCENARIO_TEAMINVENTORY_OPEN;
+	public static String SCENARIO_TEAMINVENTORY_ITEM;
 	public static String SCENARIO_SILENTNIGHT_ERROR;
 	public static String SCENARIO_WEAKESTLINK_KILL;
 	public static String SCENARIO_NOGOINGBACK_ERROR;
@@ -237,12 +244,16 @@ public class Lang{
 		GAME_STARTING = getString(lang, "game.starting", "Starting the game now!");
 		GAME_STARTING_IN = getString(lang, "game.starting-in", "Starting in %time% seconds.");
 		GAME_STARTING_CANCELLED = getString(lang, "game.starting-cancelled", "Game starting was cancelled because not enough teams are ready");
+		GAME_STARTED_TITLE = getString(lang, "game.started-title", "&aGood luck!");
+		GAME_STARTED_SUBTITLE = getString(lang, "game.started-subtitle", "&fThe game has started");
 		GAME_FINISHED = getString(lang, "game.finished", "The game has finished!");
 		GAME_END_STOPPED = getString(lang, "game.end-stopped", "Game ending stopped");
 		GAME_SHUTDOWN = getString(lang, "game.shutdown", "Server will shutdown in %time% seconds.");
 		GAME_PLEASE_WAIT_TELEPORTING = getString(lang, "game.please-wait-teleporting", "Please wait while all players are being teleported.");
 		GAME_START_DEATHMATCH = getString(lang, "game.start-deathmatch", "Starting the deathmatch! Prepare yourself until PVP is enabled!");
+		GAME_BORDER_IN = getString(lang, "game.border-in", "The border will start to shrink in ");
 		GAME_BORDER_START_SHRINKING = getString(lang, "game.border-start-shrinking", "The border will now begin to shrink");
+		GAME_BORDER_NEAR = getString(lang, "game.border-near", "&cWarning! &fWorld border is only %blocks% away");
 		GAME_FINAL_HEAL = getString(lang, "game.final-heal", "All players have been healed to full health");
 
 		// Players
@@ -286,7 +297,7 @@ public class Lang{
 		COMMAND_SPECTATING_TELEPORT = getString(lang, "command.spectating-teleport", "&aTeleporting to %player%");
 		COMMAND_SPECTATING_TELEPORT_ERROR = getString(lang, "command.spectating-teleport-error", "&cYou can't teleport to that player");
 		COMMAND_RECIPES_ERROR = getString(lang, "command.recipes-error", "&cThere are no custom recipes for this game.");
-		COMMAND_TOP_TELEPORT = getString(lang, "command.top-teleport", "&aYou have been teleported to the highest block.");
+		COMMAND_TOP_HEADER = getString(lang, "command.top-header", "&aTOP teams:");
 		COMMAND_TOP_ERROR_PLAYING = getString(lang, "command.top-error-playing", "&cYou can only use this command while playing.");
 		COMMAND_TOP_ERROR_NETHER = getString(lang, "command.top-error-nether", "&cYou can only use this command in the overworld.");
 		COMMAND_SPECTATE_ERROR = getString(lang, "command.spectate.error", "&cYou may only toggle to spectating mode while the game has not yet started.");
@@ -397,6 +408,8 @@ public class Lang{
 		SCENARIO_GLOBAL_ITEM_COLOR = getString(lang, "scenarios.global.item-color", "&5");
 		SCENARIO_GLOBAL_ITEM_INFO = getString(lang, "scenarios.global.item-info", "&7(Right click for info)");
 		SCENARIO_GLOBAL_VOTE_MAX = getString(lang, "scenarios.global.vote-max", "&cMax votes reached (%max%)");
+		SCENARIO_GLOBAL_TITLE = getString(lang, "scenarios.global.title", "&eScenarios:");
+		SCENARIO_GLOBAL_SUBTITLE = getString(lang, "scenarios.global.subtitle", "&f%scenarios%");
 
 		// load scenario info
 		JsonObject defaultInfo = getDefaultScenarioInfo();
@@ -446,6 +459,7 @@ public class Lang{
 		SCENARIO_TEAMINVENTORY_ERROR = getString(lang, "scenarios.team_inventory.error", "&cYou may only open your team's inventory while playing!");
 		SCENARIO_TEAMINVENTORY_ERROR = getString(lang, "scenarios.team_inventory.disabled", "&cTeam Inventory is currently disabled!");
 		SCENARIO_TEAMINVENTORY_OPEN = getString(lang, "scenarios.team_inventory.open", "&aOpening team inventory ...");
+		SCENARIO_TEAMINVENTORY_ITEM = getString(lang, "scenarios.team_inventory.item", "&6Team inventory");
 		SCENARIO_SILENTNIGHT_ERROR = getString(lang, "scenarios.silent_night.error", "&4[Silent Night] &cSilent Night is enabled");
 		SCENARIO_WEAKESTLINK_KILL = getString(lang, "scenarios.weakest_link.kill", "&4[Weakest Link] &c%player% has been killed!");
 		SCENARIO_NOGOINGBACK_ERROR = getString(lang, "scenarios.no_going_back.error", "&4[No Going Back] &cYou are stuck in the nether!");

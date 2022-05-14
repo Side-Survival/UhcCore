@@ -204,8 +204,8 @@
       "At the beginning of the game everyone gets 64 enchantment tables, anvils, lapis blocks and a lot of XP."
     ]
   },
-  "children_left_unattended":{
-    "name":"Children Left Unattended",
+  "wolf_clutch":{
+    "name":"Wolf Clutch",
     "description":[
       "When a teammate dies you receive a speed potion and a tamed wolf."
     ]

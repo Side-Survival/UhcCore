@@ -24,14 +24,13 @@ public class ElapsedTimeThread implements Runnable{
 	
 	@Override
 	public void run() {
-		
 		long time = gameManager.getElapsedTime() + 1;
 		gameManager.setElapsedTime(time);
 
 		Set<UhcPlayer> playingPlayers = gameManager.getPlayerManager().getOnlinePlayingPlayers();
 
 		// Call time event
-		UhcTimeEvent event = new UhcTimeEvent(playingPlayers,time);
+		UhcTimeEvent event = new UhcTimeEvent(playingPlayers, time);
 		Bukkit.getScheduler().runTask(UhcCore.getPlugin(), () -> Bukkit.getServer().getPluginManager().callEvent(event));
 
 		customEventHandler.handleTimeEvent(playingPlayers, time);
@@ -40,5 +39,4 @@ public class ElapsedTimeThread implements Runnable{
 			Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), task, 20);
 		}
 	}
-
 }

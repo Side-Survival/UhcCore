@@ -86,4 +86,12 @@ public class RandomUtils {
 		item.setItemMeta(meta);
 		return item;
 	}
+
+	public static boolean isAnnounceTimer(int timer) {
+		return switch (timer) {
+			case 600, 300, 180, 60, 30, 10 -> true;
+			default -> false;
+		};
+
+	}
 }

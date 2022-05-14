@@ -267,7 +267,7 @@ public class MapLoader {
 		VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_DAYLIGHT_CYCLE, false);
 		VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_MOB_SPAWNING, false);
 
-		overworld.setTime(6000);
+		overworld.setTime(14000);
 		overworld.setWeatherDuration(999999999);
 
 		if (config.get(MainConfig.ENABLE_NETHER)){

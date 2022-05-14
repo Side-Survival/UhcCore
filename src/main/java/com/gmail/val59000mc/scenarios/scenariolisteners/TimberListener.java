@@ -14,10 +14,6 @@ public class TimberListener extends ScenarioListener {
 
     @Option(key = "calculate-axe-damage")
     private boolean calculateAxeDamage = true;
-    
-    @Option(key = "drop-planks")
-    private boolean dropPlanks = false;
-
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -37,12 +33,7 @@ public class TimberListener extends ScenarioListener {
     private int breakTree(Block block, int i) {
         int broken = 0;
         if (UniversalMaterial.isLog(block.getType())){
-            if (dropPlanks){
-                block.setType(Material.AIR);
-                block.getWorld().dropItem(block.getLocation(), new ItemStack(UniversalMaterial.OAK_PLANKS.getType(), 4));
-            }else {
-                block.breakNaturally();
-            }
+            block.breakNaturally();
             broken++;
             i = 2;
         }else {
@@ -59,5 +50,4 @@ public class TimberListener extends ScenarioListener {
 
         return broken;
     }
-
 }

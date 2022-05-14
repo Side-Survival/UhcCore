@@ -85,7 +85,7 @@ public class VeinMinerListener extends ScenarioListener{
         if (getScenarioManager().isEnabled(Scenario.TRIPLE_ORES)) {
             multiplier *= 3;
         }
-        if (getScenarioManager().isEnabled(Scenario.DOUBLE_ORES)) {
+        if (oreType != OreType.GOLD) {
             multiplier *= 2;
         }
         if ((oreType == OreType.GOLD || oreType == OreType.NETHER_GOLD) && getScenarioManager().isEnabled(Scenario.DOUBLE_GOLD)) {

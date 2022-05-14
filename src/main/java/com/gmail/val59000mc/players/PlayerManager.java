@@ -11,6 +11,7 @@ import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.exceptions.UhcTeamException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
+import com.gmail.val59000mc.game.PointType;
 import com.gmail.val59000mc.game.handlers.CustomEventHandler;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
@@ -284,7 +285,6 @@ public class PlayerManager {
 			player.teleport(gm.getMapLoader().getLobby().getLocation());
 			clearPlayerInventory(player);
 			player.setGameMode(GameMode.ADVENTURE);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 99999999, 0), false);
 			player.setHealth(20);
 			player.setExhaustion(20);
 			player.setFoodLevel(20);
@@ -323,6 +323,9 @@ public class PlayerManager {
 				}
 				UhcItems.giveGameItemTo(player, GameItem.COMPASS_ITEM);
 
+				if (GameManager.getGameManager().getScenarioManager().isEnabled(Scenario.TEAM_INVENTORY))
+					UhcItems.giveGameItemTo(player, GameItem.TEAM_CHEST);
+
 				if (!uhcPlayer.getStoredItems().isEmpty()){
 					uhcPlayer.getStoredItems().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
 					uhcPlayer.getStoredItems().clear();
@@ -359,10 +362,9 @@ public class PlayerManager {
 		try {
 			player = uhcPlayer.getPlayer();player.getEquipment().clear();
 			clearPlayerInventory(player);
-			player.setGameMode(GameMode.SPECTATOR);
+			player.setGameMode(GameMode.ADVENTURE);
 
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 999999, 0));
 
 			if(gm.getGameState().equals(GameState.DEATHMATCH)){
 				player.teleport(gm.getMapLoader().getArena().getLocation());
@@ -383,11 +385,9 @@ public class PlayerManager {
 
 		if (!winners.isEmpty()) {
 			UhcPlayer player1 = winners.get(0);
-			if (winners.size() == 1) {
-				gm.broadcastInfoMessage(Lang.PLAYERS_WON_SOLO.replace("%player%", player1.getDisplayName()));
-			} else {
-				gm.broadcastInfoMessage(Lang.PLAYERS_WON_TEAM.replace("%team%", player1.getTeam().getTeamName()));
-			}
+			gm.broadcastInfoMessage(Lang.PLAYERS_WON_TEAM.replace("%team%", player1.getTeam().getTeamName()));
+			gm.getPointHandler().setPlacement(1);
+			gm.getPointHandler().addGamePoints(player1.getTeam(), PointType.PLACEMENT);
 		}
 
 		// send to bungee
@@ -430,8 +430,8 @@ public class PlayerManager {
 		double maxDistance = 0.9 * gm.getConfig().get(MainConfig.BORDER_START_SIZE);
 
 		// Fore solo players to join teams
-		if(gm.getConfig().get(MainConfig.FORCE_ASSIGN_SOLO_PLAYER_TO_TEAM_WHEN_STARTING)){
-			for(UhcPlayer uhcPlayer : getPlayersList()){
+		if (gm.getConfig().get(MainConfig.FORCE_ASSIGN_SOLO_PLAYER_TO_TEAM_WHEN_STARTING)){
+			for (UhcPlayer uhcPlayer : getPlayersList()){
 				// If player is spectating don't assign player.
 				if (uhcPlayer.getState() == PlayerState.DEAD){
 					continue;
@@ -443,7 +443,9 @@ public class PlayerManager {
 			}
 		}
 
-		for(UhcTeam team : listUhcTeams()){
+		gm.getPointHandler().init();
+
+		for (UhcTeam team : listUhcTeams()){
 			Location newLoc = LocationUtils.findRandomSafeLocation(world, maxDistance);
 			team.setStartingLocation(newLoc);
 		}
@@ -451,6 +453,14 @@ public class PlayerManager {
 		Bukkit.getPluginManager().callEvent(new UhcPreTeleportEvent());
 
 		long delayTeleportByTeam = 0;
+
+		String enabledScenarios = String.join(", ", gm.getScenarioManager().getEnabledScenarios().stream().map(s -> s.getInfo().getName()).toArray(String[]::new));
+
+		sendTitleAll(
+				Lang.SCENARIO_GLOBAL_TITLE,
+				Lang.SCENARIO_GLOBAL_SUBTITLE.replace("%scenarios%", enabledScenarios),
+				5, 80, 5
+		);
 
 		for (UhcTeam team : listUhcTeams()) {
 			for (UhcPlayer uhcPlayer : team.getMembers()){
@@ -486,26 +496,38 @@ public class PlayerManager {
 
 	public void playSoundToAll(UniversalSound sound) {
 		for(UhcPlayer player : getPlayersList()){
-			playsoundTo(player, sound);
+			playSoundTo(player, sound);
 		}
 	}
 
 	public void playSoundToAll(UniversalSound sound, float v, float v1){
 		for(UhcPlayer player : getPlayersList()){
-			playsoundTo(player, sound,v,v1);
+			playSoundTo(player, sound,v,v1);
 		}
 	}
 
-	public void playsoundTo(UhcPlayer player, UniversalSound sound) {
-		playsoundTo(player,sound,1,1);
+	public void playSoundTo(UhcPlayer player, UniversalSound sound) {
+		playSoundTo(player,sound,1,1);
 	}
 
-	public void playsoundTo(UhcPlayer player, UniversalSound sound, float v, float v1) {
+	public void playSoundTo(UhcPlayer player, UniversalSound sound, float v, float v1) {
 		try {
 			Player p = player.getPlayer();
 			p.playSound(p.getLocation(), sound.getSound(), v, v1);
 		} catch (UhcPlayerNotOnlineException e) {
 			// No sound played
+		}
+	}
+
+	public void sendTitleAll(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+		}
+	}
+
+	public void playSoundAll(Sound sound, float volume, float pitch) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			player.playSound(player.getLocation(), sound, volume, pitch);
 		}
 	}
 

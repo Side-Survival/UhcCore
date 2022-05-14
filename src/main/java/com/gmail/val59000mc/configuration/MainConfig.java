@@ -15,6 +15,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class MainConfig extends YamlFile {
+
+	public static final BasicOption<Boolean> PRACTICE_MODE = new BasicOption<>("practice-mode",true);
 	public static final BasicOption<Integer> MINIMAL_READY_TEAMS_PERCENTAGE_TO_START = new BasicOption<>("minimal-ready-teams-percentage-to-start",50);
 	public static final BasicOption<Integer> MINIMAL_READY_TEAMS_TO_START = new BasicOption<>("minimal-ready-teams-to-start",2);
 	public static final BasicOption<Integer> MIN_PLAYERS_TO_START = new BasicOption<>("min-players-to-start",20);
@@ -168,6 +170,10 @@ public class MainConfig extends YamlFile {
 	public static final BasicOption<Boolean> ENABLE_WIN_EVENT = new BasicOption<>("custom-events.win.enable",false);
 	public static final BasicOption<Double> REWARD_WIN_EVENT = new BasicOption<>("custom-events.win.reward",0D);
 	public static final ListOption<String> WIN_COMMANDS = new ListOption<>("custom-events.win.commands", ListOption.Type.STRING_LIST);
+
+	public static final BasicOption<Integer> POINTS_PER_KILL = new BasicOption<>("points.per-kill",10);
+	public static final BasicOption<Integer> POINTS_BONUS = new BasicOption<>("points.per-bonus",10);
+	public static final MapOption<Integer> POINTS_PLACEMENT = new MapOption<>("points.per-placement", 10);
 
 	public void preLoad() {
 		// Pre-loads all options to add the default value for missing once

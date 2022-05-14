@@ -1,11 +1,8 @@
 package com.gmail.val59000mc.commands;
 
+import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
-import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.PlayerManager;
-import com.gmail.val59000mc.players.UhcPlayer;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,28 +18,17 @@ public class TopCommandExecutor implements CommandExecutor{
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)){
+        if (!(sender instanceof Player player)){
             sender.sendMessage("Only players can use this command!");
             return true;
         }
 
-        Player player = (Player) sender;
-        UhcPlayer uhcPlayer = playerManager.getUhcPlayer(player);
-
-        if (uhcPlayer.getState() != PlayerState.PLAYING){
-            player.sendMessage(Lang.COMMAND_TOP_ERROR_PLAYING);
-            return true;
+        player.sendMessage(Lang.COMMAND_TOP_HEADER);
+        for (String s : GameManager.getGameManager().getPointHandler().getAll()) {
+            player.sendMessage(s);
         }
+        player.sendMessage("");
 
-        if (player.getWorld().getEnvironment() == World.Environment.NETHER){
-            player.sendMessage(Lang.COMMAND_TOP_ERROR_NETHER);
-            return true;
-        }
-
-        Block highest = player.getWorld().getHighestBlockAt(player.getLocation());
-
-        player.teleport(highest.getLocation().add(.5, 0, .5));
-        player.sendMessage(Lang.COMMAND_TOP_TELEPORT);
         return true;
     }
 

@@ -18,6 +18,10 @@ import com.gmail.val59000mc.players.TeamManager;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.players.UhcTeam;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
+import com.gmail.val59000mc.scenarios.scenariolisteners.CutCleanListener;
+import com.gmail.val59000mc.scenarios.scenariolisteners.DoubleOresListener;
+import com.gmail.val59000mc.scenarios.scenariolisteners.FastLeavesDecayListener;
+import com.gmail.val59000mc.scenarios.scenariolisteners.TimberListener;
 import com.gmail.val59000mc.scoreboard.ScoreboardLayout;
 import com.gmail.val59000mc.scoreboard.ScoreboardManager;
 import com.gmail.val59000mc.threads.*;
@@ -28,6 +32,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 
@@ -56,6 +61,7 @@ public class GameManager{
 	private final DeathmatchHandler deathmatchHandler;
 	private final PlayerDeathHandler playerDeathHandler;
 	private final StatsHandler statsHandler;
+	private final PointHandler pointHandler;
 
     private GameState gameState;
 	private boolean pvp;
@@ -83,6 +89,7 @@ public class GameManager{
 		deathmatchHandler = new DeathmatchHandler(this, config, playerManager, mapLoader);
 		playerDeathHandler = new PlayerDeathHandler(this, scenarioManager, playerManager, config, customEventHandler);
 		statsHandler = new StatsHandler(UhcCore.getPlugin(), config, mapLoader, scenarioManager);
+		pointHandler = new PointHandler();
 
 		episodeNumber = 0;
 		elapsedTime = 0;
@@ -239,13 +246,20 @@ public class GameManager{
 			CageUtils.removeCage(location);
 
 			for (UhcPlayer uhcPlayer : team.getOnlinePlayingMembers()) {
-				for(PotionEffect effect : gameManager.getConfig().get(MainConfig.POTION_EFFECT_ON_START)){
+				for (PotionEffect effect : gameManager.getConfig().get(MainConfig.POTION_EFFECT_ON_START)) {
 					try {
 						uhcPlayer.getPlayer().addPotionEffect(effect);
 					} catch (UhcPlayerNotOnlineException ignored) {}
 				}
 			}
 		}
+
+		gameManager.getPlayerManager().sendTitleAll(
+				Lang.GAME_STARTED_TITLE,
+				Lang.GAME_STARTED_SUBTITLE,
+				5, 60, 5
+		);
+		gameManager.getPlayerManager().playSoundAll(Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 
 		mapLoader.setWorldsStartGame();
 
@@ -336,6 +350,12 @@ public class GameManager{
 		listeners.add(new PlayerMovementListener(playerManager));
 		listeners.add(new EntityDamageListener(this));
 		listeners.add(new PlayerHungerGainListener(playerManager));
+
+		listeners.add(new CutCleanListener());
+		listeners.add(new TimberListener());
+		listeners.add(new DoubleOresListener());
+		listeners.add(new FastLeavesDecayListener());
+
 		for(Listener listener : listeners){
 			Bukkit.getServer().getPluginManager().registerEvents(listener, UhcCore.getPlugin());
 		}
@@ -349,16 +369,12 @@ public class GameManager{
 		registerCommand("start", new StartCommandExecutor());
 		registerCommand("scenarios", new ScenarioCommandExecutor(scenarioManager));
 		registerCommand("teaminventory", new TeamInventoryCommandExecutor(playerManager, scenarioManager));
-		registerCommand("hub", new HubCommandExecutor(this));
 		registerCommand("iteminfo", new ItemInfoCommandExecutor());
 		registerCommand("revive", new ReviveCommandExecutor(this));
-		registerCommand("seed", new SeedCommandExecutor(mapLoader));
-		registerCommand("crafts", new CustomCraftsCommandExecutor());
 		registerCommand("top", new TopCommandExecutor(playerManager));
 		registerCommand("spectate", new SpectateCommandExecutor(this, scoreboardHandler));
 		registerCommand("upload", new UploadCommandExecutor());
 		registerCommand("deathmatch", new DeathmatchCommandExecutor(this, deathmatchHandler));
-		registerCommand("team", new TeamCommandExecutor(this));
 	}
 
 	private void registerCommand(String commandName, CommandExecutor executor){
@@ -397,4 +413,7 @@ public class GameManager{
 		}
 	}
 
+	public PointHandler getPointHandler() {
+		return pointHandler;
+	}
 }

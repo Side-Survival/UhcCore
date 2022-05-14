@@ -5,8 +5,10 @@ import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.languages.Lang;
+import com.gmail.val59000mc.utils.RandomUtils;
 import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 
 public class EnablePVPThread implements Runnable{
 
@@ -27,18 +29,18 @@ public class EnablePVPThread implements Runnable{
 		if(timeBeforePvp == 0){
 			GameManager.getGameManager().setPvp(true);
 			GameManager.getGameManager().broadcastInfoMessage(Lang.PVP_ENABLED);
-			GameManager.getGameManager().getPlayerManager().playSoundToAll(UniversalSound.WITHER_SPAWN);
+			gameManager.getPlayerManager().playSoundAll(Sound.ENTITY_WITHER_SPAWN, 1f, 1f);
 			return; // Stop thread
 		}
 
-		if(timeBeforePvp <= 10 || (timeBeforePvp < 60*5 && timeBeforePvp%60 == 0) || timeBeforePvp%(60*5) == 0){
+		if (timeBeforePvp != 300 && RandomUtils.isAnnounceTimer(timeBeforePvp)) {
 			if(timeBeforePvp%60 == 0) {
 				gameManager.broadcastInfoMessage(Lang.PVP_START_IN + " " + (timeBeforePvp / 60) + "m");
 			}else{
 				gameManager.broadcastInfoMessage(Lang.PVP_START_IN + " " + timeBeforePvp + "s");
 			}
 
-			gameManager.getPlayerManager().playSoundToAll(UniversalSound.CLICK);
+			gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);
 		}
 
 		if(timeBeforePvp >= 20){

@@ -44,9 +44,9 @@ public class Lobby extends Schematic {
 								|| k == -10
 								|| k == 10
 						){
-							world.getBlockAt(x+i,y+j,z+k).setType(Material.GLASS);
+							world.getBlockAt(x+i,y+j,z+k).setType(Material.BARRIER);
 						}else{
-							world.getBlockAt(x+i,y+j,z+k).setType(Material.AIR);
+							world.getBlockAt(x+i,y+j,z+k).setType(Material.LIGHT);
 						}
 					}
 				}

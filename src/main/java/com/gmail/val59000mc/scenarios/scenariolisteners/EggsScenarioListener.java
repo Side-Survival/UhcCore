@@ -16,7 +16,6 @@ public class EggsScenarioListener extends ScenarioListener{
             EntityType.CREEPER,
             EntityType.SKELETON,
             EntityType.SPIDER,
-            EntityType.GIANT,
             EntityType.ZOMBIE,
             EntityType.SLIME,
             EntityType.GHAST,
@@ -25,8 +24,6 @@ public class EggsScenarioListener extends ScenarioListener{
             EntityType.SILVERFISH,
             EntityType.BLAZE,
             EntityType.MAGMA_CUBE,
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
             EntityType.BAT,
             EntityType.WITCH,
             EntityType.ENDERMITE,
@@ -38,10 +35,8 @@ public class EggsScenarioListener extends ScenarioListener{
             EntityType.SQUID,
             EntityType.WOLF,
             EntityType.MUSHROOM_COW,
-            EntityType.SNOWMAN,
             EntityType.OCELOT,
             EntityType.IRON_GOLEM,
-            EntityType.VILLAGER,
             EntityType.HORSE,
             EntityType.RABBIT,
     };
@@ -72,5 +67,4 @@ public class EggsScenarioListener extends ScenarioListener{
     private EntityType getRandomEntity(){
         return MOBS[RandomUtils.randomInteger(0, MOBS.length-1)];
     }
-
 }

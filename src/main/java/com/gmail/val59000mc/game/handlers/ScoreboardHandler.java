@@ -62,8 +62,12 @@ public class ScoreboardHandler {
 
         List<String> lines = new ArrayList<>();
 
-        for (String line : scoreboardLayout.getLines(scoreboardType)){
-            lines.add(scoreboardManager.translatePlaceholders(line, uhcPlayer, player, scoreboardType));
+        for (String line : scoreboardLayout.getLines(scoreboardType)) {
+            if (line.equalsIgnoreCase("%top%")) {
+                lines.addAll(gameManager.getPointHandler().getTopPlaces(uhcPlayer));
+            } else {
+                lines.add(scoreboardManager.translatePlaceholders(line, uhcPlayer, player, scoreboardType));
+            }
         }
 
         String time = TimeUtils.getFormattedTime(gameManager.getElapsedTime());

@@ -42,6 +42,7 @@ public enum UniversalMaterial{
 
     WHITE_STAINED_GLASS_PANE("STAINED_GLASS_PANE", "WHITE_STAINED_GLASS_PANE", (short) 0),
     BLACK_STAINED_GLASS_PANE("STAINED_GLASS_PANE", "BLACK_STAINED_GLASS_PANE", (short) 15),
+    RED_STAINED_GLASS_PANE("STAINED_GLASS_PANE", "RED_STAINED_GLASS_PANE", (short) 14),
 
     IRON_INGOT,
     LAVA_BUCKET,
@@ -51,6 +52,7 @@ public enum UniversalMaterial{
     DIAMOND_ORE,
     SADDLE,
     TRAPPED_CHEST,
+    APPLE,
     FEATHER,
     FURNACE,
     REDSTONE,
@@ -59,6 +61,7 @@ public enum UniversalMaterial{
     QUARTZ,
     DIAMOND_PICKAXE,
     BOOK,
+    LEATHER_BOOTS,
     GOLD_INGOT,
     GOLD_ORE,
     ARROW,
@@ -93,7 +96,7 @@ public enum UniversalMaterial{
     EGG,
     ENCHANTED_BOOK,
     PAPER,
-    BARRIER,
+    BARREL,
     AIR,
     COMPASS,
     NETHER_BRICK,

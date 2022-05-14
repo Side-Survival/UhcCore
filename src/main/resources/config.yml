@@ -1,3 +1,5 @@
+practice-mode: true
+
 #Choose the percentage threshold of ready teams at which the game should start (Ignored when 'team-always-ready' is set to true)
 minimal-ready-teams-percentage-to-start: 60
 

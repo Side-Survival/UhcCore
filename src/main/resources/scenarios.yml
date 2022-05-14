@@ -1,6 +1,3 @@
-cutclean:
-  # Set to false to disable unlimited lapis in CutClean
-  unlimited-lapis: true
 fastleavesdecay:
   # Time to decay leaves in ticks.
   time-decay: 5
@@ -44,6 +41,3 @@ hastey_boys:
   durability: 1
   # Set to true if crafting wooden tools should create stone tools instead.
   stone-tools: false
-timber:
-  # Set to true if you want to trees drop oak planks.
-  drop-planks: false
