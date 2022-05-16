@@ -92,6 +92,20 @@ public class RandomUtils {
 			case 600, 300, 180, 60, 30, 10 -> true;
 			default -> false;
 		};
+	}
 
+	public static Location getSafePoint(Location loc) {
+		boolean unsafe = true;
+		while (unsafe) {
+			if (loc.getBlock().getType() == Material.AIR && loc.getBlock().getRelative(BlockFace.UP).getType() == Material.AIR) {
+				return loc;
+			} else {
+				loc.add(0, 1, 0);
+				if (loc.getY() > 255)
+					unsafe = false;
+			}
+		}
+
+		return loc;
 	}
 }

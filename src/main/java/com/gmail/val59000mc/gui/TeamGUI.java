@@ -32,33 +32,37 @@ public class TeamGUI implements InventoryProvider {
         this.invManager = plugin.getInventoryManager();
 
         if (colorMap == null) {
-            colorMap = new HashMap<>();
-
-            colorMap.put(1, RandomUtils.getColoredChestPlate(255, 238, 0));
-            colorMap.put(2, RandomUtils.getColoredChestPlate(255, 255, 175));
-            colorMap.put(3, RandomUtils.getColoredChestPlate(255, 136, 0));
-            colorMap.put(4, RandomUtils.getColoredChestPlate(255, 0, 0));
-            colorMap.put(5, RandomUtils.getColoredChestPlate(220, 20, 60));
-            colorMap.put(6, RandomUtils.getColoredChestPlate(117, 33, 39));
-            colorMap.put(7, RandomUtils.getColoredChestPlate(255, 0, 255));
-            colorMap.put(8, RandomUtils.getColoredChestPlate(94, 52, 106));
-            colorMap.put(9, RandomUtils.getColoredChestPlate(158, 71, 158));
-            colorMap.put(10, RandomUtils.getColoredChestPlate(173, 255, 47));
-            colorMap.put(11, RandomUtils.getColoredChestPlate(42, 255, 0));
-            colorMap.put(12, RandomUtils.getColoredChestPlate(35, 110, 20));
-            colorMap.put(13, RandomUtils.getColoredChestPlate(82, 114, 47));
-            colorMap.put(14, RandomUtils.getColoredChestPlate(46, 139, 47));
-            colorMap.put(15, RandomUtils.getColoredChestPlate(136, 158, 255));
-            colorMap.put(16, RandomUtils.getColoredChestPlate(66, 91, 201));
-            colorMap.put(17, RandomUtils.getColoredChestPlate(135, 206, 235));
-            colorMap.put(18, RandomUtils.getColoredChestPlate(64, 224, 208));
-            colorMap.put(19, RandomUtils.getColoredChestPlate(127, 255, 212));
-            colorMap.put(20, RandomUtils.getColoredChestPlate(111, 68, 30));
-            colorMap.put(21, RandomUtils.getColoredChestPlate(244, 164, 96));
-            colorMap.put(22, RandomUtils.getColoredChestPlate(94, 94, 94));
-            colorMap.put(23, RandomUtils.getColoredChestPlate(172, 172, 172));
-            colorMap.put(24, RandomUtils.getColoredChestPlate(217, 203, 183));
+            initColorMap();
         }
+    }
+
+    public static void initColorMap() {
+        colorMap = new HashMap<>();
+
+        colorMap.put(1, RandomUtils.getColoredChestPlate(255, 238, 0));
+        colorMap.put(2, RandomUtils.getColoredChestPlate(255, 255, 175));
+        colorMap.put(3, RandomUtils.getColoredChestPlate(255, 136, 0));
+        colorMap.put(4, RandomUtils.getColoredChestPlate(255, 0, 0));
+        colorMap.put(5, RandomUtils.getColoredChestPlate(220, 20, 60));
+        colorMap.put(6, RandomUtils.getColoredChestPlate(117, 33, 39));
+        colorMap.put(7, RandomUtils.getColoredChestPlate(255, 0, 255));
+        colorMap.put(8, RandomUtils.getColoredChestPlate(94, 52, 106));
+        colorMap.put(9, RandomUtils.getColoredChestPlate(158, 71, 158));
+        colorMap.put(10, RandomUtils.getColoredChestPlate(173, 255, 47));
+        colorMap.put(11, RandomUtils.getColoredChestPlate(42, 255, 0));
+        colorMap.put(12, RandomUtils.getColoredChestPlate(35, 110, 20));
+        colorMap.put(13, RandomUtils.getColoredChestPlate(82, 114, 47));
+        colorMap.put(14, RandomUtils.getColoredChestPlate(46, 139, 47));
+        colorMap.put(15, RandomUtils.getColoredChestPlate(136, 158, 255));
+        colorMap.put(16, RandomUtils.getColoredChestPlate(66, 91, 201));
+        colorMap.put(17, RandomUtils.getColoredChestPlate(135, 206, 235));
+        colorMap.put(18, RandomUtils.getColoredChestPlate(64, 224, 208));
+        colorMap.put(19, RandomUtils.getColoredChestPlate(127, 255, 212));
+        colorMap.put(20, RandomUtils.getColoredChestPlate(111, 68, 30));
+        colorMap.put(21, RandomUtils.getColoredChestPlate(244, 164, 96));
+        colorMap.put(22, RandomUtils.getColoredChestPlate(94, 94, 94));
+        colorMap.put(23, RandomUtils.getColoredChestPlate(172, 172, 172));
+        colorMap.put(24, RandomUtils.getColoredChestPlate(217, 203, 183));
     }
 
     public void load() {
@@ -144,5 +148,12 @@ public class TeamGUI implements InventoryProvider {
                 player.closeInventory();
             }));
         }
+    }
+
+    public static Map<Integer, ItemStack> getColorMap() {
+        if (colorMap == null)
+            initColorMap();
+
+        return colorMap;
     }
 }

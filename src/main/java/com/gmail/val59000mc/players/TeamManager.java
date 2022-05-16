@@ -44,6 +44,16 @@ public class TeamManager{
         return result;
     }
 
+    public List<UhcTeam> getAliveUhcTeams(){
+        List<UhcTeam> result = new ArrayList<>();
+        for (UhcTeam team : teams.values()){
+            if (team.getAlivePlayingMemberCount() > 0){
+                result.add(team);
+            }
+        }
+        return result;
+    }
+
     public List<UhcTeam> getUhcTeams(){
         return new ArrayList<>(teams.values());
     }

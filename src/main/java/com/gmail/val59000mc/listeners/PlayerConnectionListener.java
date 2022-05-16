@@ -75,8 +75,7 @@ public class PlayerConnectionListener implements Listener{
 				}
 			}
 
-			// todo: leave if correct state
-			if (uhcPlayer.getTeam() != null)
+			if (!gameManager.getConfig().get(MainConfig.PRACTICE_MODE) && uhcPlayer.getTeam() != null)
 				uhcPlayer.getTeam().leave(uhcPlayer);
 
 			// Update player tab
@@ -85,19 +84,21 @@ public class PlayerConnectionListener implements Listener{
 
 		if(gameManager.getGameState().equals(GameState.PLAYING) || gameManager.getGameState().equals(GameState.DEATHMATCH)){
 			UhcPlayer uhcPlayer = playerManager.getUhcPlayer(event.getPlayer());
-			if(gameManager.getConfig().get(MainConfig.ENABLE_KILL_DISCONNECTED_PLAYERS) && uhcPlayer.getState().equals(PlayerState.PLAYING)){
+			if (uhcPlayer.isPlaying()) {
+				if (gameManager.getConfig().get(MainConfig.ENABLE_KILL_DISCONNECTED_PLAYERS)) {
 
-				KillDisconnectedPlayerThread killDisconnectedPlayerThread = new KillDisconnectedPlayerThread(
-                        playerDeathHandler, event.getPlayer().getUniqueId(),
-						gameManager.getConfig().get(MainConfig.MAX_DISCONNECT_PLAYERS_TIME)
-				);
+					KillDisconnectedPlayerThread killDisconnectedPlayerThread = new KillDisconnectedPlayerThread(
+							playerDeathHandler, event.getPlayer().getUniqueId(),
+							gameManager.getConfig().get(MainConfig.MAX_DISCONNECT_PLAYERS_TIME)
+					);
 
-				Bukkit.getScheduler().runTaskLaterAsynchronously(UhcCore.getPlugin(), killDisconnectedPlayerThread,1);
+					Bukkit.getScheduler().runTaskLaterAsynchronously(UhcCore.getPlugin(), killDisconnectedPlayerThread,1);
+				}
+				if (gameManager.getConfig().get(MainConfig.SPAWN_OFFLINE_PLAYERS)) {
+					playerManager.spawnOfflineZombieFor(event.getPlayer());
+				}
+				playerManager.checkIfRemainingPlayers();
 			}
-			if(gameManager.getConfig().get(MainConfig.SPAWN_OFFLINE_PLAYERS) && uhcPlayer.getState().equals(PlayerState.PLAYING)){
-				playerManager.spawnOfflineZombieFor(event.getPlayer());
-			}
-			playerManager.checkIfRemainingPlayers();
 		}
 
 		scoreboardHandler.removePlayerScoreboard(event.getPlayer());

@@ -34,6 +34,7 @@ public class Lang{
 	public static String GAME_BORDER_START_SHRINKING;
 	public static String GAME_BORDER_NEAR;
 	public static String GAME_FINAL_HEAL;
+	public static String GAME_NO_PEARLS;
 
 	public static String PLAYERS_NETHER_OFF;
 	public static String PLAYERS_BUILD_HEIGHT;
@@ -145,6 +146,8 @@ public class Lang{
 	public static String ITEMS_COMPASS_PLAYING_ERROR;
 	public static String ITEMS_COMPASS_PLAYING_COOLDOWN;
 	public static String ITEMS_COMPASS_PLAYING_POINTING;
+	public static String ITEMS_SPECTATOR_SPAWN;
+	public static String ITEMS_SPECTATOR_PLAYERS;
 	public static String ITEMS_KIT_SELECTION;
 	public static String ITEMS_KIT_INVENTORY;
 	public static String ITEMS_KIT_SELECTED;
@@ -182,6 +185,9 @@ public class Lang{
 	public static String SCENARIO_GLOBAL_VOTE_MAX;
 	public static String SCENARIO_GLOBAL_TITLE;
 	public static String SCENARIO_GLOBAL_SUBTITLE;
+	public static String SPECTATOR_GUI_TITLE;
+	public static String SPECTATOR_GUI_ITEM;
+	public static List<String> SPECTATOR_GUI_LORE;
 
 	public static String SCENARIO_BESTPVE_ADDED;
 	public static String SCENARIO_BESTPVE_REMOVED;
@@ -255,6 +261,7 @@ public class Lang{
 		GAME_BORDER_START_SHRINKING = getString(lang, "game.border-start-shrinking", "The border will now begin to shrink");
 		GAME_BORDER_NEAR = getString(lang, "game.border-near", "&cWarning! &fWorld border is only %blocks% away");
 		GAME_FINAL_HEAL = getString(lang, "game.final-heal", "All players have been healed to full health");
+		GAME_NO_PEARLS = getString(lang, "game.no-pearls", "&cYour Ender Pearls were removed from your inventory for deathmatch!");
 
 		// Players
 		PLAYERS_NETHER_OFF = getString(lang, "players.nether-off", "&cThe nether has been deactivated for this game.");
@@ -370,6 +377,8 @@ public class Lang{
 		ITEMS_COMPASS_PLAYING_ERROR = getString(lang, "items.compass-playing-error", "&cThere is no playing teammate to point to.");
 		ITEMS_COMPASS_PLAYING_COOLDOWN = getString(lang, "items.compass-playing-cooldown", "&cYou're clicking the compass too fast, please wait!");
 		ITEMS_COMPASS_PLAYING_POINTING = getString(lang, "items.compass-playing-pointing", "&aPointing towards %player%'s last location (%distance% blocks)");
+		ITEMS_SPECTATOR_SPAWN = getString(lang, "items.compass-spectator-spawn", "&eWorld spawnpoint");
+		ITEMS_SPECTATOR_PLAYERS = getString(lang, "items.compass-spectator-players", "&aAlive players");
 		ITEMS_KIT_SELECTION = getString(lang, "items.kit-selection", "&aRight click to choose a kit");
 		ITEMS_KIT_INVENTORY = getString(lang, "items.kit-inventory", "&2Kit selection", 32);
 		ITEMS_KIT_SELECTED =  getString(lang, "items.kit-selected", "&aYou selected the kit %kit%");
@@ -410,6 +419,11 @@ public class Lang{
 		SCENARIO_GLOBAL_VOTE_MAX = getString(lang, "scenarios.global.vote-max", "&cMax votes reached (%max%)");
 		SCENARIO_GLOBAL_TITLE = getString(lang, "scenarios.global.title", "&eScenarios:");
 		SCENARIO_GLOBAL_SUBTITLE = getString(lang, "scenarios.global.subtitle", "&f%scenarios%");
+
+		// Spectators
+		SPECTATOR_GUI_TITLE = getString(lang, "spectators.teleport.title", "All alive players");
+		SPECTATOR_GUI_ITEM = getString(lang, "spectators.teleport.item", "%color% &f%player%");
+		SPECTATOR_GUI_LORE = getStringList(lang, "spectators.teleport.lore", new ArrayList<>(List.of("&7Click to teleport!")));
 
 		// load scenario info
 		JsonObject defaultInfo = getDefaultScenarioInfo();

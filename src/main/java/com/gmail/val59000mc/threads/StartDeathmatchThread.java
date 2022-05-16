@@ -7,30 +7,39 @@ import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+
+import java.util.List;
 
 public class StartDeathmatchThread implements Runnable{
 
 	private final GameManager gameManager;
 	private int timeBeforePVP;
 	private final boolean shrinkBorder;
+	private final List<Location> cages;
 
-	public StartDeathmatchThread(GameManager gameManager, boolean shrinkBorder){
+	public StartDeathmatchThread(GameManager gameManager, boolean shrinkBorder, List<Location> cages) {
 		this.gameManager = gameManager;
-		this.timeBeforePVP = 31;
+		this.timeBeforePVP = 11;
 		this.shrinkBorder = shrinkBorder;
+		this.cages = cages;
 	}
 	
 	@Override
 	public void run() {
 		timeBeforePVP --;
 
-		if(timeBeforePVP == 0){
+		if (timeBeforePVP == 0) {
 			gameManager.setPvp(true);
 			gameManager.broadcastInfoMessage(Lang.PVP_ENABLED);
 			gameManager.getPlayerManager().playSoundToAll(UniversalSound.WITHER_SPAWN);
 			gameManager.getPlayerManager().setLastDeathTime();
+
+			for (Location cage : cages) {
+				gameManager.getDeathmatchHandler().removeCage(cage);
+			}
 
 			for (UhcPlayer uhcPlayer : gameManager.getPlayerManager().getPlayersList()){
 				uhcPlayer.releasePlayer();

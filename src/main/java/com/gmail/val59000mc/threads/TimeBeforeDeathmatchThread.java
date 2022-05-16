@@ -27,7 +27,8 @@ public class TimeBeforeDeathmatchThread implements Runnable{
 		gameManager.setRemainingTime(remainingTime);
 		
 		if(remainingTime >= 0 && remainingTime <= 60 && (remainingTime%10 == 0 || remainingTime <= 10)){
-			gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);
+			// todo: deathmatch message, better time check
+//			gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);
 		}
 
 		if (remainingTime == 0){

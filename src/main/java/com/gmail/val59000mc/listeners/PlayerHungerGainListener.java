@@ -8,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
+import java.util.Random;
+
 public class PlayerHungerGainListener implements Listener {
 
     private final PlayerManager playerManager;
@@ -29,6 +31,10 @@ public class PlayerHungerGainListener implements Listener {
         if (player.getState() != PlayerState.PLAYING){
             e.setCancelled(true);
         }
-    }
 
+        // Reduce food requirement by 50%
+        Random random = new Random();
+        if (random.nextBoolean())
+            e.setCancelled(true);
+    }
 }

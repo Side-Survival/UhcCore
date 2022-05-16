@@ -135,7 +135,7 @@ public class PlayerDeathHandler {
             UhcItems.spawnExtraXp(location, config.get(MainConfig.EXP_DROP_ON_DEATH));
         }
 
-        uhcPlayer.setState(PlayerState.DEAD);
+        playerManager.setPlayerSpectating(uhcPlayer);
 
         boolean alive = false;
         for (UhcPlayer member : uhcPlayer.getTeam().getMembers()) {

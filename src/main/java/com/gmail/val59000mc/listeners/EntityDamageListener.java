@@ -5,12 +5,15 @@ import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.PlayerManager;
 import com.gmail.val59000mc.players.UhcPlayer;
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import java.util.Optional;
 
@@ -67,5 +70,22 @@ public class EntityDamageListener implements Listener{
             }
         }
     }
-    
+
+    @EventHandler
+    public void onZombieTarget(EntityTargetLivingEntityEvent event) {
+        if (event.getEntityType() == EntityType.ZOMBIE && event.getTarget() != null && event.getTarget().getType() == EntityType.PLAYER) {
+            if (((Player) event.getTarget()).getGameMode() == GameMode.ADVENTURE) {
+                event.setCancelled(true);
+                return;
+            }
+
+            Optional<UhcPlayer> owner = gameManager.getPlayerManager().getPlayersList()
+                    .stream()
+                    .filter(uhcPlayer -> uhcPlayer.getOfflineZombieUuid() != null && uhcPlayer.getOfflineZombieUuid().equals(event.getEntity().getUniqueId()))
+                    .findFirst();
+
+            if (owner.isPresent())
+                event.setCancelled(true);
+        }
+    }
 }

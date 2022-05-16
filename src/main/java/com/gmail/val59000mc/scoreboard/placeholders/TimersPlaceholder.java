@@ -37,8 +37,8 @@ public class TimersPlaceholder extends Placeholder{
         }
 
         // When all events have passed return empty string.
-        if (timeRemaining == -1){
-            return "";
+        if (timeRemaining == -1) {
+            return null;
         }
 
         switch (placeholder){

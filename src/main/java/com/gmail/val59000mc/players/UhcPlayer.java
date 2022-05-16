@@ -6,6 +6,7 @@ import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.scenarios.Scenario;
+import com.gmail.val59000mc.utils.RandomUtils;
 import com.gmail.val59000mc.utils.TimeUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -109,10 +110,7 @@ public class UhcPlayer {
 	 * @return Returns the player team color (when enabled) followed by their name.
 	 */
 	public String getDisplayName(){
-		if (GameManager.getGameManager().getConfig().get(MainConfig.TEAM_COLORS)){
-			return team.getPrefix() + "\u25A0 " + getName() + ChatColor.RESET;
-		}
-		return getName();
+		return RandomUtils.color(team.getFullPrefix(true) + "&f " + getName());
 	}
 
 	public UUID getUuid() {

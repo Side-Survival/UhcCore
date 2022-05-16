@@ -49,7 +49,11 @@ public abstract class Placeholder{
     public String parseString(String string, UhcPlayer uhcPlayer, Player player, ScoreboardType scoreboardType){
         for (String placeholder : placeholders){
             if (string.contains("%"+placeholder+"%")){
-                string = string.replace("%"+placeholder+"%", getReplacement(uhcPlayer, player, scoreboardType, placeholder));
+                String replacement = getReplacement(uhcPlayer, player, scoreboardType, placeholder);
+                if (replacement == null)
+                    return null;
+
+                string = string.replace("%"+placeholder+"%", replacement);
             }
         }
         return string;

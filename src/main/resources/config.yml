@@ -44,6 +44,9 @@ time-to-start-when-ready: 15
 #The time in seconds before the PVP starts
 time-before-pvp: 600
 
+#The time in seconds before glowing starts
+time-before-glowing: 900
+
 # When enabled players of the same team will be able to damage each other.
 enable-friendly-fire: false
 

@@ -8,6 +8,7 @@ import com.gmail.val59000mc.game.PointType;
 import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.players.UhcTeam;
+import com.gmail.val59000mc.utils.RandomUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -193,13 +194,13 @@ public class PointHandler {
 //        );
 //    }
 
-    private String getTeamPointsFormatted(UhcTeam team, int place, int points, boolean isPlayerUhcTeam) {
+    private String getTeamPointsFormatted(UhcTeam team, int place, int points, boolean isPlayerTeam) {
         if (team == null)
             return "";
 
-        return ChatColor.translateAlternateColorCodes('&', GameManager.getGameManager().getScoreboardManager().getScoreboardLayout().getPointEntry()
+        return RandomUtils.color(GameManager.getGameManager().getScoreboardManager().getScoreboardLayout().getPointEntry()
                 .replace("%place%", String.valueOf(place))
-                .replace("%team%", team.getFullPrefix())
+                .replace("%team%", isPlayerTeam ? team.getFullPrefix(true) : team.getFullPrefix())
                 .replace("%points%", String.valueOf(points))
         );
     }

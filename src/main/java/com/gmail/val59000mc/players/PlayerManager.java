@@ -90,7 +90,7 @@ public class PlayerManager {
 							|| player.hasPermission("uhc-core.spectate.override")
 							|| gm.getConfig().get(MainConfig.CAN_JOIN_AS_SPECTATOR) && gm.getConfig().get(MainConfig.CAN_SPECTATE_AFTER_DEATH)){
 						UhcPlayer spectator = newUhcPlayer(player);
-						spectator.setState(PlayerState.DEAD);
+						gm.getPlayerManager().setPlayerSpectating(spectator);
 						return true;
 					}
 					throw new UhcPlayerJoinException(Lang.KICK_PLAYING);
@@ -348,6 +348,25 @@ public class PlayerManager {
 
 	}
 
+	public void setPlayerSpectating(UhcPlayer uhcPlayer) {
+		uhcPlayer.setState(PlayerState.DEAD);
+
+		try {
+			Player player = uhcPlayer.getPlayer();
+			player.setGameMode(GameMode.ADVENTURE);
+			player.setAllowFlight(true);
+			player.setFlying(true);
+			player.getEquipment().clear();
+			clearPlayerInventory(player);
+
+			UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
+			if (player.hasPermission("uhc-core.spectator-players"))
+				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
+		} catch (UhcPlayerNotOnlineException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void setPlayerSpectateAtLobby(UhcPlayer uhcPlayer){
 		GameManager gm = GameManager.getGameManager();
 
@@ -360,17 +379,24 @@ public class PlayerManager {
 
 		Player player;
 		try {
-			player = uhcPlayer.getPlayer();player.getEquipment().clear();
+			player = uhcPlayer.getPlayer();
+			player.getEquipment().clear();
 			clearPlayerInventory(player);
 			player.setGameMode(GameMode.ADVENTURE);
 
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 
+			UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
+			if (player.hasPermission("uhc-core.spectator-players"))
+				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
+
 			if(gm.getGameState().equals(GameState.DEATHMATCH)){
 				player.teleport(gm.getMapLoader().getArena().getLocation());
 			}else{
-				Location loc = gm.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 100, 0).getLocation();
+				Location loc = RandomUtils.getSafePoint(gm.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
 				player.teleport(loc);
+				player.setAllowFlight(true);
+				player.setFlying(true);
 			}
 		} catch (UhcPlayerNotOnlineException e) {
 			// Do nothing because DEAD is a safe state
@@ -622,10 +648,7 @@ public class PlayerManager {
 		Zombie zombie = (Zombie) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
 		zombie.setCustomName(uhcPlayer.getDisplayName());
 		zombie.setCustomNameVisible(true);
-		// 1.8 doesn't have setAI method so use VersionUtils.
-		VersionUtils.getVersionUtils().setEntityAI(zombie, false);
 		zombie.setBaby(false);
-		zombie.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 999999, 1, true, true));
 
 		EntityEquipment equipment = zombie.getEquipment();
 		equipment.setHelmet(VersionUtils.getVersionUtils().createPlayerSkull(player.getName(), player.getUniqueId()));

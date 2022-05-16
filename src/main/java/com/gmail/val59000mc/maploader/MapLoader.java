@@ -96,6 +96,12 @@ public class MapLoader {
 				createNewWorld(Environment.THE_END);
 			}
 		}
+
+		File worldDir = new File("uhc_arena");
+		if (worldDir.exists()) {
+			FileUtils.deleteFile(worldDir);
+		}
+		prepareUhcArena();
 	}
 
 	public void deleteLastWorld(Environment env){
@@ -188,6 +194,11 @@ public class MapLoader {
 				this.createNewWorld(env);
 			}
 		}
+	}
+
+	public void prepareUhcArena() {
+		recursiveCopy(new File("uhc_arena_orig"), new File("uhc_arena"));
+		Bukkit.getServer().createWorld(new WorldCreator("uhc_arena"));
 	}
 
 	public void loadWorldUuids(){

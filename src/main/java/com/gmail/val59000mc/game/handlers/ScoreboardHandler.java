@@ -66,7 +66,13 @@ public class ScoreboardHandler {
             if (line.equalsIgnoreCase("%top%")) {
                 lines.addAll(gameManager.getPointHandler().getTopPlaces(uhcPlayer));
             } else {
-                lines.add(scoreboardManager.translatePlaceholders(line, uhcPlayer, player, scoreboardType));
+                String s = scoreboardManager.translatePlaceholders(line, uhcPlayer, player, scoreboardType);
+                if (s != null) {
+                    lines.add(s);
+                } else {
+                    lines.remove(lines.size() - 1);
+                    lines.remove(lines.size() - 1);
+                }
             }
         }
 

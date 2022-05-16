@@ -57,6 +57,13 @@ public class SpectateCommandExecutor implements CommandExecutor{
         player.getInventory().clear();
     }
 
+    private void setSpectating(Player player, UhcPlayer uhcPlayer){
+        uhcPlayer.setState(PlayerState.DEAD);
+
+        // Clear lobby items
+        player.getInventory().clear();
+    }
+
     private void setPlayerPlaying(Player player, UhcPlayer uhcPlayer){
         uhcPlayer.setState(PlayerState.WAITING);
 

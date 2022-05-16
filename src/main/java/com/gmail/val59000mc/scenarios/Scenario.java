@@ -44,7 +44,7 @@ public class Scenario {
     public static final Scenario UPSIDE_DOWN_CRAFTING = new Scenario("upside_down_crafting", UniversalMaterial.CRAFTING_TABLE, UpsideDownCraftsListener.class, 13);
     public static final Scenario MONSTERS_INC = new Scenario("monsters_inc", UniversalMaterial.IRON_DOOR, MonstersIncListener.class);
     public static final Scenario ACHIEVEMENT_HUNTER = new Scenario("achievement_hunter", UniversalMaterial.BOOK, AchievementHunter.class);
-    public static final Scenario NINE_SLOTS = new Scenario("nine_slots", UniversalMaterial.RED_STAINED_GLASS_PANE, NineSlotsListener.class);
+    public static final Scenario NINE_SLOTS = new Scenario("nine_slots", UniversalMaterial.ITEM_FRAME, NineSlotsListener.class);
 
     public static final Scenario[] BUILD_IN_SCENARIOS = new Scenario[]{
             FIRELESS,

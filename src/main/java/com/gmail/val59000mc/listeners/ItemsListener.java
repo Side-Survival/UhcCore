@@ -7,11 +7,15 @@ import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.gui.ScenarioVoteGUI;
+import com.gmail.val59000mc.gui.SpectatorPlayersGUI;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.*;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
+import com.gmail.val59000mc.utils.RandomUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -130,6 +134,18 @@ public class ItemsListener implements Listener {
 				break;
 			case COMPASS_ITEM:
 				uhcPlayer.pointCompassToNextPlayer(config.get(MainConfig.PLAYING_COMPASS_MODE), config.get(MainConfig.PLAYING_COMPASS_COOLDOWN));
+				break;
+			case SPECTATOR_SPAWN:
+				if (uhcPlayer.isDeath()) {
+					Location loc = RandomUtils.getSafePoint(gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
+					player.teleport(loc);
+				}
+				break;
+			case SPECTATOR_PLAYERS:
+				if (uhcPlayer.isDeath() && player.hasPermission("uhc-core.spectator-players")) {
+					SpectatorPlayersGUI gui = new SpectatorPlayersGUI();
+					gui.open(player, teamManager.getAliveUhcTeams().size());
+				}
 				break;
 			case TEAM_CHEST:
 				if (uhcPlayer.getState() != PlayerState.PLAYING){

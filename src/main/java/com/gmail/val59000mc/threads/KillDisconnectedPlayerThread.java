@@ -31,17 +31,7 @@ public class KillDisconnectedPlayerThread implements Runnable{
 	public void run() {
 		GameManager gm = GameManager.getGameManager();
 
-		if(!gm.getGameState().equals(GameState.PLAYING)) {
-			return;
-		}
-
-		Player player = Bukkit.getPlayer(uuid);
-
-		if (player != null){
-			return; // Player is back online
-		}
-
-		if(timeLeft <= 0){
+		if (timeLeft <= 0 || gm.getGameState() == GameState.DEATHMATCH || gm.getGameState() == GameState.ENDED) {
 			UhcPlayer uhcPlayer;
 			PlayerManager pm = gm.getPlayerManager();
 			try {
@@ -51,27 +41,8 @@ public class KillDisconnectedPlayerThread implements Runnable{
 				return;
 			}
 
-			// If using offline zombies kill that zombie.
-			if (uhcPlayer.getOfflineZombieUuid() != null){
-				Optional<LivingEntity> zombie = gm.getMapLoader().getUhcWorld(World.Environment.NORMAL).getLivingEntities()
-						.stream()
-						.filter(e -> e.getUniqueId().equals(uhcPlayer.getOfflineZombieUuid()))
-						.findFirst();
-
-				// Remove zombie
-				if (zombie.isPresent()) {
-					playerDeathHandler.handleOfflinePlayerDeath(uhcPlayer, zombie.get().getLocation(), null);
-					zombie.get().remove();
-					uhcPlayer.setOfflineZombieUuid(null);
-				}
-				// No zombie found, kill player without removing zombie.
-				else {
-					playerDeathHandler.handleOfflinePlayerDeath(uhcPlayer, null, null);
-				}
-			}else{
-				playerDeathHandler.handleOfflinePlayerDeath(uhcPlayer, null, null);
-			}
-		}else{
+			playerDeathHandler.handleOfflinePlayerDeath(uhcPlayer, null, null);
+		} else {
 			timeLeft-=5;
 			Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), this, 100);
 		}

@@ -40,6 +40,8 @@ public enum GameItem{
     // Game Items
     CUSTOM_CRAFT_BOOK(UniversalMaterial.ENCHANTED_BOOK),
     COMPASS_ITEM(UniversalMaterial.COMPASS),
+    SPECTATOR_SPAWN(UniversalMaterial.EMERALD),
+    SPECTATOR_PLAYERS(UniversalMaterial.PLAYER_HEAD),
 
     // Scenario GUI items
     SCENARIOS_EDIT(UniversalMaterial.RED_STAINED_GLASS_PANE),
@@ -132,6 +134,10 @@ public enum GameItem{
                 return Lang.ITEMS_BUNGEE;
             case COMPASS_ITEM:
                 return Lang.ITEMS_COMPASS_PLAYING;
+            case SPECTATOR_SPAWN:
+                return Lang.ITEMS_SPECTATOR_SPAWN;
+            case SPECTATOR_PLAYERS:
+                return Lang.ITEMS_SPECTATOR_PLAYERS;
             case TEAM_SETTINGS:
                 return Lang.TEAM_ITEM_SETTINGS;
             case TEAM_RENAME:

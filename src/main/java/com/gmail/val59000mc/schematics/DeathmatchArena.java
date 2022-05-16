@@ -133,5 +133,4 @@ public class DeathmatchArena extends Schematic {
 	public List<Location> getTeleportSpots(){
 		return teleportSpots;
 	}
-
 }

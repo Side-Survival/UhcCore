@@ -347,7 +347,6 @@ public class GameManager{
 		listeners.add(new PingListener());
 		listeners.add(new BlockListener(this));
 		listeners.add(new WorldListener());
-		listeners.add(new PlayerMovementListener(playerManager));
 		listeners.add(new EntityDamageListener(this));
 		listeners.add(new PlayerHungerGainListener(playerManager));
 
@@ -415,5 +414,9 @@ public class GameManager{
 
 	public PointHandler getPointHandler() {
 		return pointHandler;
+	}
+
+	public DeathmatchHandler getDeathmatchHandler() {
+		return deathmatchHandler;
 	}
 }

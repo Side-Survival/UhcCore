@@ -57,6 +57,10 @@ public class UhcTeam {
 		return teamColor + prefix;
 	}
 
+	public String getFullPrefix(boolean bold) {
+		return teamColor + (bold ? "&l" : "") + prefix;
+	}
+
 	public Inventory getTeamInventory() {
 		return teamInventory;
 	}
@@ -87,6 +91,10 @@ public class UhcTeam {
 
 	public int getPlayingMemberCount(){
 		return getMembers(UhcPlayer::isPlaying).size();
+	}
+
+	public int getAlivePlayingMemberCount() {
+		return getOnlinePlayingMembers().size();
 	}
 
 	public int getKills(){
