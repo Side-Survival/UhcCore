@@ -53,6 +53,7 @@ public enum GameItem{
     UNKNOWN(UniversalMaterial.AIR);
 
     private static final String LORE_PREFIX = Lang.ITEMS_DEF_LORE;
+    private static final String LORE_PREFIX2 = Lang.ITEMS_CLICK_LORE;
     public static final GameItem[] LOBBY_ITEMS = new GameItem[]{
             TEAM_LIST,
             SCENARIO_VIEWER,
@@ -68,7 +69,10 @@ public enum GameItem{
         ItemStack item = type.getStack();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(getItemName());
-        meta.setLore(Collections.singletonList(LORE_PREFIX));
+        if (this == GameItem.COMPASS_ITEM || this == GameItem.SPECTATOR_SPAWN || this == GameItem.SPECTATOR_PLAYERS)
+            meta.setLore(Collections.singletonList(LORE_PREFIX2));
+        else
+            meta.setLore(Collections.singletonList(LORE_PREFIX));
         item.setItemMeta(meta);
         return item;
     }
@@ -182,7 +186,7 @@ public enum GameItem{
         if (!meta.hasDisplayName() || !meta.hasLore()){
             return false;
         }
-        return meta.getLore().contains(LORE_PREFIX);
+        return meta.getLore().contains(LORE_PREFIX) || meta.getLore().contains(LORE_PREFIX2);
     }
 
     public static GameItem getGameItem(ItemStack item){

@@ -65,6 +65,7 @@ public class GameManager{
 
     private GameState gameState;
 	private boolean pvp;
+	private boolean glowing;
 	private boolean gameIsEnding;
 	private int episodeNumber;
 	private long remainingTime;
@@ -171,7 +172,15 @@ public class GameManager{
 		pvp = state;
 	}
 
-    public void setGameState(GameState gameState){
+	public boolean getGlowing() {
+		return glowing;
+	}
+
+	public void setGlowing(boolean glowing) {
+		this.glowing = glowing;
+	}
+
+	public void setGameState(GameState gameState){
         Validate.notNull(gameState);
 
         if (this.gameState == gameState){
@@ -266,6 +275,7 @@ public class GameManager{
 		playerManager.startWatchPlayerPlayingThread();
 		Bukkit.getScheduler().runTaskAsynchronously(UhcCore.getPlugin(), new ElapsedTimeThread(this, customEventHandler));
 		Bukkit.getScheduler().runTaskAsynchronously(UhcCore.getPlugin(), new EnablePVPThread(this));
+		Bukkit.getScheduler().runTaskAsynchronously(UhcCore.getPlugin(), new EnableGlowingThread(this));
 
 		if (config.get(MainConfig.ENABLE_EPISODE_MARKERS)){
 			Bukkit.getScheduler().runTaskAsynchronously(UhcCore.getPlugin(), new EpisodeMarkersThread(this));

@@ -46,9 +46,10 @@ public class StartDeathmatchThread implements Runnable{
 			}
 
 			// If center deathmatch move border.
-			if (shrinkBorder){
-				gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getWorldBorder().setSize(gameManager.getConfig().get(MainConfig.DEATHMATCH_END_SIZE), gameManager.getConfig().get(MainConfig.DEATHMATCH_TIME_TO_SHRINK));
-				gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getWorldBorder().setDamageBuffer(1);
+			if (shrinkBorder) {
+				World world = Bukkit.getWorld("uhc_arena");
+				world.getWorldBorder().setSize(gameManager.getConfig().get(MainConfig.DEATHMATCH_END_SIZE), gameManager.getConfig().get(MainConfig.DEATHMATCH_TIME_TO_SHRINK));
+				world.getWorldBorder().setDamageBuffer(1);
 			}
 		}else{
 

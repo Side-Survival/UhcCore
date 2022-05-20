@@ -59,6 +59,7 @@ public class Lang{
 	public static String DISPLAY_MOTD_STARTING;
 	public static String DISPLAY_MOTD_PLAYING;
 	public static String DISPLAY_MOTD_ENDED;
+	public static String DISPLAY_CHAT_TIP;
 
 	public static String KICK_LOADING;
 	public static String KICK_STARTING;
@@ -131,8 +132,10 @@ public class Lang{
 	public static String TEAM_MESSAGE_COLOR_CHANGED;
 	public static String TEAM_MESSAGE_NAME_CHANGED;
 	public static String TEAM_MESSAGE_NAME_CHANGED_ERROR;
+	public static String TEAM_CHAT_PREFIX;
 
 	public static String ITEMS_DEF_LORE;
+	public static String ITEMS_CLICK_LORE;
 	public static String ITEMS_TEAM_LIST;
 	public static String ITEMS_SWORD;
 	public static String ITEMS_BUNGEE;
@@ -166,6 +169,8 @@ public class Lang{
 
 	public static String PVP_ENABLED;
 	public static String PVP_START_IN;
+	public static String GLOWING_ENABLED;
+	public static String GLOWING_START_IN;
 
 	public static String EVENT_TIME_REWARD;
 	public static String EVENT_KILL_REWARD;
@@ -287,6 +292,7 @@ public class Lang{
 		DISPLAY_MOTD_STARTING  = getString(lang, "display.motd-starting", "Starting");
 		DISPLAY_MOTD_PLAYING  = getString(lang, "display.motd-playing", "Playing");
 		DISPLAY_MOTD_ENDED  = getString(lang, "display.motd-ended", "Ended");
+		DISPLAY_CHAT_TIP  = getString(lang, "display.chat-tip", "Type @ at the start of the message to speak in the public chat!");
 
 		// Kick
 		KICK_LOADING = getString(lang, "kick.loading", "Loading. Please retry in a few minutes.");
@@ -361,9 +367,11 @@ public class Lang{
 		TEAM_MESSAGE_COLOR_CHANGED = getString(lang, "team.message.color-changed", "&aYour team color was successfully changed.");
 		TEAM_MESSAGE_NAME_CHANGED = getString(lang, "team.message.name-changed", "&aYour team name was successfully changed.");
 		TEAM_MESSAGE_NAME_CHANGED_ERROR = getString(lang, "team.message.name-changed-error", "&cThat team name is not allowed!");
+		TEAM_CHAT_PREFIX  = getString(lang, "team.chat-prefix", "Team chat");
 
 		// Items
 		ITEMS_DEF_LORE = getString(lang, "items.def-lore", "&7Click to open!");
+		ITEMS_CLICK_LORE = getString(lang, "items.click-lore", "&7Click to run!");
 		ITEMS_TEAM_LIST = getString(lang, "items.team-list", "&9Right click to view teams");
 		ITEMS_SWORD = getString(lang, "items.sword", "&bRight click to choose your team");
 		ITEMS_BUNGEE = getString(lang, "items.bungee", "&cRight click to go back to the Hub");
@@ -398,6 +406,10 @@ public class Lang{
 		// PVP
 		PVP_ENABLED = getString(lang, "pvp.enabled", "PVP enabled!");
 		PVP_START_IN = getString(lang, "pvp.start-in", "PVP will start in");
+
+		// Glowing
+		GLOWING_ENABLED = getString(lang, "glowing.enabled", "Glowing enabled!");
+		GLOWING_START_IN = getString(lang, "glowing.start-in", "Glowing will start in ");
 
 		// Event
 		EVENT_TIME_REWARD = getString(lang, "event.time-reward", "&eYou have received %money% in your account for playing %time% , total playing time %totaltime%");

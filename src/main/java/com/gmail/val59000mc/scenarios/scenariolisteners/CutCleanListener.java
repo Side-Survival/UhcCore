@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -96,9 +97,7 @@ public class CutCleanListener extends ScenarioListener{
             UhcItems.spawnExtraXp(loc,xp);
         }
 
-        if (type == Material.SAND) {
-            drop = new ItemStack(Material.GLASS);
-        } else if (type == Material.GRAVEL) {
+        if (type == Material.GRAVEL) {
             drop = new ItemStack(Material.FLINT);
         }
 
@@ -106,5 +105,11 @@ public class CutCleanListener extends ScenarioListener{
             block.setType(Material.AIR);
             loc.getWorld().dropItem(loc, drop);
         }
+    }
+
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent event) {
+        if (event.getEntity().getItemStack().getType() == Material.SUGAR_CANE)
+            event.getEntity().getItemStack().setType(Material.BOOK);
     }
 }

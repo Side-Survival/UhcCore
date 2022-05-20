@@ -11,6 +11,7 @@ import com.gmail.val59000mc.gui.SpectatorPlayersGUI;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.*;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
+import com.gmail.val59000mc.threads.EnableGlowingThread;
 import com.gmail.val59000mc.utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,6 +33,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ItemsListener implements Listener {
 
@@ -133,11 +135,15 @@ public class ItemsListener implements Listener {
 				scenarioVoteGUI.open(player);
 				break;
 			case COMPASS_ITEM:
-				uhcPlayer.pointCompassToNextPlayer(config.get(MainConfig.PLAYING_COMPASS_MODE), config.get(MainConfig.PLAYING_COMPASS_COOLDOWN));
+				uhcPlayer.pointCompassToNextPlayer();
 				break;
 			case SPECTATOR_SPAWN:
 				if (uhcPlayer.isDeath()) {
-					Location loc = RandomUtils.getSafePoint(gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
+					Location loc;
+					if (gameManager.getGameState() == GameState.DEATHMATCH || gameManager.getGameState() == GameState.ENDED)
+						loc = Bukkit.getWorld("uhc_arena").getSpawnLocation();
+					else
+						loc = RandomUtils.getSafePoint(gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
 					player.teleport(loc);
 				}
 				break;
@@ -203,6 +209,16 @@ public class ItemsListener implements Listener {
 	@EventHandler
 	public void onPlayerItemConsume(PlayerItemConsumeEvent e){
 		if (e.getItem() == null) return;
+
+		if (e.getItem().getType() == Material.MILK_BUCKET) {
+			if (gameManager.getGlowing())
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						e.getPlayer().addPotionEffect(EnableGlowingThread.effect);
+					}
+				}.runTaskLater(UhcCore.getPlugin(), 20L);
+		}
 
 		Craft craft = CraftsManager.getCraft(e.getItem());
 		if (craft != null){

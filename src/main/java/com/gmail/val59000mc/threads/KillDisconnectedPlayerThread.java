@@ -31,6 +31,10 @@ public class KillDisconnectedPlayerThread implements Runnable{
 	public void run() {
 		GameManager gm = GameManager.getGameManager();
 
+		Player player = Bukkit.getPlayer(uuid);
+		if (player != null)
+			return;
+
 		if (timeLeft <= 0 || gm.getGameState() == GameState.DEATHMATCH || gm.getGameState() == GameState.ENDED) {
 			UhcPlayer uhcPlayer;
 			PlayerManager pm = gm.getPlayerManager();

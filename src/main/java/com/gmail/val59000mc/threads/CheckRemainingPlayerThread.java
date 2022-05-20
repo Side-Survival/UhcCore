@@ -19,9 +19,8 @@ public class CheckRemainingPlayerThread implements Runnable{
 		gameManager.getPlayerManager().checkIfRemainingPlayers();
 		GameState state = gameManager.getGameState();
 
-		if(state.equals(GameState.PLAYING) || state.equals(GameState.DEATHMATCH)) {
+		if (state.equals(GameState.PLAYING) || state.equals(GameState.DEATHMATCH)) {
 			Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), this, 40);
 		}
 	}
-
 }

@@ -14,6 +14,7 @@ public class TimersPlaceholder extends Placeholder{
         PVP,
         DEATHMATCH,
         BORDER,
+        GLOWING,
         NONE
     }
 
@@ -24,14 +25,17 @@ public class TimersPlaceholder extends Placeholder{
     }
 
     @Override
-    public String getReplacement(UhcPlayer uhcPlayer, Player player, ScoreboardType scoreboardType, String placeholder){
+    public String getReplacement(UhcPlayer uhcPlayer, Player player, ScoreboardType scoreboardType, String placeholder) {
         if (nextEvent == null){
             nextEvent = getNextEvent();
         }
 
+        if (nextEvent == Event.NONE)
+            return null;
+
         long timeRemaining = getTimeRemaining(nextEvent);
 
-        if (timeRemaining < 0 && nextEvent != Event.NONE){
+        if (timeRemaining <= 0 && nextEvent != Event.NONE){
             nextEvent = getNextEvent();
             timeRemaining = getTimeRemaining(nextEvent);
         }
@@ -67,6 +71,7 @@ public class TimersPlaceholder extends Placeholder{
         return nearestEvent;
     }
 
+    // todo: add to translations
     private String getEventName(Event event){
         switch (event){
             case PVP:
@@ -75,6 +80,8 @@ public class TimersPlaceholder extends Placeholder{
                 return "Deathmatch";
             case BORDER:
                 return "Border";
+            case GLOWING:
+                return "Glowing";
             default:
                 return "-";
         }
@@ -86,6 +93,8 @@ public class TimersPlaceholder extends Placeholder{
         switch (event){
             case PVP:
                 return cfg.get(MainConfig.TIME_BEFORE_PVP) - gm.getElapsedTime();
+            case GLOWING:
+                return cfg.get(MainConfig.TIME_BEFORE_GLOWING) - gm.getElapsedTime();
             case DEATHMATCH:
                 return gm.getRemainingTime();
             case BORDER:

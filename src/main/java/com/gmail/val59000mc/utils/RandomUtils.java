@@ -89,7 +89,7 @@ public class RandomUtils {
 
 	public static boolean isAnnounceTimer(int timer) {
 		return switch (timer) {
-			case 600, 300, 180, 60, 30, 10 -> true;
+			case 600, 300, 180, 60, 30, 10, 3, 2, 1 -> true;
 			default -> false;
 		};
 	}

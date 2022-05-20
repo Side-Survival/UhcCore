@@ -27,8 +27,8 @@ public class EnablePVPThread implements Runnable{
 		}
 
 		if(timeBeforePvp == 0){
-			GameManager.getGameManager().setPvp(true);
-			GameManager.getGameManager().broadcastInfoMessage(Lang.PVP_ENABLED);
+			gameManager.setPvp(true);
+			gameManager.broadcastInfoMessage(Lang.PVP_ENABLED);
 			gameManager.getPlayerManager().playSoundAll(Sound.ENTITY_WITHER_SPAWN, 1f, 1f);
 			return; // Stop thread
 		}

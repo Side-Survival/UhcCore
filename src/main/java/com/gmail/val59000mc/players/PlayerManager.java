@@ -16,9 +16,7 @@ import com.gmail.val59000mc.game.handlers.CustomEventHandler;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.scenarios.Scenario;
-import com.gmail.val59000mc.threads.CheckRemainingPlayerThread;
-import com.gmail.val59000mc.threads.TeleportPlayersThread;
-import com.gmail.val59000mc.threads.TimeBeforeSendBungeeThread;
+import com.gmail.val59000mc.threads.*;
 import com.gmail.val59000mc.utils.*;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -176,6 +174,12 @@ public class PlayerManager {
 				.collect(Collectors.toSet());
 	}
 
+	public Set<UhcPlayer> getOnlinePlayers() {
+		return players.stream()
+				.filter(UhcPlayer::isOnline)
+				.collect(Collectors.toSet());
+	}
+
 	public Set<UhcPlayer> getAllPlayingPlayers() {
 		return players.stream()
 				.filter(UhcPlayer::isPlaying)
@@ -245,6 +249,7 @@ public class PlayerManager {
 					// Call event
 					Bukkit.getPluginManager().callEvent(new PlayerStartsPlayingEvent(uhcPlayer));
 				}
+
 				if (uhcPlayer.getOfflineZombieUuid() != null){
 					Optional<LivingEntity> zombie = player.getWorld().getLivingEntities()
 							.stream()
@@ -254,7 +259,12 @@ public class PlayerManager {
 					zombie.ifPresent(Entity::remove);
 					uhcPlayer.setOfflineZombieUuid(null);
 				}
+
 				uhcPlayer.sendPrefixedMessage(Lang.PLAYERS_WELCOME_BACK_IN_GAME);
+
+				if (gm.getGlowing())
+					player.addPotionEffect(EnableGlowingThread.effect);
+
 				break;
 			case DEAD:
 				setPlayerSpectateAtLobby(uhcPlayer);
@@ -321,7 +331,8 @@ public class PlayerManager {
 					VersionUtils.getVersionUtils().setPlayerMaxHealth(player, 20+((double) cfg.get(MainConfig.EXTRA_HALF_HEARTS)));
 					player.setHealth(20+((double) cfg.get(MainConfig.EXTRA_HALF_HEARTS)));
 				}
-				UhcItems.giveGameItemTo(player, GameItem.COMPASS_ITEM);
+				if (uhcPlayer.getTeam().getMembers().size() > 1)
+					UhcItems.giveGameItemTo(player, GameItem.COMPASS_ITEM);
 
 				if (GameManager.getGameManager().getScenarioManager().isEnabled(Scenario.TEAM_INVENTORY))
 					UhcItems.giveGameItemTo(player, GameItem.TEAM_CHEST);
@@ -359,6 +370,10 @@ public class PlayerManager {
 			player.getEquipment().clear();
 			clearPlayerInventory(player);
 
+			for (UhcPlayer uPlayer : getOnlinePlayingPlayers()) {
+				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
+			}
+
 			UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
 			if (player.hasPermission("uhc-core.spectator-players"))
 				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
@@ -390,14 +405,19 @@ public class PlayerManager {
 			if (player.hasPermission("uhc-core.spectator-players"))
 				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
 
-			if(gm.getGameState().equals(GameState.DEATHMATCH)){
-				player.teleport(gm.getMapLoader().getArena().getLocation());
+			if(gm.getGameState().equals(GameState.DEATHMATCH) || gm.getGameState().equals(GameState.ENDED)) {
+				player.teleport(Bukkit.getWorld("uhc_arena").getSpawnLocation());
 			}else{
 				Location loc = RandomUtils.getSafePoint(gm.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
 				player.teleport(loc);
 				player.setAllowFlight(true);
 				player.setFlying(true);
 			}
+
+			for (UhcPlayer uPlayer : getOnlinePlayingPlayers()) {
+				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
+			}
+
 		} catch (UhcPlayerNotOnlineException e) {
 			// Do nothing because DEAD is a safe state
 		}
@@ -632,6 +652,7 @@ public class PlayerManager {
 		}
 
 		Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), new CheckRemainingPlayerThread(GameManager.getGameManager()) , 40);
+		Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), new CompassThread(GameManager.getGameManager()) , 10);
 	}
 
 	public void sendPlayerToBungeeServer(Player player) {

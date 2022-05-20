@@ -1,16 +1,13 @@
 package com.gmail.val59000mc.players;
 
-import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.events.UhcPlayerStateChangedEvent;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.utils.RandomUtils;
-import com.gmail.val59000mc.utils.TimeUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,8 +33,7 @@ public class UhcPlayer {
 	private Scoreboard scoreboard;
 	private boolean frozen;
 	private UUID offlineZombieUuid;
-	private UhcPlayer compassPlayingCurrentPlayer;
-	private long compassPlayingLastUpdate;
+	private UhcPlayer compassTarget = null;
 	private int browsingPage;
 
 	public UhcPlayer(UUID uuid, String name){
@@ -55,7 +51,6 @@ public class UhcPlayer {
 		storedItems = new HashSet<>();
 		offlineZombieUuid = null;
 
-		compassPlayingCurrentPlayer = this;
 		browsingPage = 0;
 	}
 
@@ -64,6 +59,10 @@ public class UhcPlayer {
 		if(player != null)
 			return player;
 		throw new UhcPlayerNotOnlineException(name);
+	}
+
+	public Player getPlayerForce() {
+		return Bukkit.getPlayer(uuid);
 	}
 
 	public Boolean isOnline(){
@@ -242,78 +241,39 @@ public class UhcPlayer {
 		kills++;
 	}
 
-	public void pointCompassToNextPlayer(int mode, int cooldown) {
+	public UhcPlayer pointCompassToNextPlayer() {
 		PlayerManager pm = GameManager.getGameManager().getPlayerManager();
-		List<UhcPlayer> pointPlayers = new ArrayList<>();
+		List<UhcPlayer> pointPlayers = new ArrayList<>(team.getOnlinePlayingMembers());
 
-		// Check cooldown
-		if (cooldown != -1 && (cooldown*TimeUtils.SECOND) + compassPlayingLastUpdate > System.currentTimeMillis()){
-			sendMessage(Lang.ITEMS_COMPASS_PLAYING_COOLDOWN);
-			return;
-		}
-
-		switch (mode){
-			case 1:
-				pointPlayers.addAll(team.getOnlinePlayingMembers());
-				break;
-			case 2:
-				pointPlayers.addAll(pm.getOnlinePlayingPlayers());
-				for (UhcPlayer teamMember : team.getOnlinePlayingMembers()){
-					pointPlayers.remove(teamMember);
-				}
-				break;
-			case 3:
-				pointPlayers.addAll(pm.getOnlinePlayingPlayers());
-				break;
-		}
-
-		if((pointPlayers.size() == 1 && pointPlayers.get(0).equals(this)) || pointPlayers.size() == 0){
-			sendMessage(Lang.ITEMS_COMPASS_PLAYING_ERROR);
-		}else{
+		if ((pointPlayers.size() == 1 && pointPlayers.contains(this)) || pointPlayers.size() == 0) {
+			return null;
+		} else {
 			int currentIndice = -1;
-			for(int i = 0 ; i < pointPlayers.size() ; i++){
-				if(pointPlayers.get(i).equals(compassPlayingCurrentPlayer))
+			for (int i = 0 ; i < pointPlayers.size() ; i++) {
+				if (pointPlayers.get(i).equals(compassTarget))
 					currentIndice = i;
 			}
 
 			// Switching to next player
-			if(currentIndice == pointPlayers.size()-1)
+			if (currentIndice == pointPlayers.size()-1)
 				currentIndice = 0;
 			else
 				currentIndice++;
 
 
 			// Skipping player if == this
-			if(pointPlayers.get(currentIndice).equals(this))
+			if (pointPlayers.get(currentIndice).equals(this))
 				currentIndice++;
 
 			// Correct indice if out of bounds
-			if(currentIndice == pointPlayers.size())
+			if (currentIndice == pointPlayers.size())
 				currentIndice = 0;
 
-
 			// Pointing compass
-			compassPlayingCurrentPlayer = pointPlayers.get(currentIndice);
-			compassPlayingLastUpdate = System.currentTimeMillis();
-			try {
-				Player bukkitPlayer = getPlayer();
-				Player bukkitPlayerPointing = compassPlayingCurrentPlayer.getPlayer();
+			compassTarget = pointPlayers.get(currentIndice);
 
-				bukkitPlayer.setCompassTarget(bukkitPlayerPointing.getLocation());
-
-				String message = Lang.ITEMS_COMPASS_PLAYING_POINTING.replace("%player%", compassPlayingCurrentPlayer.getName());
-
-				if (message.contains("%distance%")){
-					int distance = (int) bukkitPlayer.getLocation().distance(bukkitPlayerPointing.getLocation());
-					message = message.replace("%distance%", String.valueOf(distance));
-				}
-
-				sendMessage(message);
-			} catch (UhcPlayerNotOnlineException e) {
-				sendMessage(Lang.TEAM_MESSAGE_PLAYER_NOT_ONLINE.replace("%player%", compassPlayingCurrentPlayer.getName()));
-			}
+			return compassTarget;
 		}
-
 	}
 
 	public void selectDefaultGlobalChat() {
@@ -342,4 +302,7 @@ public class UhcPlayer {
 		this.browsingPage = browsingPage;
 	}
 
+	public UhcPlayer getCompassTarget() {
+		return compassTarget;
+	}
 }

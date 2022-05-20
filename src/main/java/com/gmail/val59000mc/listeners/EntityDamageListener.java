@@ -12,7 +12,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import java.util.Optional;
@@ -27,6 +26,13 @@ public class EntityDamageListener implements Listener{
     
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e){
+        if (e.getDamager() instanceof Player damager) {
+            if (gameManager.getPlayerManager().getUhcPlayer(damager).isDeath()) {
+                e.setCancelled(true);
+                return;
+            }
+         }
+
         handleOfflinePlayers(e);
     }
 
@@ -73,11 +79,14 @@ public class EntityDamageListener implements Listener{
 
     @EventHandler
     public void onZombieTarget(EntityTargetLivingEntityEvent event) {
-        if (event.getEntityType() == EntityType.ZOMBIE && event.getTarget() != null && event.getTarget().getType() == EntityType.PLAYER) {
+        if (event.getTarget() != null && event.getTarget().getType() == EntityType.PLAYER) {
             if (((Player) event.getTarget()).getGameMode() == GameMode.ADVENTURE) {
                 event.setCancelled(true);
                 return;
             }
+
+            if (event.getEntityType() != EntityType.ZOMBIE)
+                return;
 
             Optional<UhcPlayer> owner = gameManager.getPlayerManager().getPlayersList()
                     .stream()

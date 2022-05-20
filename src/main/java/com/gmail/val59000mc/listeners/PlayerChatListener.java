@@ -1,79 +1,79 @@
 package com.gmail.val59000mc.listeners;
 
 import com.gmail.val59000mc.configuration.MainConfig;
+import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
+import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
-import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.PlayerManager;
 import com.gmail.val59000mc.players.UhcPlayer;
+import com.gmail.val59000mc.utils.RandomUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerChatListener implements Listener{
 
 	private final PlayerManager playerManager;
 	private final MainConfig configuration;
+	private final List<UUID> tipReceived = new ArrayList<>();
 
 	public PlayerChatListener(PlayerManager playerManager, MainConfig configuration){
 		this.playerManager = playerManager;
 		this.configuration = configuration;
 	}
 
-	@EventHandler(priority=EventPriority.HIGH)
-	public void onPlayerChat(AsyncPlayerChatEvent e){
-		Player player = e.getPlayer();
-
-		if (e.isCancelled()){
-		    return;
-        }
-
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		String prefix = "&7";
+		Player player = event.getPlayer();
 		UhcPlayer uhcPlayer = playerManager.getUhcPlayer(player);
+		boolean isPublic = event.getMessage().startsWith("@");
 
-		// Spec chat
-        if(!configuration.get(MainConfig.CAN_SEND_MESSAGES_AFTER_DEATH) && uhcPlayer.getState() == PlayerState.DEAD){
-        	// check if has override permissions
-			if (player.hasPermission("uhc-core.chat.override")) return;
+		try {
+			if (uhcPlayer.getTeam() != null) {
+				// Game chat
+				prefix = RandomUtils.color("&8[" + uhcPlayer.getTeam().getTeamColor() + (!isPublic ? Lang.TEAM_CHAT_PREFIX : uhcPlayer.getTeam().getTeamName().charAt(0)) + "&8] &7");
 
-			// Send message in spec chat.
-			String message = Lang.DISPLAY_SPECTATOR_CHAT
-					.replace("%player%", player.getDisplayName())
-					.replace("%message%", e.getMessage());
-
-			playerManager.getPlayersList()
-					.stream()
-					.filter(UhcPlayer::isDeath)
-					.forEach(p -> p.sendMessage(message));
-
-            e.setCancelled(true);
-            return;
-        }
-
-        // Team chat
-		if (
-				uhcPlayer.getState() == PlayerState.PLAYING && isTeamMessage(e, uhcPlayer)
-		){
-			e.setCancelled(true);
-			// todo: change formatting
-//			uhcPlayer.getTeam().sendChatMessageToTeamMembers(uhcPlayer, e.getMessage());
-        }
-
-	}
-
-	private boolean isTeamMessage(AsyncPlayerChatEvent e, UhcPlayer uhcPlayer){
-		if (configuration.get(MainConfig.ENABLE_CHAT_PREFIX)){
-			if (e.getMessage().startsWith(configuration.get(MainConfig.TEAM_CHAT_PREFIX))){
-				e.setMessage(e.getMessage().replaceFirst(configuration.get(MainConfig.TEAM_CHAT_PREFIX), ""));
-				return true;
+				if (!isPublic) {
+					event.getRecipients().clear();
+					for (UhcPlayer member : uhcPlayer.getTeam().getOnlinePlayingMembers()) {
+						event.getRecipients().add(member.getPlayer());
+					}
+				} else if (event.getMessage().length() > 1) {
+					event.setMessage(event.getMessage().substring(1));
+				} else {
+					event.setCancelled(true);
+					return;
+				}
 			}
-			if (e.getMessage().startsWith(configuration.get(MainConfig.GLOBAL_CHAT_PREFIX))){
-				e.setMessage(e.getMessage().replaceFirst(configuration.get(MainConfig.GLOBAL_CHAT_PREFIX), ""));
-				return false;
+
+			if (uhcPlayer.isDeath()) {
+				// Spectator chat
+				event.getRecipients().clear();
+				prefix = Lang.DISPLAY_SPECTATOR_CHAT;
+				event.getRecipients().addAll(GameManager.getGameManager().getPlayerManager().getOnlinePlayers().stream().filter(UhcPlayer::isDeath).map(UhcPlayer::getPlayerForce).toList());
 			}
+
+			event.setFormat(RandomUtils.color(prefix + player.getName() + " &8» &f%2$s"));
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				if (p.hasPermission("uhccore.chat.all") && !event.getRecipients().contains(p))
+					p.sendMessage(event.getFormat().replace("%2$s", event.getMessage()));
+			}
+
+			if (uhcPlayer.getTeam() != null && !isPublic && !tipReceived.contains(player.getUniqueId()) && !uhcPlayer.isDeath()) {
+				player.sendMessage(Lang.DISPLAY_CHAT_TIP);
+				player.playSound(player.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 1);
+				tipReceived.add(player.getUniqueId());
+			}
+		} catch (UhcPlayerNotOnlineException e) {
+			e.printStackTrace();
 		}
-
-		return !uhcPlayer.isGlobalChat();
 	}
-
 }
