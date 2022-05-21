@@ -70,10 +70,6 @@ public class EntityDamageListener implements Listener{
         // If PvP is false or is team member & friendly fire is off
         if (!pvp || (isTeamMember && !friendlyFire)){
             e.setCancelled(true);
-            // Canceled due to friendly fire, so send message
-            if (pvp){
-                damager.sendMessage(Lang.PLAYERS_FF_OFF);
-            }
         }
     }
 

@@ -28,6 +28,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class PlayerManager {
@@ -211,32 +212,12 @@ public class PlayerManager {
 			case PLAYING:
 				setPlayerStartPlaying(uhcPlayer);
 
-				if(!uhcPlayer.getHasBeenTeleportedToLocation()){
-					List<UhcPlayer> onlinePlayingMembers = uhcPlayer.getTeam().getOnlinePlayingMembers();
-
-					// Only player in team so create random spawn location.
-					if(onlinePlayingMembers.size() <= 1){
-						World world = gm.getMapLoader().getUhcWorld(World.Environment.NORMAL);
-						double maxDistance = 0.9 *  gm.getMapLoader().getBorderSize();
-						uhcPlayer.getTeam().setStartingLocation(LocationUtils.findRandomSafeLocation(world, maxDistance));
-					}
-					// Set spawn location at team mate.
-					else{
-						UhcPlayer teamMate = onlinePlayingMembers.get(0);
-						if (teamMate == uhcPlayer){
-							teamMate = onlinePlayingMembers.get(1);
-						}
-
-						try{
-							uhcPlayer.getTeam().setStartingLocation(teamMate.getPlayer().getLocation());
-						}catch (UhcPlayerNotOnlineException ex){
-							ex.printStackTrace();
-						}
-					}
-
+				if (!uhcPlayer.getHasBeenTeleportedToLocation()) {
 					// Apply start potion effect.
-					for(PotionEffect effect : GameManager.getGameManager().getConfig().get(MainConfig.POTION_EFFECT_ON_START)){
-						player.addPotionEffect(effect);
+					if (uhcPlayer.getDeathLocation() == null) {
+						for (PotionEffect effect : GameManager.getGameManager().getConfig().get(MainConfig.POTION_EFFECT_ON_START)) {
+							player.addPotionEffect(effect);
+						}
 					}
 
 					// Teleport player
@@ -262,8 +243,10 @@ public class PlayerManager {
 
 				uhcPlayer.sendPrefixedMessage(Lang.PLAYERS_WELCOME_BACK_IN_GAME);
 
-				if (gm.getGlowing())
+				if (gm.isGlowing())
 					player.addPotionEffect(EnableGlowingThread.effect);
+				if (gm.isWithering())
+					player.addPotionEffect(GameManager.witherEffect);
 
 				break;
 			case DEAD:
@@ -338,7 +321,7 @@ public class PlayerManager {
 					UhcItems.giveGameItemTo(player, GameItem.TEAM_CHEST);
 
 				if (!uhcPlayer.getStoredItems().isEmpty()){
-					uhcPlayer.getStoredItems().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
+					uhcPlayer.getStoredItems().forEach(item -> player.getInventory().addItem(item));
 					uhcPlayer.getStoredItems().clear();
 				}
 			} catch (UhcPlayerNotOnlineException e) {
@@ -449,7 +432,14 @@ public class PlayerManager {
 		customEventHandler.handleWinEvent(new HashSet<>(winners));
 
 		// When the game finished set all player states to DEAD
-		getPlayersList().forEach(player -> player.setState(PlayerState.DEAD));
+		getPlayersList().forEach(player -> {
+			player.setState(PlayerState.DEAD);
+			Player bukkitPlayer = player.getPlayerForce();
+			if (bukkitPlayer != null) {
+				bukkitPlayer.removePotionEffect(PotionEffectType.WITHER);
+				bukkitPlayer.setFireTicks(0);
+			}
+		});
 	}
 
 	private List<UhcPlayer> getWinners(){
@@ -491,24 +481,51 @@ public class PlayerManager {
 
 		gm.getPointHandler().init();
 
-		for (UhcTeam team : listUhcTeams()){
-			Location newLoc = LocationUtils.findRandomSafeLocation(world, maxDistance);
+		List<Location> locations = new ArrayList<>();
+		List<UhcTeam> notEmptyTeams = GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams();
+		double minDistanceBetween = (maxDistance * 2) / (Math.sqrt(notEmptyTeams.size()) + 1);
+		if (minDistanceBetween > 30)
+			minDistanceBetween -= 30;
+
+		for (UhcTeam team : notEmptyTeams) {
+			Location newLoc = LocationUtils.findRandomSafeLocation(world, maxDistance, locations, minDistanceBetween);
+			if (newLoc == null) {
+				UhcCore.getPlugin().getLogger().log(Level.SEVERE, "Unable to find starting location!");
+				return;
+			}
+			locations.add(newLoc);
 			team.setStartingLocation(newLoc);
 		}
 
 		Bukkit.getPluginManager().callEvent(new UhcPreTeleportEvent());
 
 		long delayTeleportByTeam = 0;
+		StringBuilder bcMessage = new StringBuilder(Lang.SCENARIO_GLOBAL_HEADER);
 
-		String enabledScenarios = String.join(", ", gm.getScenarioManager().getEnabledScenarios().stream().map(s -> s.getInfo().getName()).toArray(String[]::new));
+		List<String> scenarioNames = new ArrayList<>();
+		for (Scenario scenario : gm.getScenarioManager().getEnabledScenarios()) {
+			scenarioNames.add(scenario.getInfo().getName());
 
+			bcMessage.append("\n").append(Lang.SCENARIO_GLOBAL_DESCRIPTION_HEADER.replace("%scenario%", scenario.getInfo().getName()));
+			bcMessage.append("\n").append(Lang.SCENARIO_GLOBAL_DESCRIPTION_PREFIX);
+			for (String s : scenario.getInfo().getDescription()) {
+				bcMessage.append(s).append(" ");
+			}
+		}
+		bcMessage.append("\n ");
+
+		String enabledScenarios = String.join(", ", scenarioNames);
+
+		gm.broadcastMessage(bcMessage.toString());
 		sendTitleAll(
 				Lang.SCENARIO_GLOBAL_TITLE,
 				Lang.SCENARIO_GLOBAL_SUBTITLE.replace("%scenarios%", enabledScenarios),
 				5, 80, 5
 		);
 
-		for (UhcTeam team : listUhcTeams()) {
+		gm.getMapLoader().enableDay();
+
+		for (UhcTeam team : gm.getTeamManager().getNotEmptyUhcTeams()) {
 			for (UhcPlayer uhcPlayer : team.getMembers()){
 				gm.getPlayerManager().setPlayerStartPlaying(uhcPlayer);
 			}
@@ -583,7 +600,7 @@ public class PlayerManager {
 		int playingTeams = 0;
 		int playingTeamsOnline = 0;
 
-		for(UhcTeam team : listUhcTeams()){
+		for(UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()){
 
 			int teamIsOnline = 0;
 			int teamIsPlaying = 0;
@@ -628,12 +645,6 @@ public class PlayerManager {
 		else if(playingPlayers>0 && playingPlayersOnline > 0 && playingTeamsOnline == 1 && playingTeams == 1 && !cfg.get(MainConfig.ONE_PLAYER_MODE)){
 			// Check if one playing team remains
 			gm.endGame();
-		}
-		else if(playingPlayers>0 && playingPlayersOnline > 0 && playingTeamsOnline == 1 && playingTeams > 1){
-			// Check if one playing team remains
-			if(cfg.get(MainConfig.END_GAME_WHEN_ALL_PLAYERS_HAVE_LEFT) && !cfg.get(MainConfig.ONE_PLAYER_MODE)){
-				gm.startEndGameThread();
-			}
 		}
 		else if(gm.getGameIsEnding()){
 			gm.stopEndGameThread();
@@ -702,8 +713,22 @@ public class PlayerManager {
 	}
 
 	public void revivePlayer(UhcPlayer uhcPlayer, boolean spawnWithItems){
+		if (uhcPlayer.getTeam() == null)
+			return;
+
 		uhcPlayer.setHasBeenTeleportedToLocation(false);
 		uhcPlayer.setState(PlayerState.PLAYING);
+
+		if (uhcPlayer.getDeathLocation() == null) {
+			GameManager gm = GameManager.getGameManager();
+			Location loc;
+			if (gm.getGameState() == GameState.DEATHMATCH || gm.getGameState() == GameState.ENDED)
+				loc = Bukkit.getWorld("uhc_arena").getSpawnLocation();
+			else
+				loc = RandomUtils.getSafePoint(gm.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
+
+			uhcPlayer.setDeathLocation(loc);
+		}
 
 		// If not respawn with items, clear stored items.
 		if (!spawnWithItems){
@@ -711,7 +736,12 @@ public class PlayerManager {
 		}
 
 		try{
-			playerJoinsTheGame(uhcPlayer.getPlayer());
+			Player player = uhcPlayer.getPlayer();
+			playerJoinsTheGame(player);
+
+			for (UhcPlayer onlinePlayer : getOnlinePlayers()) {
+				onlinePlayer.getPlayerForce().showPlayer(UhcCore.getPlugin(), player);
+			}
 		}catch (UhcPlayerNotOnlineException ex){
 			// Player gets revived next time they attempt to join.
 		}

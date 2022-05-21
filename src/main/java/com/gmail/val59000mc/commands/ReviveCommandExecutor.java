@@ -11,11 +11,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-public class ReviveCommandExecutor implements CommandExecutor{
+public class ReviveCommandExecutor implements CommandExecutor, TabCompleter {
 
     private final GameManager gameManager;
 
@@ -41,12 +44,12 @@ public class ReviveCommandExecutor implements CommandExecutor{
         Player player = Bukkit.getPlayer(name);
         boolean spawnWithItems = args.length != 2 || !args[1].equalsIgnoreCase("clear");
 
-        if (player != null){
+        if (player != null) {
             uuidCallback(player.getUniqueId(), player.getName(), spawnWithItems, sender);
             return true;
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(UhcCore.getPlugin(), () -> uuidCallback(MojangUtils.getPlayerUuid(name), MojangUtils.getPlayerName(name), spawnWithItems, sender));
+        sender.sendMessage(ChatColor.RED + "That player is not online!");
         return true;
     }
 
@@ -72,4 +75,18 @@ public class ReviveCommandExecutor implements CommandExecutor{
         }
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        List<String> completions = new ArrayList<>();
+
+        if (!sender.hasPermission("uhc-core.commands.revive"))
+            return completions;
+
+        for (UhcPlayer uhcPlayer : gameManager.getPlayerManager().getPlayersList()) {
+            if (uhcPlayer.getTeam() != null)
+                completions.add(uhcPlayer.getName());
+        }
+
+        return completions;
+    }
 }

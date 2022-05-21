@@ -5,6 +5,7 @@ import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcTeam;
+import com.gmail.val59000mc.utils.RandomUtils;
 import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -63,13 +64,11 @@ public class PreStartThread implements Runnable{
 				force ||
 				(!pause && (remainingTime < 5 || (playersNumber >= minPlayers && readyTeams >= gameManager.getConfig().get(MainConfig.MINIMAL_READY_TEAMS_TO_START) && percentageReadyTeams >= gameManager.getConfig().get(MainConfig.MINIMAL_READY_TEAMS_PERCENTAGE_TO_START))))
 		){
-			if(remainingTime == timeBeforeStart+1){
+			if (remainingTime == timeBeforeStart+1) {
 				gameManager.broadcastInfoMessage(Lang.GAME_ENOUGH_TEAMS_READY);
-				gameManager.broadcastInfoMessage(Lang.GAME_STARTING_IN.replace("%time%", String.valueOf(remainingTime)));
-				gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
-			}else if((remainingTime > 0 && remainingTime <= 10) || (remainingTime > 0 && remainingTime%10 == 0)){
-				gameManager.broadcastInfoMessage(Lang.GAME_STARTING_IN.replace("%time%", String.valueOf(remainingTime)));
-				gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
+				broadcastStart();
+			}else if (RandomUtils.isAnnounceTimer(remainingTime)) {
+				broadcastStart();
 			}
 
 			remainingTime--;
@@ -89,4 +88,13 @@ public class PreStartThread implements Runnable{
 		}
 	}
 
+	public void broadcastStart() {
+		String time;
+		if (remainingTime % 60 == 0)
+			time = (remainingTime / 60) + "m";
+		else
+			time = remainingTime + "s";
+		gameManager.broadcastInfoMessage(Lang.GAME_STARTING_IN.replace("%time%", time));
+		gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
+	}
 }

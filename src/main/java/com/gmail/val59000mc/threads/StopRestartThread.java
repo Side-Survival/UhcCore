@@ -4,6 +4,7 @@ import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
+import com.gmail.val59000mc.utils.RandomUtils;
 import org.bukkit.Bukkit;
 
 public class StopRestartThread implements Runnable{
@@ -26,9 +27,9 @@ public class StopRestartThread implements Runnable{
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart");
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop");
 		}else{
-			if(timeBeforeStop<5 || timeBeforeStop%10 == 0){
+			if (RandomUtils.isAnnounceTimer((int) timeBeforeStop)) {
 				Bukkit.getLogger().info("[UhcCore] Server will shutdown in "+timeBeforeStop+"s");
-				gm.broadcastInfoMessage(Lang.GAME_SHUTDOWN.replace("%time%", ""+timeBeforeStop));
+				gm.broadcastInfoMessage(Lang.GAME_SHUTDOWN.replace("%time%", String.valueOf(timeBeforeStop)));
 			}
 
 			timeBeforeStop--;

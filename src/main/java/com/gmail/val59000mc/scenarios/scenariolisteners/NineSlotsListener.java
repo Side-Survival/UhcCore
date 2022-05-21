@@ -20,9 +20,9 @@ public class NineSlotsListener extends ScenarioListener{
 
     @Override
     public void onEnable(){
-        fillItem = UniversalMaterial.LIGHT_GRAY_STAINED_GLASS_PANE.getStack();
+        fillItem = UniversalMaterial.RED_STAINED_GLASS_PANE.getStack();
         ItemMeta meta = fillItem.getItemMeta();
-        meta.setDisplayName(ChatColor.RED.toString() + ChatColor.BOLD + "BLOCKED");
+        meta.setDisplayName(ChatColor.RED.toString() + ChatColor.BOLD + "NEVAR IZMANTOT");
         fillItem.setItemMeta(meta);
     }
 

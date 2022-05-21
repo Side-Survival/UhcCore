@@ -39,10 +39,28 @@ public class RandomUtils {
 		return faces[randomInteger(0,faces.length-1)];
 	}
 
-	public static Location newRandomLocation(World world, double maxDistance) {
-		double x = 2*maxDistance*r.nextDouble()-maxDistance;
-		double z = 2*maxDistance*r.nextDouble()-maxDistance;
-		return new Location(world,x,250,z);
+	public static Location newRandomLocation(World world, double maxDistance, List<Location> nearbyLocations, double minDistanceBetween) {
+		double squared = minDistanceBetween * minDistanceBetween;
+
+		for (int i = 0; i < 300; i++) {
+			double x = 2 * maxDistance * r.nextDouble() - maxDistance;
+			double z = 2 * maxDistance * r.nextDouble() - maxDistance;
+
+			Location loc = new Location(world, x, 250, z);
+			boolean valid = true;
+
+			for (Location nLoc : nearbyLocations) {
+				if (nLoc.distanceSquared(loc) < squared) {
+					valid = false;
+					break;
+				}
+			}
+
+			if (valid)
+				return loc;
+		}
+
+		return null;
 	}
 
 	private static Pattern HEX_PATTERN = Pattern.compile("&(#[a-f0-9]{6})", 2);

@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class LocationUtils {
 
@@ -28,16 +29,17 @@ public class LocationUtils {
      * @param maxDistance Max distance from 0 0 you want the location to be.
      * @return Returns save ground location. (When no location can be found a random location in the sky will be returned.)
      */
-    public static Location findRandomSafeLocation(World world, double maxDistance) {
+    public static Location findRandomSafeLocation(World world, double maxDistance, List<Location> nearbyLocations, double minDistanceBetween) {
         // 35 is the range findSafeLocationAround() will look for a spawn block
         maxDistance-=10;
+
         Location randomLoc;
         Location location = null;
 
         int i = 0;
-        while (location == null){
+        while (location == null) {
             i++;
-            randomLoc = RandomUtils.newRandomLocation(world, maxDistance);
+            randomLoc = RandomUtils.newRandomLocation(world, maxDistance, nearbyLocations, minDistanceBetween);
             location = findSafeLocationAround(randomLoc, 10);
             if (i > 20){
                 return randomLoc;
@@ -55,6 +57,8 @@ public class LocationUtils {
      */
     @Nullable
     private static Location findSafeLocationAround(Location loc, int searchRadius) {
+        if (loc == null)
+            return null;
         boolean nether = loc.getWorld().getEnvironment() == World.Environment.NETHER;
         Material material;
         Location betterLocation;

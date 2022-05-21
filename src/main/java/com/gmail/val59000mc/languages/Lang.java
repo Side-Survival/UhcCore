@@ -26,15 +26,21 @@ public class Lang{
 	public static String GAME_STARTING_CANCELLED;
 	public static String GAME_STARTED_TITLE;
 	public static String GAME_STARTED_SUBTITLE;
-	public static String GAME_FINISHED;
+	public static String GAME_FINISHED_TITLE;
+	public static String GAME_FINISHED_SUBTITLE;
 	public static String GAME_END_STOPPED;
 	public static String GAME_SHUTDOWN;
+	public static String GAME_DEATHMATCH_IN;
 	public static String GAME_START_DEATHMATCH;
 	public static String GAME_BORDER_IN;
 	public static String GAME_BORDER_START_SHRINKING;
 	public static String GAME_BORDER_NEAR;
 	public static String GAME_FINAL_HEAL;
 	public static String GAME_NO_PEARLS;
+	public static String GAME_STAGE_PVP;
+	public static String GAME_STAGE_DEATHMATCH;
+	public static String GAME_STAGE_BORDER;
+	public static String GAME_STAGE_GLOWING;
 
 	public static String PLAYERS_NETHER_OFF;
 	public static String PLAYERS_BUILD_HEIGHT;
@@ -171,6 +177,7 @@ public class Lang{
 	public static String PVP_START_IN;
 	public static String GLOWING_ENABLED;
 	public static String GLOWING_START_IN;
+	public static String WITHERING_ENABLED;
 
 	public static String EVENT_TIME_REWARD;
 	public static String EVENT_KILL_REWARD;
@@ -190,6 +197,7 @@ public class Lang{
 	public static String SCENARIO_GLOBAL_VOTE_MAX;
 	public static String SCENARIO_GLOBAL_TITLE;
 	public static String SCENARIO_GLOBAL_SUBTITLE;
+	public static String SCENARIO_GLOBAL_HEADER;
 	public static String SPECTATOR_GUI_TITLE;
 	public static String SPECTATOR_GUI_ITEM;
 	public static List<String> SPECTATOR_GUI_LORE;
@@ -257,16 +265,22 @@ public class Lang{
 		GAME_STARTING_CANCELLED = getString(lang, "game.starting-cancelled", "Game starting was cancelled because not enough teams are ready");
 		GAME_STARTED_TITLE = getString(lang, "game.started-title", "&aGood luck!");
 		GAME_STARTED_SUBTITLE = getString(lang, "game.started-subtitle", "&fThe game has started");
-		GAME_FINISHED = getString(lang, "game.finished", "The game has finished!");
+		GAME_FINISHED_TITLE = getString(lang, "game.finished-title", "The game has finished!");
+		GAME_FINISHED_SUBTITLE = getString(lang, "game.finished-subtitle", "Winner: %team% team");
 		GAME_END_STOPPED = getString(lang, "game.end-stopped", "Game ending stopped");
 		GAME_SHUTDOWN = getString(lang, "game.shutdown", "Server will shutdown in %time% seconds.");
+		GAME_DEATHMATCH_IN = getString(lang, "game.deathmatch-in", "Deathmatch will start in %time%");
 		GAME_PLEASE_WAIT_TELEPORTING = getString(lang, "game.please-wait-teleporting", "Please wait while all players are being teleported.");
 		GAME_START_DEATHMATCH = getString(lang, "game.start-deathmatch", "Starting the deathmatch! Prepare yourself until PVP is enabled!");
-		GAME_BORDER_IN = getString(lang, "game.border-in", "The border will start to shrink in ");
+		GAME_BORDER_IN = getString(lang, "game.border-in", "The border will start to shrink in %time%");
 		GAME_BORDER_START_SHRINKING = getString(lang, "game.border-start-shrinking", "The border will now begin to shrink");
 		GAME_BORDER_NEAR = getString(lang, "game.border-near", "&cWarning! &fWorld border is only %blocks% away");
 		GAME_FINAL_HEAL = getString(lang, "game.final-heal", "All players have been healed to full health");
 		GAME_NO_PEARLS = getString(lang, "game.no-pearls", "&cYour Ender Pearls were removed from your inventory for deathmatch!");
+		GAME_STAGE_PVP = getString(lang, "game.stage.pvp", "PvP");
+		GAME_STAGE_DEATHMATCH = getString(lang, "game.stage.deathmatch", "Deathmatch");
+		GAME_STAGE_BORDER = getString(lang, "game.stage.border", "Border");
+		GAME_STAGE_GLOWING = getString(lang, "game.stage.glowing", "Glowing");
 
 		// Players
 		PLAYERS_NETHER_OFF = getString(lang, "players.nether-off", "&cThe nether has been deactivated for this game.");
@@ -277,7 +291,7 @@ public class Lang{
 		PLAYERS_ELIMINATED = getString(lang, "players.eliminated", "%player% has been eliminated!");
 		PLAYERS_WON_SOLO = getString(lang, "players.won-solo", "%player% won the game!");
 		PLAYERS_WON_TEAM = getString(lang, "players.won-team", "Team %team% won the game!");
-		PLAYERS_ALL_HAVE_LEFT = getString(lang, "players.all-have-left", "All players have left, game will end in");
+		PLAYERS_ALL_HAVE_LEFT = getString(lang, "players.all-have-left", "All players have left, game will end in %time%");
 		PLAYERS_FF_OFF = getString(lang, "players.ff-off", "&7Friendly-Fire is disabled");
 		PLAYERS_SEND_BUNGEE = getString(lang, "players.send-bungee", "&eSending you to the hub in %time%");
 		PLAYERS_SEND_BUNGEE_NOW = getString(lang, "players.send-bungee-now", "&eConnecting to Hub ...");
@@ -405,11 +419,13 @@ public class Lang{
 
 		// PVP
 		PVP_ENABLED = getString(lang, "pvp.enabled", "PVP enabled!");
-		PVP_START_IN = getString(lang, "pvp.start-in", "PVP will start in");
+		PVP_START_IN = getString(lang, "pvp.start-in", "PVP will start in %time%");
 
 		// Glowing
 		GLOWING_ENABLED = getString(lang, "glowing.enabled", "Glowing enabled!");
-		GLOWING_START_IN = getString(lang, "glowing.start-in", "Glowing will start in ");
+		GLOWING_START_IN = getString(lang, "glowing.start-in", "Glowing will start in %time%");
+
+		WITHERING_ENABLED = getString(lang, "wintering-enabled", "All alive players are now being withered!");
 
 		// Event
 		EVENT_TIME_REWARD = getString(lang, "event.time-reward", "&eYou have received %money% in your account for playing %time% , total playing time %totaltime%");
@@ -431,6 +447,7 @@ public class Lang{
 		SCENARIO_GLOBAL_VOTE_MAX = getString(lang, "scenarios.global.vote-max", "&cMax votes reached (%max%)");
 		SCENARIO_GLOBAL_TITLE = getString(lang, "scenarios.global.title", "&eScenarios:");
 		SCENARIO_GLOBAL_SUBTITLE = getString(lang, "scenarios.global.subtitle", "&f%scenarios%");
+		SCENARIO_GLOBAL_HEADER = getString(lang, "scenarios.global.header", "&eEnabled scenarios:");
 
 		// Spectators
 		SPECTATOR_GUI_TITLE = getString(lang, "spectators.teleport.title", "All alive players");

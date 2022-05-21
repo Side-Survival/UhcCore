@@ -26,11 +26,11 @@ public class WorldBorderThread implements Runnable{
 		if(timeBeforeShrink <= 0){
 			startMoving();
 		} else {
-			if (timeBeforeShrink != 300 && RandomUtils.isAnnounceTimer((int) timeBeforeShrink)) {
-				if(timeBeforeShrink%60 == 0) {
-					GameManager.getGameManager().broadcastInfoMessage(Lang.GAME_BORDER_IN + " " + (timeBeforeShrink / 60) + "m");
+			if (timeBeforeShrink < 300 && RandomUtils.isAnnounceTimer((int) timeBeforeShrink)) {
+				if(timeBeforeShrink % 60 == 0) {
+					GameManager.getGameManager().broadcastInfoMessage(Lang.GAME_BORDER_IN.replace("%time%", (timeBeforeShrink / 60) + "m"));
 				}else{
-					GameManager.getGameManager().broadcastInfoMessage(Lang.GAME_BORDER_IN + " " + timeBeforeShrink + "s");
+					GameManager.getGameManager().broadcastInfoMessage(Lang.GAME_BORDER_IN.replace("%time%", timeBeforeShrink + "s"));
 				}
 
 				GameManager.getGameManager().getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);

@@ -244,7 +244,7 @@ public class MapLoader {
 		return Bukkit.getWorld(worldUuid);
 	}
 
-	public void setWorldsStartGame() {
+	public void enableDay() {
 		World overworld = getUhcWorld(Environment.NORMAL);
 		VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_MOB_SPAWNING, true);
 
@@ -252,6 +252,11 @@ public class MapLoader {
 			VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_DAYLIGHT_CYCLE, true);
 			overworld.setTime(0);
 		}
+	}
+
+	public void setWorldsStartGame() {
+		World overworld = getUhcWorld(Environment.NORMAL);
+		VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_MOB_SPAWNING, true);
 
 		if (!config.get(MainConfig.LOBBY_IN_DEFAULT_WORLD)) {
 			lobby.destroyBoundingBox();

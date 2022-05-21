@@ -117,6 +117,8 @@ public class PlayerDeathHandler {
             }
         }
 
+        uhcPlayer.setDeathLocation(location);
+
         // Store drops in case player gets re-spawned.
         uhcPlayer.getStoredItems().clear();
         uhcPlayer.getStoredItems().addAll(playerDrops);

@@ -2,7 +2,9 @@ package com.gmail.val59000mc.threads;
 
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.languages.Lang;
+import com.gmail.val59000mc.utils.RandomUtils;
 import org.bukkit.Bukkit;
 
 public class EndThread implements Runnable{
@@ -28,13 +30,15 @@ public class EndThread implements Runnable{
 		}
 
 		GameManager gm = GameManager.getGameManager();
+		if (gm.getGameState() == GameState.ENDED)
+			return;
 
 		if(timeBeforeEnd <= 0){
 			gm.endGame();
 		}else{
-			if(timeBeforeEnd%10 == 0 || timeBeforeEnd <= 5){
+			if (RandomUtils.isAnnounceTimer(timeBeforeEnd)){
 				Bukkit.getLogger().info(Lang.DISPLAY_MESSAGE_PREFIX+" "+Lang.PLAYERS_ALL_HAVE_LEFT+" "+timeBeforeEnd);
-				gm.broadcastInfoMessage(Lang.PLAYERS_ALL_HAVE_LEFT+" "+timeBeforeEnd);
+				gm.broadcastInfoMessage(Lang.PLAYERS_ALL_HAVE_LEFT.replace("%time%", String.valueOf(timeBeforeEnd)));
 			}
 			timeBeforeEnd--;
 			Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), EndThread.this,20);

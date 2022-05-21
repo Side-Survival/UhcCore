@@ -2,6 +2,7 @@ package com.gmail.val59000mc.scoreboard;
 
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.*;
@@ -43,7 +44,11 @@ public class ScoreboardManager {
         MainConfig cfg = gm.getConfig();
 
         if (scoreboardType.equals(ScoreboardType.WAITING)){
-            returnString = returnString.replace("%online%",Bukkit.getOnlinePlayers().size() + "").replace("%needed%",cfg.get(MainConfig.MIN_PLAYERS_TO_START) + "");
+            // todo: might interfere with future spectate join
+            int minPlayers = cfg.get(MainConfig.MIN_PLAYERS_TO_START) - Bukkit.getOnlinePlayers().size();
+            if (minPlayers < 0)
+                minPlayers = 0;
+            returnString = returnString.replace("%online%", String.valueOf(Bukkit.getOnlinePlayers().size())).replace("%needed%", String.valueOf(minPlayers));
         }
 
         if (returnString.contains("%kills%")){
@@ -79,7 +84,7 @@ public class ScoreboardManager {
 
             if (distanceX <= 15 || distanceZ <= 15){
                 borderString = ChatColor.RED + borderString;
-                if (bukkitPlayer.getGameMode() == GameMode.SURVIVAL) {
+                if (bukkitPlayer.getGameMode() == GameMode.SURVIVAL && gm.getGameState() != GameState.DEATHMATCH) {
                     int smallDistance = Math.min(distanceX, distanceZ);
                     if (smallDistance > 0)
                         bukkitPlayer.spigot().sendMessage(

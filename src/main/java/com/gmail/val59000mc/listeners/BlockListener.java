@@ -5,6 +5,7 @@ import com.gmail.val59000mc.configuration.LootConfiguration;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.customitems.UhcItems;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.PlayerManager;
 import com.gmail.val59000mc.players.UhcPlayer;
@@ -20,9 +21,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BlockListener implements Listener{
@@ -30,6 +34,7 @@ public class BlockListener implements Listener{
 	private final PlayerManager playerManager;
 	private final MainConfig configuration;
 	private final Map<Material, LootConfiguration<Material>> blockLoots;
+	private final List<Location> placedDMBlocks;
 	private final int maxBuildingHeight;
 	
 	public BlockListener(GameManager gameManager){
@@ -37,6 +42,7 @@ public class BlockListener implements Listener{
 		configuration = gameManager.getConfig();
 		blockLoots = configuration.get(MainConfig.ENABLE_BLOCK_LOOT) ? configuration.get(MainConfig.BLOCK_LOOT) : new HashMap<>();
 		maxBuildingHeight = configuration.get(MainConfig.MAX_BUILDING_HEIGHT);
+		placedDMBlocks = new ArrayList<>();
 	}
 
 	@EventHandler
@@ -44,12 +50,27 @@ public class BlockListener implements Listener{
 		handleBlockLoot(event);
 		handleShearedLeaves(event);
 		handleFrozenPlayers(event);
+
+		GameManager gm = GameManager.getGameManager();
+		if (event.isCancelled() || gm.getGameState() != GameState.DEATHMATCH)
+			return;
+
+		if (!placedDMBlocks.contains(event.getBlock().getLocation()))
+			event.setCancelled(true);
+		else
+			placedDMBlocks.remove(event.getBlock().getLocation());
 	}
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event){
 		handleMaxBuildingHeight(event);
 		handleFrozenPlayers(event);
+
+		GameManager gm = GameManager.getGameManager();
+		if (event.isCancelled() || gm.getGameState() != GameState.DEATHMATCH)
+			return;
+
+		placedDMBlocks.add(event.getBlock().getLocation());
 	}
 
 	@EventHandler
@@ -146,4 +167,8 @@ public class BlockListener implements Listener{
 		Bukkit.getScheduler().runTask(UhcCore.getPlugin(), () -> block.getWorld().dropItem(block.getLocation().add(.5, .5, .5), new ItemStack(Material.APPLE)));
 	}
 
+	@EventHandler
+	public void onLootGenerate(LootGenerateEvent event) {
+		event.getLoot().removeIf(i -> i.getType() == Material.ENCHANTED_GOLDEN_APPLE);
+	}
 }

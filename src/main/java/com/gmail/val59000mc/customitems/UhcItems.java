@@ -63,7 +63,6 @@ public class UhcItems{
 	}
 
 	public static ItemStack createGoldenHeadPlayerSkull(String name, UUID uuid){
-
 		ItemStack itemStack = VersionUtils.getVersionUtils().createPlayerSkull(name, uuid);
 		ItemMeta itemMeta = itemStack.getItemMeta();
 		itemMeta.setDisplayName(Lang.ITEMS_GOLDEN_HEAD_SKULL_NAME.replace("%player%", name));

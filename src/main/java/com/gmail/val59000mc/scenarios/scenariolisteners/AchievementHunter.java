@@ -5,6 +5,7 @@ import com.gmail.val59000mc.events.PlayerStartsPlayingEvent;
 import com.gmail.val59000mc.events.UhcGameStateChangedEvent;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameState;
+import com.gmail.val59000mc.maploader.MapLoader;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.scenarios.Option;
 import com.gmail.val59000mc.scenarios.Scenario;
@@ -12,6 +13,7 @@ import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.VersionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.PlayerEvent;
@@ -62,8 +64,6 @@ public class AchievementHunter extends ScenarioListener implements EventExecutor
             return;
         }
 
-        System.out.println("event!");
-
         if (type == Type.ACHIEVEMENTS){
             addHeart(((PlayerEvent) event).getPlayer());
         }else{
@@ -86,6 +86,8 @@ public class AchievementHunter extends ScenarioListener implements EventExecutor
                 // Don't set max health for offline players.
             }
         }
+
+        VersionUtils.getVersionUtils().setGameRuleValue(getGameManager().getMapLoader().getUhcWorld(World.Environment.NORMAL), MapLoader.ANNOUNCE_ADVANCEMENTS, true);
     }
 
     @EventHandler
@@ -113,7 +115,6 @@ public class AchievementHunter extends ScenarioListener implements EventExecutor
     private static boolean isValidAdvancement(PlayerEvent event){
         org.bukkit.event.player.PlayerAdvancementDoneEvent advancementEvent = (org.bukkit.event.player.PlayerAdvancementDoneEvent) event;
         NamespacedKey key = advancementEvent.getAdvancement().getKey();
-        System.out.println(key.getKey());
         return key.getKey().startsWith("story/");
     }
 

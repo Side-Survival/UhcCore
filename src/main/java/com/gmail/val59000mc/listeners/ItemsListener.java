@@ -13,10 +13,7 @@ import com.gmail.val59000mc.players.*;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
 import com.gmail.val59000mc.threads.EnableGlowingThread;
 import com.gmail.val59000mc.utils.RandomUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -79,16 +76,16 @@ public class ItemsListener implements Listener {
 			return;
 		}
 
-		GameState state = gameManager.getGameState();
-		if ((state == GameState.PLAYING || state == GameState.DEATHMATCH)
-				&& UhcItems.isRegenHeadItem(hand)
-				&& uhcPlayer.getState().equals(PlayerState.PLAYING)
-				&& (event.getAction() == Action.RIGHT_CLICK_AIR
-				|| event.getAction() == Action.RIGHT_CLICK_BLOCK)
-		) {
+		if (hand.getType() == Material.PLAYER_HEAD) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 0));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 1));
+			player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 1L, 1L);
+			player.setItemInHand(null);
+			return;
+		}
+
+		if (player.getGameMode() == GameMode.ADVENTURE) {
 			event.setCancelled(true);
-			uhcPlayer.getTeam().regenTeam(config.get(MainConfig.DOUBLE_REGEN_HEAD));
-			player.getInventory().remove(hand);
 		}
 	}
 	
@@ -201,7 +198,7 @@ public class ItemsListener implements Listener {
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		ItemStack item = event.getItemDrop().getItemStack();
 
-		if (gameManager.getGameState() == GameState.WAITING && GameItem.isGameItem(item)){
+		if (event.getPlayer().getGameMode() == GameMode.ADVENTURE || gameManager.getGameState() == GameState.WAITING && GameItem.isGameItem(item)){
 			event.setCancelled(true);
 		}
 	}
@@ -211,11 +208,14 @@ public class ItemsListener implements Listener {
 		if (e.getItem() == null) return;
 
 		if (e.getItem().getType() == Material.MILK_BUCKET) {
-			if (gameManager.getGlowing())
+			if (gameManager.isGlowing() || gameManager.isWithering())
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						e.getPlayer().addPotionEffect(EnableGlowingThread.effect);
+						if (gameManager.isGlowing())
+							e.getPlayer().addPotionEffect(EnableGlowingThread.effect);
+						if (gameManager.isWithering())
+							e.getPlayer().addPotionEffect(GameManager.witherEffect);
 					}
 				}.runTaskLater(UhcCore.getPlugin(), 20L);
 		}
@@ -228,10 +228,6 @@ public class ItemsListener implements Listener {
 					return;
 				}
 			}
-		}
-
-		if (e.getItem().isSimilar(UhcItems.createGoldenHead())){
-			e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1));
 		}
 	}
 }

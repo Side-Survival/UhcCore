@@ -22,7 +22,7 @@ public class UhcTeam {
 
 	private final List<UhcPlayer> members = new ArrayList<>();
 	private boolean readyToStart = false;
-	private Location startingLocation;
+	private Location startingLocation = null;
 	private final int teamNumber;
 	private String teamName;
 	private String teamColor;

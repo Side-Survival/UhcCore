@@ -74,7 +74,7 @@ public class ScenarioVoteGUI implements InventoryProvider {
             }
 
             List<String> lore = itemMeta.getLore();
-            lore.add("");
+            lore.add(" ");
             lore.add(Lang.SCENARIO_GLOBAL_ITEM_INFO.replace("%votes%", String.valueOf(votes.getOrDefault(scenario, 0))));
             itemMeta.setLore(lore);
 
@@ -128,6 +128,7 @@ public class ScenarioVoteGUI implements InventoryProvider {
             }
 
             List<String> lore = itemMeta.getLore();
+            lore.add(" ");
             lore.add(Lang.SCENARIO_GLOBAL_ITEM_INFO.replace("%votes%", String.valueOf(votes.getOrDefault(scenario, 0))));
             itemMeta.setLore(lore);
 

@@ -48,11 +48,11 @@ public class EnableGlowingThread implements Runnable{
 			return; // Stop thread
 		}
 
-		if (timeBeforeGlowing != 300 && RandomUtils.isAnnounceTimer(timeBeforeGlowing)) {
+		if (timeBeforeGlowing <= 300 && RandomUtils.isAnnounceTimer(timeBeforeGlowing)) {
 			if (timeBeforeGlowing % 60 == 0) {
-				gameManager.broadcastInfoMessage(Lang.GLOWING_START_IN + " " + (timeBeforeGlowing / 60) + "m");
+				gameManager.broadcastInfoMessage(Lang.GLOWING_START_IN.replace("%time%", (timeBeforeGlowing / 60) + "m"));
 			} else {
-				gameManager.broadcastInfoMessage(Lang.GLOWING_START_IN + " " + timeBeforeGlowing + "s");
+				gameManager.broadcastInfoMessage(Lang.GLOWING_START_IN.replace("%time%", timeBeforeGlowing + "s"));
 			}
 
 			gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);

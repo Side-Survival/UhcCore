@@ -32,9 +32,9 @@ import org.bukkit.World.Environment;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,10 +66,13 @@ public class GameManager{
     private GameState gameState;
 	private boolean pvp;
 	private boolean glowing;
+	private boolean withering;
 	private boolean gameIsEnding;
 	private int episodeNumber;
 	private long remainingTime;
 	private long elapsedTime;
+
+	public static PotionEffect witherEffect;
 
 	static{
 	    gameManager = null;
@@ -94,6 +97,8 @@ public class GameManager{
 
 		episodeNumber = 0;
 		elapsedTime = 0;
+
+		witherEffect = new PotionEffect(PotionEffectType.WITHER, 999999, 9, true, true, true);
 	}
 
 	public static GameManager getGameManager(){
@@ -172,12 +177,20 @@ public class GameManager{
 		pvp = state;
 	}
 
-	public boolean getGlowing() {
+	public boolean isGlowing() {
 		return glowing;
 	}
 
 	public void setGlowing(boolean glowing) {
 		this.glowing = glowing;
+	}
+
+	public boolean isWithering() {
+		return withering;
+	}
+
+	public void setWithering(boolean withering) {
+		this.withering = withering;
 	}
 
 	public void setGameState(GameState gameState){
@@ -241,7 +254,7 @@ public class GameManager{
 
 		Bukkit.getPluginManager().callEvent(new UhcStartingEvent());
 
-		broadcastInfoMessage(Lang.GAME_STARTING);
+//		broadcastInfoMessage(Lang.GAME_STARTING);
 		broadcastInfoMessage(Lang.GAME_PLEASE_WAIT_TELEPORTING);
 		playerManager.randomTeleportTeams();
 		gameIsEnding = false;
@@ -250,7 +263,7 @@ public class GameManager{
 	public void startWatchingEndOfGame(){
 		setGameState(GameState.PLAYING);
 
-		for (UhcTeam team : playerManager.listUhcTeams()) {
+		for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
 			Location location = team.getStartingLocation().clone().add(0, 6, 0);
 			CageUtils.removeCage(location);
 
@@ -263,6 +276,7 @@ public class GameManager{
 			}
 		}
 
+		gameManager.broadcastInfoMessage(Lang.GAME_STARTED_TITLE + " " + Lang.GAME_STARTED_SUBTITLE);
 		gameManager.getPlayerManager().sendTitleAll(
 				Lang.GAME_STARTED_TITLE,
 				Lang.GAME_STARTED_SUBTITLE,
@@ -401,7 +415,15 @@ public class GameManager{
 			setGameState(GameState.ENDED);
 			pvp = false;
 			gameIsEnding = true;
-			broadcastInfoMessage(Lang.GAME_FINISHED);
+
+			UhcTeam winners = gameManager.getPointHandler().getWinnerUhcTeam();
+			broadcastInfoMessage(Lang.GAME_FINISHED_TITLE + " " + Lang.GAME_FINISHED_SUBTITLE.replace("%team%", winners.getFullPrefix()));
+			gameManager.getPlayerManager().sendTitleAll(
+					Lang.GAME_FINISHED_TITLE,
+					Lang.GAME_FINISHED_SUBTITLE.replace("%team%", winners.getFullPrefix()),
+					5, 100, 5
+			);
+
 			playerManager.playSoundToAll(UniversalSound.ENDERDRAGON_GROWL, 1, 2);
 			playerManager.setAllPlayersEndGame();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), new StopRestartThread(),20);

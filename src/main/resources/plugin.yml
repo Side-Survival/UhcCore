@@ -38,6 +38,7 @@ commands:
     usage: "/<command> while holding a item."
     permission: "uhc-core.commands.iteminfo"
   revive:
+    aliases: [respawn]
     description: "You can use this command to let a death player respawn in the game."
     usage: /<command> <player>
     permission: "uhc-core.commands.revive"
@@ -52,6 +53,7 @@ commands:
   top:
     description: "This command teleports players to the highest block above their head"
     usage: /<command>
+    aliases: [tops]
     permission: "uhc-core.commands.top"
   spectate:
     description: "This command can be used to set yourself as spectator at the start of the game."

@@ -3,12 +3,14 @@ package com.gmail.val59000mc.players;
 import com.gmail.val59000mc.events.UhcPlayerStateChangedEvent;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.utils.RandomUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
@@ -35,6 +37,7 @@ public class UhcPlayer {
 	private UUID offlineZombieUuid;
 	private UhcPlayer compassTarget = null;
 	private int browsingPage;
+	private Location deathLocation;
 
 	public UhcPlayer(UUID uuid, String name){
 		this.uuid = uuid;
@@ -52,6 +55,7 @@ public class UhcPlayer {
 		offlineZombieUuid = null;
 
 		browsingPage = 0;
+		deathLocation = null;
 	}
 
 	public Player getPlayer() throws UhcPlayerNotOnlineException {
@@ -283,6 +287,11 @@ public class UhcPlayer {
 	}
 
 	public Location getStartingLocation(){
+		if (deathLocation != null)
+			deathLocation = getDeathLocation();
+		if (deathLocation != null)
+			return deathLocation;
+
 		return team.getStartingLocation();
 	}
 
@@ -304,5 +313,23 @@ public class UhcPlayer {
 
 	public UhcPlayer getCompassTarget() {
 		return compassTarget;
+	}
+
+	public Location getDeathLocation() {
+		if (deathLocation != null) {
+			if (GameManager.getGameManager().getGameState() == GameState.DEATHMATCH)
+				deathLocation = null;
+			else {
+				double border = deathLocation.getWorld().getWorldBorder().getSize();
+				if ((Math.abs(deathLocation.getX()) > border - 5) || (Math.abs(deathLocation.getZ()) > border - 5))
+					deathLocation = null;
+			}
+		}
+
+		return deathLocation;
+	}
+
+	public void setDeathLocation(Location deathLocation) {
+		this.deathLocation = deathLocation;
 	}
 }

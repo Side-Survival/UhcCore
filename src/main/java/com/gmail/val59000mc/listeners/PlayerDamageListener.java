@@ -42,7 +42,7 @@ public class PlayerDamageListener implements Listener{
 	///////////////////////
 
 	private void handleAnyDamage(EntityDamageEvent event){
-		if(event.getEntity() instanceof Player){
+		if (event.getEntity() instanceof Player){
 			Player player = (Player) event.getEntity();
 			PlayerManager pm = gameManager.getPlayerManager();
 			UhcPlayer uhcPlayer = pm.getUhcPlayer(player);
@@ -55,6 +55,9 @@ public class PlayerDamageListener implements Listener{
 			if (uhcPlayer.isFrozen()){
 				event.setCancelled(true);
 			}
+
+			if (gameManager.getGameIsEnding())
+				event.setCancelled(true);
 		}
 	}
 	
@@ -79,7 +82,6 @@ public class PlayerDamageListener implements Listener{
 			UhcPlayer uhcDamaged = pm.getUhcPlayer(damaged);
 
 			if(!friendlyFire && uhcDamager.getState().equals(PlayerState.PLAYING) && uhcDamager.isInTeamWith(uhcDamaged)){
-				damager.sendMessage(Lang.PLAYERS_FF_OFF);
 				event.setCancelled(true);
 			}
 		}
@@ -108,7 +110,6 @@ public class PlayerDamageListener implements Listener{
 				UhcPlayer uhcDamaged = pm.getUhcPlayer(shot);
 
 				if(!friendlyFire && uhcDamager.getState().equals(PlayerState.PLAYING) && uhcDamager.isInTeamWith(uhcDamaged)){
-					uhcDamager.sendMessage(Lang.PLAYERS_FF_OFF);
 					event.setCancelled(true);
 				}
 			}

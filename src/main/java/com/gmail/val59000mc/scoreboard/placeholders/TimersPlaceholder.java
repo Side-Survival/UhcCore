@@ -2,6 +2,7 @@ package com.gmail.val59000mc.scoreboard.placeholders;
 
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.scoreboard.Placeholder;
 import com.gmail.val59000mc.scoreboard.ScoreboardType;
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class TimersPlaceholder extends Placeholder{
 
-    private enum Event{
+    private enum Event {
         PVP,
         DEATHMATCH,
         BORDER,
@@ -75,13 +76,13 @@ public class TimersPlaceholder extends Placeholder{
     private String getEventName(Event event){
         switch (event){
             case PVP:
-                return "PvP";
+                return Lang.GAME_STAGE_PVP;
             case DEATHMATCH:
-                return "Deathmatch";
+                return Lang.GAME_STAGE_DEATHMATCH;
             case BORDER:
-                return "Border";
+                return Lang.GAME_STAGE_BORDER;
             case GLOWING:
-                return "Glowing";
+                return Lang.GAME_STAGE_GLOWING;
             default:
                 return "-";
         }

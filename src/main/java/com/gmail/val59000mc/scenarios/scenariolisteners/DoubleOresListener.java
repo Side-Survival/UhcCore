@@ -41,9 +41,7 @@ public class DoubleOresListener extends ScenarioListener {
             UhcItems.spawnExtraXp(loc,xp);
         }
 
-        if (type == Material.SAND) {
-            drop = new ItemStack(Material.GLASS);
-        } else if (type == Material.GRAVEL) {
+        if (type == Material.GRAVEL) {
             drop = new ItemStack(Material.FLINT);
         }
 

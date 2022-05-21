@@ -34,10 +34,10 @@ public class EnablePVPThread implements Runnable{
 		}
 
 		if (timeBeforePvp != 300 && RandomUtils.isAnnounceTimer(timeBeforePvp)) {
-			if(timeBeforePvp%60 == 0) {
-				gameManager.broadcastInfoMessage(Lang.PVP_START_IN + " " + (timeBeforePvp / 60) + "m");
+			if(timeBeforePvp % 60 == 0) {
+				gameManager.broadcastInfoMessage(Lang.PVP_START_IN.replace("%time%", (timeBeforePvp / 60) + "m"));
 			}else{
-				gameManager.broadcastInfoMessage(Lang.PVP_START_IN + " " + timeBeforePvp + "s");
+				gameManager.broadcastInfoMessage(Lang.PVP_START_IN.replace("%time%", timeBeforePvp + "s"));
 			}
 
 			gameManager.getPlayerManager().playSoundAll(Sound.BLOCK_NOTE_BLOCK_BANJO, 1f, 1f);
