@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.gmail.val59000mc.utils.LocationUtils;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -42,7 +43,7 @@ public class MonstersIncListener extends ScenarioListener {
         Player player = e.getPlayer();
         Location goToLoc;
 
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK){
+        if (e.getPlayer().getGameMode() != GameMode.SURVIVAL ||  e.getAction() != Action.RIGHT_CLICK_BLOCK){
             return;
         }
 
@@ -60,7 +61,7 @@ public class MonstersIncListener extends ScenarioListener {
                 do {
                     goToLoc = doorLocs.get((int) (Math.random() * doorLocs.size()));
                     // Door loc is no longer valid.
-                    if (!isValidDoorLocation(goToLoc)){
+                    if (!isValidDoorLocation(goToLoc) || goToLoc.getWorld() != block.getWorld()){
                         doorLocs.remove(goToLoc);
                         goToLoc = null;
                     }
@@ -81,7 +82,7 @@ public class MonstersIncListener extends ScenarioListener {
         Block block = e.getBlock();
         Block above = block.getRelative(BlockFace.UP);
 
-        if(isDoor(block) || isDoor(above)) {
+        if(e.getPlayer().getGameMode() != GameMode.SURVIVAL || isDoor(block) || isDoor(above)) {
             e.getPlayer().sendMessage(Lang.SCENARIO_MONSTERSINC_ERROR);
             e.setCancelled(true);
         }

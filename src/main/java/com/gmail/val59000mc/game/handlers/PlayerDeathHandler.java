@@ -4,6 +4,7 @@ import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.customitems.UhcItems;
 import com.gmail.val59000mc.events.UhcPlayerKillEvent;
+import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.PointType;
 import com.gmail.val59000mc.languages.Lang;
@@ -21,13 +22,16 @@ import com.gmail.val59000mc.utils.VersionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Lidded;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PlayerDeathHandler {
@@ -71,10 +75,12 @@ public class PlayerDeathHandler {
 
     public void handleOfflinePlayerDeath(UhcPlayer uhcPlayer, @Nullable Location location, @Nullable Player killer) {
         Set<ItemStack> modifiedDrops = handlePlayerDeath(uhcPlayer, location, new HashSet<>(uhcPlayer.getStoredItems()), killer);
+        List<ItemStack> resultDrops = new ArrayList<>(modifiedDrops);
+        resultDrops = uhcPlayer.getStoredArmorOffhand(resultDrops);
 
         // Drop player items
         if (location != null) {
-            modifiedDrops.forEach(item -> location.getWorld().dropItem(location, item));
+            resultDrops.forEach(item -> location.getWorld().dropItem(location, item));
         }
     }
 
@@ -121,7 +127,11 @@ public class PlayerDeathHandler {
 
         // Store drops in case player gets re-spawned.
         uhcPlayer.getStoredItems().clear();
-        uhcPlayer.getStoredItems().addAll(playerDrops);
+        List<ItemStack> storedDrops = new ArrayList<>(playerDrops);
+        try {
+            storedDrops = uhcPlayer.checkArmorOffhand(uhcPlayer.getPlayer(), storedDrops);
+        } catch (UhcPlayerNotOnlineException ignored) {}
+        uhcPlayer.getStoredItems().addAll(storedDrops);
 
         gameManager.broadcastInfoMessage(Lang.PLAYERS_ELIMINATED.replace("%player%", uhcPlayer.getName()));
 

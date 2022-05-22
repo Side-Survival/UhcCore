@@ -376,7 +376,6 @@ public class GameManager{
 
 		listeners.add(new CutCleanListener());
 		listeners.add(new TimberListener());
-		listeners.add(new DoubleOresListener());
 		listeners.add(new FastLeavesDecayListener());
 
 		for(Listener listener : listeners){
@@ -387,16 +386,16 @@ public class GameManager{
 	private void registerCommands(){
 		// Registers CommandExecutor
 		registerCommand("uhccore", new UhcCommandExecutor(this));
-		registerCommand("chat", new ChatCommandExecutor(playerManager));
+//		registerCommand("chat", new ChatCommandExecutor(playerManager));
 		registerCommand("teleport", new TeleportCommandExecutor(this));
 		registerCommand("start", new StartCommandExecutor());
 		registerCommand("scenarios", new ScenarioCommandExecutor(scenarioManager));
 		registerCommand("teaminventory", new TeamInventoryCommandExecutor(playerManager, scenarioManager));
-		registerCommand("iteminfo", new ItemInfoCommandExecutor());
+//		registerCommand("iteminfo", new ItemInfoCommandExecutor());
 		registerCommand("revive", new ReviveCommandExecutor(this));
 		registerCommand("top", new TopCommandExecutor(playerManager));
 		registerCommand("spectate", new SpectateCommandExecutor(this, scoreboardHandler));
-		registerCommand("upload", new UploadCommandExecutor());
+//		registerCommand("upload", new UploadCommandExecutor());
 		registerCommand("deathmatch", new DeathmatchCommandExecutor(this, deathmatchHandler));
 	}
 

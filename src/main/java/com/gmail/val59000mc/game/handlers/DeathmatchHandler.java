@@ -90,19 +90,23 @@ public class DeathmatchHandler {
         List<Location> spots = new ArrayList<>();
         List<UhcTeam> teams = gameManager.getTeamManager().getAliveUhcTeams();
 
-        double deg = 360d / teams.size();
-        double ang = deg;
+        double deg = (2 * Math.PI) / teams.size();
+        double ang = 0;
 
+        List<UhcTeam> visited = new ArrayList<>();
         for (UhcTeam team : teams) {
             double x = (30 * Math.sin(ang));
             double z = (30 * Math.cos(ang));
             ang += deg;
+
             Location paste = new Location(center.getWorld(), center.getX() + x, 80, center.getZ() + z);
             paste = getGround(paste).getBlock().getLocation();
             pasteCage(paste);
             spots.add(paste);
 
             paste.add(0.5, 0, 0.5);
+
+            visited.add(team);
 
             int i = 0;
             for (UhcPlayer player : team.getMembers()) {
@@ -114,7 +118,7 @@ public class DeathmatchHandler {
                 }
 
                 if (bukkitPlayer.getInventory().contains(Material.ENDER_PEARL)) {
-                    bukkitPlayer.sendMessage(Lang.GAME_NO_PEARLS);
+                    player.sendPrefixedMessage(Lang.GAME_NO_PEARLS);
                     bukkitPlayer.getInventory().remove(Material.ENDER_PEARL);
                 }
 
@@ -128,6 +132,22 @@ public class DeathmatchHandler {
                     bukkitPlayer.setFlying(true);
                 }
             }
+        }
+
+        for (UhcPlayer player : gameManager.getPlayerManager().getPlayersList()) {
+            if (player.getTeam() != null && visited.contains(player.getTeam()))
+                continue;
+
+            Player bukkitPlayer;
+            try {
+                bukkitPlayer = player.getPlayer();
+            } catch (UhcPlayerNotOnlineException e) {
+                continue;
+            }
+
+            bukkitPlayer.teleport(center);
+            bukkitPlayer.setAllowFlight(true);
+            bukkitPlayer.setFlying(true);
         }
 
         // Start Enable pvp thread

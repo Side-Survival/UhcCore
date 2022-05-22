@@ -3,6 +3,7 @@ package com.gmail.val59000mc.listeners;
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.LootConfiguration;
 import com.gmail.val59000mc.configuration.MainConfig;
+import com.gmail.val59000mc.customitems.GameItem;
 import com.gmail.val59000mc.customitems.UhcItems;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
@@ -67,6 +68,9 @@ public class BlockListener implements Listener{
 		handleFrozenPlayers(event);
 
 		GameManager gm = GameManager.getGameManager();
+		if (!event.isCancelled() && event.getItemInHand().getType() == Material.PLAYER_HEAD)
+			event.setCancelled(true);
+
 		if (event.isCancelled() || gm.getGameState() != GameState.DEATHMATCH)
 			return;
 

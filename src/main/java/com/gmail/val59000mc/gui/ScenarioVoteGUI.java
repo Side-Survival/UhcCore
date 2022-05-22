@@ -88,7 +88,7 @@ public class ScenarioVoteGUI implements InventoryProvider {
                 } else {
                     int maxVotes = GameManager.getGameManager().getConfig().get(MainConfig.MAX_SCENARIO_VOTES);
                     if (uhcPlayer.getScenarioVotes().size() == maxVotes){
-                        player.sendMessage(Lang.SCENARIO_GLOBAL_VOTE_MAX.replace("%max%", String.valueOf(maxVotes)));
+                        uhcPlayer.sendPrefixedMessage(Lang.SCENARIO_GLOBAL_VOTE_MAX.replace("%max%", String.valueOf(maxVotes)));
                         return;
                     }
                     uhcPlayer.getScenarioVotes().add(scenario);
@@ -142,7 +142,7 @@ public class ScenarioVoteGUI implements InventoryProvider {
                 } else {
                     int maxVotes = GameManager.getGameManager().getConfig().get(MainConfig.MAX_SCENARIO_VOTES);
                     if (uhcPlayer.getScenarioVotes().size() == maxVotes){
-                        player.sendMessage(Lang.SCENARIO_GLOBAL_VOTE_MAX.replace("%max%", String.valueOf(maxVotes)));
+                        uhcPlayer.sendPrefixedMessage(Lang.SCENARIO_GLOBAL_VOTE_MAX.replace("%max%", String.valueOf(maxVotes)));
                         return;
                     }
                     uhcPlayer.getScenarioVotes().add(scenario);

@@ -8,6 +8,7 @@ import com.gmail.val59000mc.players.UhcPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,7 +26,7 @@ public class EntityDamageListener implements Listener{
     }
     
     @EventHandler(ignoreCancelled = true)
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent e){
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Player damager) {
             if (gameManager.getPlayerManager().getUhcPlayer(damager).isDeath()) {
                 e.setCancelled(true);
@@ -37,7 +38,7 @@ public class EntityDamageListener implements Listener{
     }
 
     private void handleOfflinePlayers(EntityDamageByEntityEvent e){
-        if (e.getEntityType() != EntityType.ZOMBIE || !(e.getDamager() instanceof Player)){
+        if (e.getEntityType() != EntityType.ZOMBIE || (!(e.getDamager() instanceof Player) && !(e.getDamager() instanceof Projectile))){
             return;
         }
 
@@ -50,7 +51,6 @@ public class EntityDamageListener implements Listener{
         }
 
         Zombie zombie = (Zombie) e.getEntity();
-        UhcPlayer damager = pm.getUhcPlayer((Player) e.getDamager());
         
         // Find zombie owner
         Optional<UhcPlayer> owner = pm.getPlayersList()
@@ -62,14 +62,21 @@ public class EntityDamageListener implements Listener{
         if (!owner.isPresent()){
             return;
         }
-        
-        boolean pvp = gameManager.getPvp();
-        boolean isTeamMember = owner.get().isInTeamWith(damager);
-        boolean friendlyFire = cfg.get(MainConfig.ENABLE_FRIENDLY_FIRE);
-        
-        // If PvP is false or is team member & friendly fire is off
-        if (!pvp || (isTeamMember && !friendlyFire)){
+
+        if (!gameManager.getPvp()) {
             e.setCancelled(true);
+            return;
+        }
+
+        if (e.getDamager() instanceof Player) {
+            UhcPlayer damager = pm.getUhcPlayer((Player) e.getDamager());
+            boolean isTeamMember = owner.get().isInTeamWith(damager);
+            boolean friendlyFire = cfg.get(MainConfig.ENABLE_FRIENDLY_FIRE);
+
+            // If PvP is false or is team member & friendly fire is off
+            if (isTeamMember && !friendlyFire){
+                e.setCancelled(true);
+            }
         }
     }
 

@@ -13,7 +13,7 @@ public class BleedingSweetsListener extends ScenarioListener{
     public void onPlayerDeath(PlayerDeathEvent e){
         e.getDrops().add(new ItemStack(Material.DIAMOND));
         e.getDrops().add(new ItemStack(Material.BOOK));
-        e.getDrops().add(new ItemStack(Material.STRING));
+        e.getDrops().add(new ItemStack(Material.STRING, 2));
         e.getDrops().add(new ItemStack(Material.GOLD_INGOT,5));
         e.getDrops().add(new ItemStack(Material.ARROW,16));
     }

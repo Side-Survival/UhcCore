@@ -4,6 +4,7 @@ import com.gmail.val59000mc.customitems.UhcItems;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.OreType;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,8 +18,7 @@ public class DoubleOresListener extends ScenarioListener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-
-        if (isEnabled(Scenario.VEIN_MINER)) {
+        if (e.getPlayer().getGameMode() != GameMode.SURVIVAL || isEnabled(Scenario.VEIN_MINER)) {
             return;
         }
 
@@ -28,10 +28,12 @@ public class DoubleOresListener extends ScenarioListener {
         ItemStack drop = null;
 
         Optional<OreType> oreType = OreType.valueOf(type);
+        System.out.println("mining!!! " + e.getPlayer() + " " + oreType + " " + oreType.isPresent());
 
         if (oreType.isPresent()) {
             int xp = oreType.get().getXpPerBlock() * 2;
             int count = oreType.get() != OreType.GOLD ? 2 : 1;
+            System.out.println("oretype = " + oreType.get());
 
             if (oreType.get() == OreType.GOLD && isEnabled(Scenario.DOUBLE_GOLD)) {
                 count *= 2;

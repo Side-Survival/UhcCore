@@ -15,7 +15,7 @@ public class SuperHeroesListener extends ScenarioListener{
 
     @EventHandler
     public void onGameStart(PlayerStartsPlayingEvent e){
-        addHeroesEffect(e.getUhcPlayer(), RandomUtils.randomInteger(0, 5));
+        addHeroesEffect(e.getUhcPlayer(), RandomUtils.randomInteger(0, 4));
     }
 
     private void addHeroesEffect(UhcPlayer uhcPlayer, int effect){
@@ -37,16 +37,13 @@ public class SuperHeroesListener extends ScenarioListener{
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 999999,0));
                 break;
             case 2:
-                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 999999,1));
-                break;
-            case 3:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999,0));
                 break;
-            case 4:
+            case 3:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999,3));
                 break;
-            case 5:
-                double maxHealth = 40;
+            case 4:
+                double maxHealth = 32;
                 VersionUtils.getVersionUtils().setPlayerMaxHealth(player, maxHealth);
                 player.setHealth(maxHealth);
                 break;

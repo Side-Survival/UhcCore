@@ -25,16 +25,19 @@ public class PlayerHungerGainListener implements Listener {
             return;
         }
 
-        UhcPlayer player = playerManager.getUhcPlayer((Player) e.getEntity());
+        Player player = (Player) e.getEntity();
+        UhcPlayer uhcPlayer = playerManager.getUhcPlayer(player);
 
         // Cancel hunger when the game is not in playing state.
-        if (player.getState() != PlayerState.PLAYING){
+        if (uhcPlayer.getState() != PlayerState.PLAYING){
             e.setCancelled(true);
         }
 
-        // Reduce food requirement by 50%
-        Random random = new Random();
-        if (random.nextBoolean())
-            e.setCancelled(true);
+        if (player.getFoodLevel() > e.getFoodLevel()) {
+            // Reduce food requirement by 50%
+            Random random = new Random();
+            if (random.nextBoolean())
+                e.setCancelled(true);
+        }
     }
 }

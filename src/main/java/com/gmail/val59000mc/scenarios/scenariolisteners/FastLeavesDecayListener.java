@@ -44,7 +44,7 @@ public class FastLeavesDecayListener extends ScenarioListener{
         onBlockBreak(e.getBlock());
     }
 
-    private void onBlockBreak(Block block){
+    private void onBlockBreak(Block block) {
         for (BlockFace face : NEIGHBOURS) {
             final Block relative = block.getRelative(face);
 

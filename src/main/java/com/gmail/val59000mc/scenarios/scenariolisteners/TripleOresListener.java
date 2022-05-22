@@ -4,6 +4,7 @@ import com.gmail.val59000mc.customitems.UhcItems;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.OreType;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,8 +18,7 @@ public class TripleOresListener extends ScenarioListener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-
-        if (isEnabled(Scenario.VEIN_MINER)) {
+        if (e.getPlayer().getGameMode() != GameMode.SURVIVAL || (isEnabled(Scenario.VEIN_MINER) && e.getPlayer().isSneaking())) {
             return;
         }
 
@@ -32,10 +32,6 @@ public class TripleOresListener extends ScenarioListener {
         if (oreType.isPresent()) {
             int xp = oreType.get().getXpPerBlock() * 3;
             int count = 3;
-
-            if (oreType.get() == OreType.GOLD && isEnabled(Scenario.DOUBLE_GOLD)) {
-                count *= 2;
-            }
 
             drop = new ItemStack(oreType.get().getDrop(), count);
             UhcItems.spawnExtraXp(loc,xp);

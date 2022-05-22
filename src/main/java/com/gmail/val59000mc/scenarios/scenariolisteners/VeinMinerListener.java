@@ -5,6 +5,7 @@ import com.gmail.val59000mc.scenarios.Option;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.*;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,7 +35,7 @@ public class VeinMinerListener extends ScenarioListener{
     public void onBlockBreak(BlockBreakEvent e){
         Player player = e.getPlayer();
 
-        if (!player.isSneaking()){
+        if (e.getPlayer().getGameMode() != GameMode.SURVIVAL || !player.isSneaking()){
             return;
         }
 
@@ -84,11 +85,9 @@ public class VeinMinerListener extends ScenarioListener{
         int multiplier = 1;
         if (getScenarioManager().isEnabled(Scenario.TRIPLE_ORES)) {
             multiplier *= 3;
-        }
-        if (oreType != OreType.GOLD) {
+        } else if (oreType != OreType.GOLD && oreType != OreType.DIAMOND) {
             multiplier *= 2;
-        }
-        if ((oreType == OreType.GOLD || oreType == OreType.NETHER_GOLD) && getScenarioManager().isEnabled(Scenario.DOUBLE_GOLD)) {
+        } else if (oreType == OreType.GOLD && getScenarioManager().isEnabled(Scenario.DOUBLE_GOLD)) {
             multiplier *= 2;
         }
         return multiplier;

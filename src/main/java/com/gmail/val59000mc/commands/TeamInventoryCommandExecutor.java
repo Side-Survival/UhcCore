@@ -57,7 +57,7 @@ public class TeamInventoryCommandExecutor implements CommandExecutor{
             return true;
         }
 
-        player.sendMessage(Lang.SCENARIO_TEAMINVENTORY_OPEN);
+//        player.sendMessage(Lang.SCENARIO_TEAMINVENTORY_OPEN);
         player.openInventory(uhcPlayer.getTeam().getTeamInventory());
         return true;
     }

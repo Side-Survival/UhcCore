@@ -120,15 +120,15 @@ public class UhcTeam {
 
 	public void join(UhcPlayer player) throws UhcTeamException {
 		if(isFull()){
-			player.sendMessage(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
+			player.sendPrefixedMessage(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
 			throw new UhcTeamException(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
 		}else{
 			if (player.getTeam() != null)
 				player.getTeam().leave(player);
 
-			player.sendMessage(Lang.TEAM_MESSAGE_JOIN_AS_PLAYER);
+			player.sendPrefixedMessage(Lang.TEAM_MESSAGE_JOIN_AS_PLAYER.replace("%team%", getFullPrefix()));
 			for(UhcPlayer teamMember : getMembers()){
-				teamMember.sendMessage(Lang.TEAM_MESSAGE_PLAYER_JOINS.replace("%player%",player.getName()));
+				teamMember.sendPrefixedMessage(Lang.TEAM_MESSAGE_PLAYER_JOINS.replace("%player%",player.getName()));
 			}
 			getMembers().add(player);
 			player.setTeam(this);
@@ -144,7 +144,7 @@ public class UhcTeam {
 		getMembers().remove(player);
 		player.setTeam(null);
 
-		player.sendMessage(Lang.TEAM_MESSAGE_LEAVE_AS_PLAYER);
+		player.sendPrefixedMessage(Lang.TEAM_MESSAGE_LEAVE_AS_PLAYER);
 		for(UhcPlayer teamMember : getMembers()){
 			teamMember.sendMessage(Lang.TEAM_MESSAGE_PLAYER_LEAVES.replace("%player%", player.getName()));
 		}
@@ -160,7 +160,7 @@ public class UhcTeam {
 
 	public void regenTeam(boolean doubleRegen) {
 		for(UhcPlayer uhcPlayer : getMembers()){
-			uhcPlayer.sendMessage(Lang.ITEMS_REGEN_HEAD_ACTION);
+			uhcPlayer.sendPrefixedMessage(Lang.ITEMS_REGEN_HEAD_ACTION);
 			try{
 				Player p = uhcPlayer.getPlayer();
 				p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,100,doubleRegen?2:1));

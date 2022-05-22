@@ -10,8 +10,9 @@ import com.gmail.val59000mc.utils.RandomUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -30,6 +31,11 @@ public class UhcPlayer {
 	private final Set<UhcTeam> teamInvites;
 	private final Set<Scenario> scenarioVotes;
 	private final Set<ItemStack> storedItems;
+	private ItemStack storedHelmet = null;
+	private ItemStack storedChestplate = null;
+	private ItemStack storedLeggings = null;
+	private ItemStack storedBoots = null;
+	private ItemStack storedOffHand = null;
 
 	private String nickName;
 	private Scoreboard scoreboard;
@@ -186,6 +192,71 @@ public class UhcPlayer {
 
 	public synchronized Set<ItemStack> getStoredItems(){
 		return storedItems;
+	}
+
+	public List<ItemStack> checkArmorOffhand(Player player, List<ItemStack> contents) {
+		storedHelmet = null;
+		storedChestplate = null;
+		storedLeggings = null;
+		storedBoots = null;
+		storedOffHand = null;
+
+		if (player.getInventory().getHelmet() != null) {
+			storedHelmet = player.getInventory().getHelmet();
+			contents.remove(storedHelmet);
+		}
+		if (player.getInventory().getChestplate() != null) {
+			storedChestplate = player.getInventory().getChestplate();
+			contents.remove(storedChestplate);
+		}
+		if (player.getInventory().getLeggings() != null) {
+			storedLeggings = player.getInventory().getLeggings();
+			contents.remove(storedLeggings);
+		}
+		if (player.getInventory().getBoots() != null) {
+			storedBoots = player.getInventory().getBoots();
+			contents.remove(storedBoots);
+		}
+		if (player.getInventory().getItemInOffHand().getType() != Material.AIR) {
+			storedOffHand = player.getInventory().getItemInOffHand();
+			contents.remove(storedOffHand);
+		}
+
+		return contents;
+	}
+
+	public void applyStoredArmorOffhand(Player player) {
+		if (storedHelmet != null)
+			player.getInventory().setHelmet(storedHelmet);
+		if (storedChestplate != null)
+			player.getInventory().setChestplate(storedChestplate);
+		if (storedLeggings != null)
+			player.getInventory().setLeggings(storedLeggings);
+		if (storedBoots != null)
+			player.getInventory().setBoots(storedBoots);
+		if (storedOffHand != null)
+			player.getInventory().setItemInOffHand(storedOffHand);
+
+		storedHelmet = null;
+		storedChestplate = null;
+		storedLeggings = null;
+		storedBoots = null;
+		storedOffHand = null;
+	}
+
+	public List<ItemStack> getStoredArmorOffhand(List<ItemStack> contents) {
+		if (storedHelmet != null)
+			contents.add(storedHelmet);
+		if (storedChestplate != null)
+			contents.add(storedChestplate);
+		if (storedLeggings != null)
+			contents.add(storedLeggings);
+		if (storedBoots != null)
+			contents.add(storedBoots);
+		if (storedOffHand != null)
+			contents.add(storedOffHand);
+
+		return contents;
 	}
 
 	public UUID getOfflineZombieUuid() {

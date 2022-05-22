@@ -322,6 +322,7 @@ public class PlayerManager {
 
 				if (!uhcPlayer.getStoredItems().isEmpty()){
 					uhcPlayer.getStoredItems().forEach(item -> player.getInventory().addItem(item));
+					uhcPlayer.applyStoredArmorOffhand(player);
 					uhcPlayer.getStoredItems().clear();
 				}
 			} catch (UhcPlayerNotOnlineException e) {
@@ -353,16 +354,16 @@ public class PlayerManager {
 			player.getEquipment().clear();
 			clearPlayerInventory(player);
 
-			for (UhcPlayer uPlayer : getOnlinePlayingPlayers()) {
+			for (UhcPlayer uPlayer : getOnlinePlayers()) {
 				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
+				if (!uPlayer.isPlaying())
+					player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
 			}
 
 			UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
 			if (player.hasPermission("uhc-core.spectator-players"))
 				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
-		} catch (UhcPlayerNotOnlineException e) {
-			e.printStackTrace();
-		}
+		} catch (UhcPlayerNotOnlineException ignored) {}
 	}
 
 	public void setPlayerSpectateAtLobby(UhcPlayer uhcPlayer){
@@ -397,13 +398,13 @@ public class PlayerManager {
 				player.setFlying(true);
 			}
 
-			for (UhcPlayer uPlayer : getOnlinePlayingPlayers()) {
+			for (UhcPlayer uPlayer : getOnlinePlayers()) {
 				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
+				if (!uPlayer.isPlaying())
+					player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
 			}
 
-		} catch (UhcPlayerNotOnlineException e) {
-			// Do nothing because DEAD is a safe state
-		}
+		} catch (UhcPlayerNotOnlineException ignored) {}
 	}
 
 	public void setAllPlayersEndGame() {
@@ -681,20 +682,27 @@ public class PlayerManager {
 		zombie.setCustomName(uhcPlayer.getDisplayName());
 		zombie.setCustomNameVisible(true);
 		zombie.setBaby(false);
+		zombie.setAI(false);
 
 		EntityEquipment equipment = zombie.getEquipment();
 		equipment.setHelmet(VersionUtils.getVersionUtils().createPlayerSkull(player.getName(), player.getUniqueId()));
 		equipment.setChestplate(player.getInventory().getChestplate());
 		equipment.setLeggings(player.getInventory().getLeggings());
 		equipment.setBoots(player.getInventory().getBoots());
-		equipment.setItemInHand(player.getItemInHand());
+		equipment.setItemInMainHand(player.getInventory().getItemInMainHand());
+		equipment.setItemInOffHand(player.getInventory().getItemInOffHand());
 
 		uhcPlayer.getStoredItems().clear();
+		List<ItemStack> storedDrops = new ArrayList<>();
+
 		for (ItemStack item : player.getInventory().getContents()){
 			if (item != null){
-				uhcPlayer.getStoredItems().add(item);
+				storedDrops.add(item);
 			}
 		}
+
+		uhcPlayer.checkArmorOffhand(player, storedDrops);
+		uhcPlayer.getStoredItems().addAll(storedDrops);
 
 		uhcPlayer.setOfflineZombieUuid(zombie.getUniqueId());
 	}

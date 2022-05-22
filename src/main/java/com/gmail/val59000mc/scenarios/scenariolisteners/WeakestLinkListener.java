@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler;
 public class WeakestLinkListener extends ScenarioListener{
 
     @Option
-    private long delay = 10*60;
+    private long delay = 120;
 
     @EventHandler
     public void onUhcTime(UhcTimeEvent e){

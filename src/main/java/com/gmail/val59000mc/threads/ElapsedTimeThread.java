@@ -55,7 +55,9 @@ public class ElapsedTimeThread implements Runnable{
 					Location pLoc = player.getLocation();
 					Location tpTo;
 
-					Optional<UhcPlayer> teammate = uhcPlayer.getTeam().getOnlinePlayingMembers().stream().findFirst();
+					Optional<UhcPlayer> teammate = Optional.empty();
+					if (uhcPlayer.getTeam() != null)
+						teammate = uhcPlayer.getTeam().getOnlinePlayingMembers().stream().findFirst();
 					if (teammate.isPresent()) {
 						tpTo = teammate.get().getPlayer().getLocation();
 					} else {
@@ -69,8 +71,6 @@ public class ElapsedTimeThread implements Runnable{
 					}
 				}
 			}
-		} catch (UhcPlayerNotOnlineException e) {
-			e.printStackTrace();
-		}
+		} catch (UhcPlayerNotOnlineException ignored) {}
 	}
 }

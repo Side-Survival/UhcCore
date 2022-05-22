@@ -6,6 +6,7 @@ import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.OreType;
 import com.gmail.val59000mc.utils.UniversalMaterial;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -68,8 +69,7 @@ public class CutCleanListener extends ScenarioListener{
 
     @EventHandler (priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent e){
-
-        if (isEnabled(Scenario.TRIPLE_ORES) || (isEnabled(Scenario.VEIN_MINER) && e.getPlayer().isSneaking())){
+        if (e.getPlayer().getGameMode() != GameMode.SURVIVAL || isEnabled(Scenario.TRIPLE_ORES) || (isEnabled(Scenario.VEIN_MINER) && e.getPlayer().isSneaking())){
             return;
         }
 
@@ -81,13 +81,9 @@ public class CutCleanListener extends ScenarioListener{
 
         Optional<OreType> oreType = OreType.valueOf(type);
 
-        if (
-                oreType.isPresent() &&
-                        oreType.get().needsSmelting() &&
-                        (!checkTool || oreType.get().isCorrectTool(tool))
-        ) {
+        if (oreType.isPresent() && (!checkTool || oreType.get().isCorrectTool(tool))) {
             int xp = oreType.get().getXpPerBlock();
-            int count = 1;
+            int count = (oreType.get() != OreType.GOLD && oreType.get() != OreType.DIAMOND) ? 2 : 1;
 
             if (oreType.get() == OreType.GOLD && isEnabled(Scenario.DOUBLE_GOLD)) {
                 count *= 2;
@@ -109,7 +105,10 @@ public class CutCleanListener extends ScenarioListener{
 
     @EventHandler
     public void onItemSpawn(ItemSpawnEvent event) {
-        if (event.getEntity().getItemStack().getType() == Material.SUGAR_CANE)
+        if (event.getEntity().getItemStack().getType() == Material.SUGAR_CANE) {
             event.getEntity().getItemStack().setType(Material.BOOK);
+            if (getScenarioManager().isEnabled(Scenario.FLY_HIGH))
+                event.getEntity().getWorld().dropItem(event.getLocation(), new ItemStack(Material.PAPER));
+        }
     }
 }

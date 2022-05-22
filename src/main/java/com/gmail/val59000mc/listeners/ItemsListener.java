@@ -25,6 +25,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -81,6 +82,7 @@ public class ItemsListener implements Listener {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 1));
 			player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 1L, 1L);
 			player.setItemInHand(null);
+			event.setCancelled(true);
 			return;
 		}
 
@@ -142,6 +144,8 @@ public class ItemsListener implements Listener {
 					else
 						loc = RandomUtils.getSafePoint(gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
 					player.teleport(loc);
+					player.setAllowFlight(true);
+					player.setFlying(true);
 				}
 				break;
 			case SPECTATOR_PLAYERS:
@@ -229,5 +233,11 @@ public class ItemsListener implements Listener {
 				}
 			}
 		}
+	}
+
+	@EventHandler
+	public void onItemPickup(PlayerPickupItemEvent event) {
+		if (event.getPlayer().getGameMode() == GameMode.ADVENTURE)
+			event.setCancelled(true);
 	}
 }
