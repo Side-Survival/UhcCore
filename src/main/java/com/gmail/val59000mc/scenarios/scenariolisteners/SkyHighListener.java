@@ -11,6 +11,7 @@ import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.scenarios.Option;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.TimeUtils;
+import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -73,6 +74,7 @@ public class SkyHighListener extends ScenarioListener{
                         if (player.getLocation().getBlockY() < listener.yLayer) {
                             player.sendMessage(Lang.SCENARIO_SKYHIGH_DAMAGE);
                             player.setHealth(player.getHealth() - 1);
+                            player.getWorld().playSound(player.getLocation(), UniversalSound.PLAYER_HURT.getSound(), 1, 1);
                         }
                     } catch (UhcPlayerNotOnlineException ex) {
                         // No los of hp for offline players.

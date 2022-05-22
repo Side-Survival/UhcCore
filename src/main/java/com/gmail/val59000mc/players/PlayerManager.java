@@ -370,7 +370,8 @@ public class PlayerManager {
 		GameManager gm = GameManager.getGameManager();
 
 		uhcPlayer.setState(PlayerState.DEAD);
-		uhcPlayer.sendPrefixedMessage(Lang.PLAYERS_WELCOME_BACK_SPECTATING);
+		if (uhcPlayer.getTeam() != null)
+			uhcPlayer.sendPrefixedMessage(Lang.PLAYERS_WELCOME_BACK_SPECTATING);
 
 		if(gm.getConfig().get(MainConfig.SPECTATING_TELEPORT)) {
 			uhcPlayer.sendPrefixedMessage(Lang.COMMAND_SPECTATING_HELP);

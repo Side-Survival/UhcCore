@@ -1,10 +1,15 @@
 package com.gmail.val59000mc.scenarios.scenariolisteners;
 
+import com.gmail.val59000mc.events.UhcStartedEvent;
+import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
+import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.RandomUtils;
+import com.gmail.val59000mc.utils.UniversalMaterial;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -61,6 +66,20 @@ public class EggsScenarioListener extends ScenarioListener{
         int i = RandomUtils.randomInteger(0, 99);
         if (i < 5){
             e.getDrops().add(new ItemStack(Material.EGG));
+        }
+    }
+
+    @EventHandler
+    public void onGameStarted(UhcStartedEvent e){
+        ItemStack eggs = new ItemStack(Material.EGG, 4);
+
+        for (UhcPlayer uhcPlayer : e.getPlayerManager().getOnlinePlayingPlayers()){
+            try {
+                Player player = uhcPlayer.getPlayer();
+                player.getInventory().addItem(eggs);
+            }catch (UhcPlayerNotOnlineException ex){
+                // No rod for offline players
+            }
         }
     }
 
