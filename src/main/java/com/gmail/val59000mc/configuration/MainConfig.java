@@ -62,6 +62,7 @@ public class MainConfig extends YamlFile {
 	public static final BasicOption<Boolean> ENABLE_SCENARIO_VOTING = new BasicOption<>("customize-game-behavior.scenarios.voting.enable", false);
 	public static final BasicOption<Integer> MAX_SCENARIO_VOTES = new BasicOption<>("customize-game-behavior.scenarios.voting.max-votes", 3);
 	public static final BasicOption<Integer> ELECTED_SCENARIO_COUNT = new BasicOption<>("customize-game-behavior.scenarios.voting.elected-scenarios", 3);
+	public static final BasicOption<Integer> SCENARIO_PREVIOUS_COUNT = new BasicOption<>("customize-game-behavior.scenarios.voting.previous-games", 3);
 	public static final BasicOption<Boolean> ENABLE_EXP_DROP_ON_DEATH = new BasicOption<>("customize-game-behavior.add-xp-drops-on-player-death.enable",false);
 	public static final BasicOption<Integer> EXP_DROP_ON_DEATH = new BasicOption<>("customize-game-behavior.add-xp-drops-on-player-death.quantity",0);
 	public static final BasicOption<Boolean> REGEN_HEAD_DROP_ON_PLAYER_DEATH = new BasicOption<>("customize-game-behavior.add-regen-head-drop-on-player-death",true);

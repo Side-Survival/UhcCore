@@ -50,7 +50,6 @@ public class HasteyBoysListener extends ScenarioListener{
         }catch (IllegalArgumentException ex){
             // Nothing
         }
-
     }
 
 }

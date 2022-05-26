@@ -13,6 +13,8 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
@@ -20,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -30,11 +33,28 @@ public class ScenarioManager {
 
     private final List<Scenario> registeredScenarios;
     private final Map<Scenario, ScenarioListener> enabledScenarios;
+    private YamlFile scenarioData = null;
+    private Map<Scenario, Integer> previousScenarios;
 
     public ScenarioManager(){
         registeredScenarios = new ArrayList<>();
         enabledScenarios = new HashMap<>();
         Collections.addAll(registeredScenarios, Scenario.BUILD_IN_SCENARIOS);
+
+        try {
+            scenarioData = FileUtils.saveResourceIfNotAvailable(UhcCore.getPlugin(), "scenario-data.yml");
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        previousScenarios = new HashMap<>();
+        if (scenarioData.getConfigurationSection("previous") == null)
+            return;
+
+        for (String key : scenarioData.getConfigurationSection("previous").getKeys(false)) {
+            Optional<Scenario> scenario = registeredScenarios.stream().filter(s -> s.getKey().equalsIgnoreCase(key)).findFirst();
+            scenario.ifPresent(value -> previousScenarios.put(value, scenarioData.getInt("previous." + key)));
+        }
     }
 
     /**
@@ -52,7 +72,7 @@ public class ScenarioManager {
      */
     public void registerScenario(Scenario scenario) {
         Validate.notNull(scenario.getInfo(), "Scenario info cannot be null!");
-        Validate.isTrue(!getScenarioByKey(scenario.getKey()).isPresent(), "An scenario with the key " + scenario.getKey() + " is already registered!");
+        Validate.isTrue(getScenarioByKey(scenario.getKey()).isEmpty(), "An scenario with the key " + scenario.getKey() + " is already registered!");
         registeredScenarios.add(scenario);
     }
 
@@ -290,4 +310,39 @@ public class ScenarioManager {
         }
     }
 
+    public Map<Scenario, Integer> getPreviousScenarios() {
+        return previousScenarios;
+    }
+
+    public void updatePrevious() {
+        List<Scenario> toRemove = new ArrayList<>();
+        for (Map.Entry<Scenario, Integer> entry : previousScenarios.entrySet()) {
+            if (entry.getValue() == 1) {
+                toRemove.add(entry.getKey());
+                continue;
+            }
+
+            previousScenarios.put(entry.getKey(), entry.getValue() - 1);
+        }
+
+        for (Scenario scenario : toRemove) {
+            previousScenarios.remove(scenario);
+        }
+
+        int disabledFor = GameManager.getGameManager().getConfig().get(MainConfig.SCENARIO_PREVIOUS_COUNT);
+        for (Scenario scenario : enabledScenarios.keySet()) {
+            previousScenarios.put(scenario, disabledFor);
+        }
+
+        scenarioData.set("previous", null);
+        for (Map.Entry<Scenario, Integer> entry : previousScenarios.entrySet()) {
+            scenarioData.set("previous." + entry.getKey().getKey(), entry.getValue());
+        }
+
+        try {
+            scenarioData.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

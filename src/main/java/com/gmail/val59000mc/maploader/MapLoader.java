@@ -33,9 +33,12 @@ public class MapLoader {
 	public final static String COMMAND_BLOCK_OUTPUT = "commandBlockOutput";
 	public final static String LOG_ADMIN_COMMANDS = "logAdminCommands";
 	public final static String SEND_COMMAND_FEEDBACK = "sendCommandFeedback";
+	public final static String SHOW_DEATH_MESSAGES = "showDeathMessages";
 
 	private final MainConfig config;
 	private final Map<Environment, String> worldUuids;
+
+	private ChunkLoaderThread activeLoaderThread;
 
 	private Lobby lobby;
 	private DeathmatchArena arena;
@@ -198,7 +201,9 @@ public class MapLoader {
 
 	public void prepareUhcArena() {
 		recursiveCopy(new File("uhc_arena_orig"), new File("uhc_arena"));
-		Bukkit.getServer().createWorld(new WorldCreator("uhc_arena"));
+		World world = Bukkit.getServer().createWorld(new WorldCreator("uhc_arena"));
+		VersionUtils.getVersionUtils().setGameRuleValue(world, NATURAL_REGENERATION, false);
+		VersionUtils.getVersionUtils().setGameRuleValue(world, SHOW_DEATH_MESSAGES, false);
 	}
 
 	public void loadWorldUuids(){
@@ -317,6 +322,7 @@ public class MapLoader {
 		if (!healthRegen){
 			VersionUtils.getVersionUtils().setGameRuleValue(world, NATURAL_REGENERATION, false);
 		}
+		VersionUtils.getVersionUtils().setGameRuleValue(world, SHOW_DEATH_MESSAGES, false);
 		if (!announceAdvancements && UhcCore.getVersion() >= 12){
 			VersionUtils.getVersionUtils().setGameRuleValue(world, ANNOUNCE_ADVANCEMENTS, false);
 		}
@@ -458,6 +464,8 @@ public class MapLoader {
 
 		chunkLoaderThread.printSettings();
 
+		activeLoaderThread = chunkLoaderThread;
+
 		if (PaperLib.isPaper() && PaperLib.getMinecraftVersion() >= 13){
 			Bukkit.getScheduler().runTaskAsynchronously(UhcCore.getPlugin(), chunkLoaderThread);
 		}else {
@@ -465,4 +473,7 @@ public class MapLoader {
 		}
 	}
 
+	public ChunkLoaderThread getActiveLoaderThread() {
+		return activeLoaderThread;
+	}
 }

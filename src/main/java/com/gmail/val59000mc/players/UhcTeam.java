@@ -103,6 +103,12 @@ public class UhcTeam {
 				.sum();
 	}
 
+	public List<UhcPlayer> getOnlineMembers(){
+		return members.stream()
+				.filter(UhcPlayer::isOnline)
+				.collect(Collectors.toList());
+	}
+
 	public List<UhcPlayer> getOnlinePlayingMembers(){
 		return members.stream()
 				.filter(UhcPlayer::isPlaying)

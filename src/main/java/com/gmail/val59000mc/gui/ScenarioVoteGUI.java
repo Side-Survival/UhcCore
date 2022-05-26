@@ -15,6 +15,7 @@ import libs.fr.minuskube.inv.InventoryManager;
 import libs.fr.minuskube.inv.SmartInventory;
 import libs.fr.minuskube.inv.content.InventoryContents;
 import libs.fr.minuskube.inv.content.InventoryProvider;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -64,6 +65,8 @@ public class ScenarioVoteGUI implements InventoryProvider {
             }
         }
 
+        Map<Scenario, Integer> previousScenarios = scenarioManager.getPreviousScenarios();
+
         Set<Scenario> playerVotes = uhcPlayer.getScenarioVotes();
         for (Scenario scenario : scenarioManager.getRegisteredScenarios()){
             ItemStack item = scenario.getScenarioItem().clone();
@@ -75,13 +78,24 @@ public class ScenarioVoteGUI implements InventoryProvider {
 
             List<String> lore = itemMeta.getLore();
             lore.add(" ");
-            lore.add(Lang.SCENARIO_GLOBAL_ITEM_INFO.replace("%votes%", String.valueOf(votes.getOrDefault(scenario, 0))));
+            if (!previousScenarios.containsKey(scenario)) {
+                lore.add(Lang.SCENARIO_GLOBAL_ITEM_INFO.replace("%votes%", String.valueOf(votes.getOrDefault(scenario, 0))));
+            } else {
+                item.setType(Material.BLACK_STAINED_GLASS_PANE);
+                if (previousScenarios.get(scenario) > 1)
+                    lore.add(Lang.SCENARIO_GLOBAL_ITEM_DISABLED_PL.replace("%amount%", String.valueOf(previousScenarios.get(scenario))));
+                else
+                    lore.add(Lang.SCENARIO_GLOBAL_ITEM_DISABLED.replace("%amount%", String.valueOf(previousScenarios.get(scenario))));
+            }
             itemMeta.setLore(lore);
 
             item.setAmount(votes.getOrDefault(scenario, 0) + 1);
             item.setItemMeta(itemMeta);
 
             contents.add(ClickableItem.of(item, e -> {
+                if (previousScenarios.containsKey(scenario))
+                    return;
+
                 if (uhcPlayer.getScenarioVotes().contains(scenario)) {
                     uhcPlayer.getScenarioVotes().remove(scenario);
                     updated = System.currentTimeMillis();
@@ -117,6 +131,8 @@ public class ScenarioVoteGUI implements InventoryProvider {
             }
         }
 
+        Map<Scenario, Integer> previousScenarios = scenarioManager.getPreviousScenarios();
+
         Set<Scenario> playerVotes = uhcPlayer.getScenarioVotes();
         int i = 0;
         for (Scenario scenario : scenarioManager.getRegisteredScenarios()){
@@ -129,13 +145,24 @@ public class ScenarioVoteGUI implements InventoryProvider {
 
             List<String> lore = itemMeta.getLore();
             lore.add(" ");
-            lore.add(Lang.SCENARIO_GLOBAL_ITEM_INFO.replace("%votes%", String.valueOf(votes.getOrDefault(scenario, 0))));
+            if (!previousScenarios.containsKey(scenario)) {
+                lore.add(Lang.SCENARIO_GLOBAL_ITEM_INFO.replace("%votes%", String.valueOf(votes.getOrDefault(scenario, 0))));
+            } else {
+                item.setType(Material.BLACK_STAINED_GLASS_PANE);
+                if (previousScenarios.get(scenario) > 1)
+                    lore.add(Lang.SCENARIO_GLOBAL_ITEM_DISABLED_PL.replace("%amount%", String.valueOf(previousScenarios.get(scenario))));
+                else
+                    lore.add(Lang.SCENARIO_GLOBAL_ITEM_DISABLED.replace("%amount%", String.valueOf(previousScenarios.get(scenario))));
+            }
             itemMeta.setLore(lore);
 
             item.setAmount(votes.getOrDefault(scenario, 0) + 1);
             item.setItemMeta(itemMeta);
 
             contents.set(i / 9, i % 9, ClickableItem.of(item, e -> {
+                if (previousScenarios.containsKey(scenario))
+                    return;
+
                 if (uhcPlayer.getScenarioVotes().contains(scenario)) {
                     uhcPlayer.getScenarioVotes().remove(scenario);
                     updated = System.currentTimeMillis();

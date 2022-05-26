@@ -261,6 +261,7 @@ public class GameManager{
 	}
 
 	public void startWatchingEndOfGame(){
+		scenarioManager.updatePrevious();
 		setGameState(GameState.PLAYING);
 
 		for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
@@ -321,6 +322,10 @@ public class GameManager{
 		broadcastMessage(Lang.DISPLAY_MESSAGE_PREFIX+" "+message);
 	}
 
+	public void broadcastRedMessage(String message){
+		broadcastMessage(Lang.RED_MESSAGE_PREFIX+" "+message);
+	}
+
 	public void loadConfig(){
 		new Lang();
 
@@ -352,9 +357,9 @@ public class GameManager{
 		// Load crafts
 		CraftsManager.loadBannedCrafts();
 		CraftsManager.loadCrafts();
-		if (config.get(MainConfig.ENABLE_GOLDEN_HEADS)){
-			CraftsManager.registerGoldenHeadCraft();
-		}
+//		if (config.get(MainConfig.ENABLE_GOLDEN_HEADS)){
+//			CraftsManager.registerGoldenHeadCraft();
+//		}
 	}
 
 	private void registerListeners() {
@@ -423,7 +428,7 @@ public class GameManager{
 					5, 100, 5
 			);
 
-			playerManager.playSoundToAll(UniversalSound.ENDERDRAGON_GROWL, 1, 2);
+			playerManager.playSoundToAll(UniversalSound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
 			playerManager.setAllPlayersEndGame();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), new StopRestartThread(),20);
 		}

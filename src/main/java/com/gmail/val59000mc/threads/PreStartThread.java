@@ -9,6 +9,7 @@ import com.gmail.val59000mc.utils.RandomUtils;
 import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -62,12 +63,12 @@ public class PreStartThread implements Runnable{
 
 		if(
 				force ||
-				(!pause && (remainingTime < 5 || (playersNumber >= minPlayers && readyTeams >= gameManager.getConfig().get(MainConfig.MINIMAL_READY_TEAMS_TO_START) && percentageReadyTeams >= gameManager.getConfig().get(MainConfig.MINIMAL_READY_TEAMS_PERCENTAGE_TO_START))))
+				(!pause && (remainingTime < 5 || (playersNumber >= minPlayers)))
 		){
 			if (remainingTime == timeBeforeStart+1) {
 				gameManager.broadcastInfoMessage(Lang.GAME_ENOUGH_TEAMS_READY);
 				broadcastStart();
-			}else if (RandomUtils.isAnnounceTimer(remainingTime)) {
+			}else if (RandomUtils.isAnnounceStartTimer(remainingTime)) {
 				broadcastStart();
 			}
 
@@ -75,10 +76,18 @@ public class PreStartThread implements Runnable{
 
 			if(remainingTime == -1) {
 				GameManager.getGameManager().startGame();
+				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+					onlinePlayer.setLevel(0);
+				}
 			}
 			else{
+				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+					onlinePlayer.setLevel(remainingTime + 1);
+				}
 				Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), this, 20);
 			}
+
+
 		}else{
 			if(!pause && remainingTime < timeBeforeStart+1){
 				gameManager.broadcastInfoMessage(Lang.GAME_STARTING_CANCELLED);

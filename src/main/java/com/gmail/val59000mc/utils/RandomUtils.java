@@ -105,6 +105,13 @@ public class RandomUtils {
 		return item;
 	}
 
+	public static boolean isAnnounceStartTimer(int timer) {
+		return switch (timer) {
+			case 600, 300, 180, 120, 60, 30, 10, 5, 4, 3, 2, 1 -> true;
+			default -> false;
+		};
+	}
+
 	public static boolean isAnnounceTimer(int timer) {
 		return switch (timer) {
 			case 600, 300, 180, 60, 30, 10, 3, 2, 1 -> true;

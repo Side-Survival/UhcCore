@@ -8,6 +8,7 @@ import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.UhcPlayer;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -52,6 +53,7 @@ public class SpectateCommandExecutor implements CommandExecutor{
 
     private void setPlayerSpectating(Player player, UhcPlayer uhcPlayer){
         uhcPlayer.setState(PlayerState.DEAD);
+        player.setGameMode(GameMode.ADVENTURE);
 
         // Clear lobby items
         player.getInventory().clear();

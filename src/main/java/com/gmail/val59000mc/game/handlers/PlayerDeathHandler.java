@@ -4,6 +4,7 @@ import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.customitems.UhcItems;
 import com.gmail.val59000mc.events.UhcPlayerKillEvent;
+import com.gmail.val59000mc.exceptions.UhcPlayerDoesNotExistException;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.PointType;
@@ -24,7 +25,10 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Lidded;
 import org.bukkit.block.Skull;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -133,7 +137,40 @@ public class PlayerDeathHandler {
         } catch (UhcPlayerNotOnlineException ignored) {}
         uhcPlayer.getStoredItems().addAll(storedDrops);
 
-        gameManager.broadcastInfoMessage(Lang.PLAYERS_ELIMINATED.replace("%player%", uhcPlayer.getName()));
+        EntityDamageEvent.DamageCause cause = EntityDamageEvent.DamageCause.CUSTOM;
+        String damager = null;
+        boolean damagerPlayer = false;
+
+        if (uhcPlayer.isOnline()) {
+            EntityDamageEvent event = uhcPlayer.getPlayerForce().getLastDamageCause();
+            System.out.println("is event? " + (event == null));
+            if (event != null) {
+                cause = event.getCause();
+                System.out.println("cause? " + cause);
+                if (cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK || cause == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) {
+                    Entity damagerEntity = ((EntityDamageByEntityEvent) event).getDamager();
+                    if (damagerEntity instanceof Player) {
+                        damagerPlayer = true;
+
+                        try {
+                            UhcPlayer damagerUPlayer = playerManager.getUhcPlayer(damagerEntity.getUniqueId());
+                            if (damagerUPlayer.getTeam() != null)
+                                damager = damagerUPlayer.getTeam().getTeamColor() + damagerEntity.getName();
+                            else
+                                damager = damagerEntity.getName();
+                        } catch (UhcPlayerDoesNotExistException e) {
+                            damager = damagerEntity.getName();
+                        }
+                    } else {
+                        damager = damagerEntity.getName().toLowerCase().replace("_", " ");
+                    }
+                }
+            }
+        }
+
+        String playerName = uhcPlayer.getTeam() != null ? uhcPlayer.getTeam().getTeamColor() + uhcPlayer.getName() : uhcPlayer.getName();
+        String deathMessage = getDeathMessage(cause, playerName, damager, damagerPlayer);
+        gameManager.broadcastRedMessage(deathMessage);
 
         if(config.get(MainConfig.REGEN_HEAD_DROP_ON_PLAYER_DEATH)){
             playerDrops.add(UhcItems.createRegenHead(uhcPlayer));
@@ -170,4 +207,47 @@ public class PlayerDeathHandler {
         return playerDrops;
     }
 
+    public String getDeathMessage(EntityDamageEvent.DamageCause cause, String player, String attacker, boolean attackerPlayer) {
+        switch (cause) {
+            case ENTITY_EXPLOSION:
+            case BLOCK_EXPLOSION:
+                return Lang.DEATH_EXPLOSION.replace("%player%", player);
+            case CUSTOM:
+                return Lang.DEATH_CUSTOM.replace("%player%", player);
+            case CONTACT:
+            case THORNS:
+                return Lang.DEATH_CONTACT.replace("%player%", player);
+            case DROWNING:
+                return Lang.DEATH_DROWNING.replace("%player%", player);
+            case FALL:
+                return Lang.DEATH_FALL.replace("%player%", player);
+            case SUFFOCATION:
+            case FALLING_BLOCK:
+                return Lang.DEATH_FALLING_BLOCK.replace("%player%", player);
+            case FIRE:
+            case HOT_FLOOR:
+            case FIRE_TICK:
+                return Lang.DEATH_FIRE.replace("%player%", player);
+            case LAVA:
+                return Lang.DEATH_LAVA.replace("%player%", player);
+            case FLY_INTO_WALL:
+                return Lang.DEATH_FLY_INTO_WALL.replace("%player%", player);
+            case MAGIC:
+                return Lang.DEATH_MAGIC.replace("%player%", player);
+            case ENTITY_ATTACK:
+            case ENTITY_SWEEP_ATTACK:
+                if (attackerPlayer)
+                    return Lang.DEATH_PLAYER.replace("%player%", player).replace("%killer%", attacker);
+                else
+                    return Lang.DEATH_MOB.replace("%player%", player).replace("%mob%", attacker);
+            case PROJECTILE:
+                return Lang.DEATH_PROJECTILE.replace("%player%", player);
+            case SUICIDE:
+                return Lang.DEATH_SUICIDE.replace("%player%", player);
+            case STARVATION:
+                return Lang.DEATH_STARVATION.replace("%player%", player);
+            default:
+                return Lang.DEATH_OTHER_CAUSE.replace("%player%", player).replace("%cause%", cause.toString().toLowerCase().replace("_", " "));
+        }
+    }
 }

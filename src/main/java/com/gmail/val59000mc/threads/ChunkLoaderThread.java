@@ -95,4 +95,8 @@ public abstract class ChunkLoaderThread implements Runnable {
         return world.getEnvironment()+" "+(Math.floor(10*percentage)/10);
     }
 
+    public int getChunksLoaded() {
+        double percentage = 100*(double)chunksLoaded/totalChunksToLoad;
+        return (int) Math.floor(10*percentage)/10;
+    }
 }

@@ -34,8 +34,8 @@ public class SpectatorPlayersGUI implements InventoryProvider {
         this.invManager = plugin.getInventoryManager();
     }
 
-    public void load(int teamCount) {
-        int size = teamCount / 9 + 1;
+    public void load(int playerCount) {
+        int size = playerCount / 9 + 1;
         this.inventory = SmartInventory.builder()
                 .manager(invManager)
                 .provider(new SpectatorPlayersGUI())
@@ -44,8 +44,8 @@ public class SpectatorPlayersGUI implements InventoryProvider {
                 .build();
     }
 
-    public void open(Player player, int teamCount) {
-        this.load(teamCount);
+    public void open(Player player, int playerCount) {
+        this.load(playerCount);
         this.inventory.open(player);
     }
 

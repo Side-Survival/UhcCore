@@ -35,6 +35,11 @@ public class EnableGlowingThread implements Runnable{
 		if (timeBeforeGlowing == 0) {
 			gameManager.setGlowing(true);
 			gameManager.broadcastInfoMessage(Lang.GLOWING_ENABLED);
+			gameManager.getPlayerManager().sendTitleAll(
+					" ",
+					Lang.GLOWING_ENABLED,
+					5, 60, 5
+			);
 
 			for (UhcPlayer uhcPlayer : gameManager.getPlayerManager().getOnlinePlayingPlayers()) {
 				try {

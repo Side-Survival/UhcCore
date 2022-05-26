@@ -30,6 +30,11 @@ public class EnablePVPThread implements Runnable{
 			gameManager.setPvp(true);
 			gameManager.broadcastInfoMessage(Lang.PVP_ENABLED);
 			gameManager.getPlayerManager().playSoundAll(Sound.ENTITY_WITHER_SPAWN, 1f, 1f);
+			gameManager.getPlayerManager().sendTitleAll(
+					" ",
+					Lang.PVP_ENABLED,
+					5, 60, 5
+			);
 			return; // Stop thread
 		}
 

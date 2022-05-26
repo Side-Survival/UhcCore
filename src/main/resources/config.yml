@@ -137,6 +137,8 @@ customize-game-behavior:
       elected-scenarios: 3
       # Black-list, scenarios under this list can not be voted for.
       black-list: [flower_power]
+      # For how many games scenario will be disabled after
+      previous-games: 3
 
 
   # Set it to false to stop ghasts from dropping ghast-tears

@@ -41,6 +41,8 @@ public class Lang{
 	public static String GAME_STAGE_DEATHMATCH;
 	public static String GAME_STAGE_BORDER;
 	public static String GAME_STAGE_GLOWING;
+	public static String GAME_PLAYER_JOINED;
+	public static String GAME_PLAYER_LEFT;
 
 	public static String PLAYERS_NETHER_OFF;
 	public static String PLAYERS_BUILD_HEIGHT;
@@ -58,6 +60,7 @@ public class Lang{
 
 
 	public static String DISPLAY_MESSAGE_PREFIX;
+	public static String RED_MESSAGE_PREFIX;
 	public static String DISPLAY_EPISODE_MARK;
 	public static String DISPLAY_SPECTATOR_CHAT;
 	public static String DISPLAY_MOTD_LOADING;
@@ -194,10 +197,13 @@ public class Lang{
 	public static String SCENARIO_GLOBAL_ITEM_HOTBAR;
 	public static String SCENARIO_GLOBAL_ITEM_COLOR;
 	public static String SCENARIO_GLOBAL_ITEM_INFO;
+	public static String SCENARIO_GLOBAL_ITEM_DISABLED;
+	public static String SCENARIO_GLOBAL_ITEM_DISABLED_PL;
 	public static String SCENARIO_GLOBAL_VOTE_MAX;
 	public static String SCENARIO_GLOBAL_TITLE;
 	public static String SCENARIO_GLOBAL_SUBTITLE;
 	public static String SCENARIO_GLOBAL_HEADER;
+	public static String SCENARIO_VOTE;
 	public static String SPECTATOR_GUI_TITLE;
 	public static String SPECTATOR_GUI_ITEM;
 	public static List<String> SPECTATOR_GUI_LORE;
@@ -225,6 +231,23 @@ public class Lang{
 	public static String SCENARIO_NOGOINGBACK_ERROR;
 	public static String SCENARIO_MONSTERSINC_ERROR;
 	public static String SCENARIO_TIMEBOMB_CHEST;
+
+	public static String DEATH_CUSTOM;
+	public static String DEATH_CONTACT;
+	public static String DEATH_DROWNING;
+	public static String DEATH_EXPLOSION;
+	public static String DEATH_FALL;
+	public static String DEATH_FALLING_BLOCK;
+	public static String DEATH_FIRE;
+	public static String DEATH_FLY_INTO_WALL;
+	public static String DEATH_LAVA;
+	public static String DEATH_MAGIC;
+	public static String DEATH_MOB;
+	public static String DEATH_PROJECTILE;
+	public static String DEATH_PLAYER;
+	public static String DEATH_SUICIDE;
+	public static String DEATH_STARVATION;
+	public static String DEATH_OTHER_CAUSE;
 
 	public static String TEAM_FULL_NAME;
 	public static String TEAM_GUI_TITLE;
@@ -281,6 +304,8 @@ public class Lang{
 		GAME_STAGE_DEATHMATCH = getString(lang, "game.stage.deathmatch", "Deathmatch");
 		GAME_STAGE_BORDER = getString(lang, "game.stage.border", "Border");
 		GAME_STAGE_GLOWING = getString(lang, "game.stage.glowing", "Glowing");
+		GAME_PLAYER_JOINED = getString(lang, "game.player-join", "%player% joined the game");
+		GAME_PLAYER_LEFT = getString(lang, "game.player-quit", "%player% left the game");
 
 		// Players
 		PLAYERS_NETHER_OFF = getString(lang, "players.nether-off", "&cThe nether has been deactivated for this game.");
@@ -299,6 +324,7 @@ public class Lang{
 
 		// Display
 		DISPLAY_MESSAGE_PREFIX = getString(lang, "display.message-prefix", "&a[UhcCore]&r");
+		RED_MESSAGE_PREFIX = getString(lang, "display.red-prefix", "&c[UhcCore]&r");
 		DISPLAY_EPISODE_MARK = getString(lang, "display.episode-mark", "End of episode %episode%!");
 		DISPLAY_SPECTATOR_CHAT = getString(lang, "display.spectator-chat", "&7[Spec] &r%player%&r: %message%");
 		DISPLAY_MOTD_LOADING  = getString(lang, "display.motd-loading", "Loading ...");
@@ -444,10 +470,13 @@ public class Lang{
 		SCENARIO_GLOBAL_ITEM_HOTBAR = getString(lang, "scenarios.global.item-hotbar", "&6Right click to view active scenarios");
 		SCENARIO_GLOBAL_ITEM_COLOR = getString(lang, "scenarios.global.item-color", "&5");
 		SCENARIO_GLOBAL_ITEM_INFO = getString(lang, "scenarios.global.item-info", "&7(Right click for info)");
+		SCENARIO_GLOBAL_ITEM_DISABLED = getString(lang, "scenarios.global.item-disabled", "&7Recently played, can vote after %amount% games");
+		SCENARIO_GLOBAL_ITEM_DISABLED_PL = getString(lang, "scenarios.global.item-disabled-pl", "&7Recently played, can vote after %amount% games");
 		SCENARIO_GLOBAL_VOTE_MAX = getString(lang, "scenarios.global.vote-max", "&cMax votes reached (%max%)");
 		SCENARIO_GLOBAL_TITLE = getString(lang, "scenarios.global.title", "&eScenarios:");
 		SCENARIO_GLOBAL_SUBTITLE = getString(lang, "scenarios.global.subtitle", "&f%scenarios%");
 		SCENARIO_GLOBAL_HEADER = getString(lang, "scenarios.global.header", "&eEnabled scenarios:");
+		SCENARIO_VOTE = getString(lang, "scenarios.vote", "&fVote for scenarios!");
 
 		// Spectators
 		SPECTATOR_GUI_TITLE = getString(lang, "spectators.teleport.title", "All alive players");
@@ -508,6 +537,23 @@ public class Lang{
 		SCENARIO_NOGOINGBACK_ERROR = getString(lang, "scenarios.no_going_back.error", "&4[No Going Back] &cYou are stuck in the nether!");
 		SCENARIO_MONSTERSINC_ERROR = getString(lang, "scenarios.monsters_inc.error", "&4[Monsters Inc.] &cStop that!");
 		SCENARIO_TIMEBOMB_CHEST = getString(lang, "scenarios.timebomb.chest", "&6&l%player%'s Timebomb");
+
+		DEATH_CUSTOM = getString(lang, "death.custom", "%player% &fdied");
+		DEATH_CONTACT = getString(lang, "death.contact", "%player% &fdied from spikes");
+		DEATH_DROWNING = getString(lang, "death.drowning", "%player% &fdrowned");
+		DEATH_EXPLOSION = getString(lang, "death.explosion", "%player% &fdied from explosion");
+		DEATH_FALL = getString(lang, "death.fall", "%player% &fdied by falling");
+		DEATH_FALLING_BLOCK = getString(lang, "death.falling-block", "%player% &fsuffocated");
+		DEATH_FIRE = getString(lang, "death.fire", "%player% &fdied by fire");
+		DEATH_FLY_INTO_WALL = getString(lang, "death.fly-into-wall", "%player% &fdied from flying into wall");
+		DEATH_LAVA = getString(lang, "death.lava", "%player% &fdied by lava");
+		DEATH_MAGIC = getString(lang, "death.magic", "%player% &fdied by magic");
+		DEATH_MOB = getString(lang, "death.mob", "%player% &fdied by %mob%");
+		DEATH_PROJECTILE = getString(lang, "death.projectile", "%player% &fwas shot");
+		DEATH_PLAYER = getString(lang, "death.player", "%killer% &fkilled %player%");
+		DEATH_SUICIDE = getString(lang, "death.suicide", "%player% &fdied");
+		DEATH_STARVATION = getString(lang, "death.starvation", "%player% &fdied from starvation");
+		DEATH_OTHER_CAUSE = getString(lang, "death.other-cause", "%player% &fdied");
 
 		TEAM_FULL_NAME = getString(lang, "team.name_full", "%color%&7 Team");
 		TEAM_GUI_TITLE = getString(lang, "team.gui_title", "Choose team");

@@ -68,7 +68,6 @@ public class VersionUtils_1_15 extends VersionUtils_1_14{
 
     @Override
     public void killPlayer(Player player) {
-        player.damage(player.getHealth() + player.getAbsorptionAmount());
+        player.damage(20000);
     }
-
 }

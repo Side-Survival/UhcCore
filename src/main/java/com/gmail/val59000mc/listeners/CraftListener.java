@@ -6,8 +6,9 @@ import com.gmail.val59000mc.customitems.CraftsManager;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcPlayer;
+import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.utils.RandomUtils;
-import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,7 +20,15 @@ public class CraftListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCrafting(CraftItemEvent event){
+		GameManager gm = GameManager.getGameManager();
 		ItemStack item = event.getRecipe().getResult();
+
+		if (event.getCurrentItem() != null && !gm.getScenarioManager().isEnabled(Scenario.HASTEY_BOYS))
+			try {
+				event.getCurrentItem().addEnchantment(Enchantment.DIG_SPEED, 2);
+				event.getCurrentItem().addEnchantment(Enchantment.DURABILITY, 1);
+			} catch (IllegalArgumentException ignored) {}
+
 		if (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()){
 			return;
 		}
@@ -34,7 +43,6 @@ public class CraftListener implements Listener{
 		}
 
 		Player player = (Player) event.getWhoClicked();
-		GameManager gm = GameManager.getGameManager();
 		UhcPlayer uhcPlayer = gm.getPlayerManager().getUhcPlayer(player);
 
 		String permission = "uhc-core.craft." + craft.getName().toLowerCase().replaceAll(" ", "-");
@@ -64,5 +72,4 @@ public class CraftListener implements Listener{
 			uhcPlayer.sendMessage(Lang.ITEMS_CRAFT_CRAFTED.replace("%craft%", craft.getName()));
 		}
 	}
-
 }

@@ -43,7 +43,7 @@ public class PlayerChatListener implements Listener{
 
 				if (!isPublic) {
 					event.getRecipients().clear();
-					for (UhcPlayer member : uhcPlayer.getTeam().getOnlinePlayingMembers()) {
+					for (UhcPlayer member : uhcPlayer.getTeam().getOnlineMembers()) {
 						event.getRecipients().add(member.getPlayer());
 					}
 				} else if (event.getMessage().length() > 1) {
@@ -56,9 +56,14 @@ public class PlayerChatListener implements Listener{
 
 			if (uhcPlayer.isDeath()) {
 				// Spectator chat
-				event.getRecipients().clear();
 				prefix = Lang.DISPLAY_SPECTATOR_CHAT;
-				event.getRecipients().addAll(GameManager.getGameManager().getPlayerManager().getOnlinePlayers().stream().filter(UhcPlayer::isDeath).map(UhcPlayer::getPlayerForce).toList());
+				if (isPublic && player.hasPermission("uhccore.chat.all")) {
+					prefix = "&c";
+					event.setMessage(event.getMessage().substring(1));
+				} else {
+					event.getRecipients().clear();
+					event.getRecipients().addAll(GameManager.getGameManager().getPlayerManager().getOnlinePlayers().stream().filter(UhcPlayer::isDeath).map(UhcPlayer::getPlayerForce).toList());
+				}
 			}
 
 			event.setFormat(RandomUtils.color(prefix + player.getName() + " &8» &f%2$s"));

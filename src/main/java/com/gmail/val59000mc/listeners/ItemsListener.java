@@ -151,7 +151,7 @@ public class ItemsListener implements Listener {
 			case SPECTATOR_PLAYERS:
 				if (uhcPlayer.isDeath() && player.hasPermission("uhc-core.spectator-players")) {
 					SpectatorPlayersGUI gui = new SpectatorPlayersGUI();
-					gui.open(player, teamManager.getAliveUhcTeams().size());
+					gui.open(player, gameManager.getPlayerManager().getAliveOnlinePlayers().size());
 				}
 				break;
 			case TEAM_CHEST:

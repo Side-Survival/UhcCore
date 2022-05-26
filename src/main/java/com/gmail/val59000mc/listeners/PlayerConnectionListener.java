@@ -2,17 +2,20 @@ package com.gmail.val59000mc.listeners;
 
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
+import com.gmail.val59000mc.exceptions.UhcPlayerDoesNotExistException;
 import com.gmail.val59000mc.exceptions.UhcPlayerJoinException;
 import com.gmail.val59000mc.exceptions.UhcTeamException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.game.handlers.PlayerDeathHandler;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
+import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.PlayerManager;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.threads.KillDisconnectedPlayerThread;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -59,25 +62,43 @@ public class PlayerConnectionListener implements Listener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onPlayerJoin(final PlayerJoinEvent event){
-		event.setJoinMessage("");
+		String joinMessage = Lang.GAME_PLAYER_JOINED.replace("%player%", event.getPlayer().getName());
+		if (gameManager.getGameState() != GameState.WAITING) {
+			Player player = event.getPlayer();
+			try {
+				if (!playerManager.doesPlayerExist(player) || playerManager.getUhcPlayer(player.getUniqueId()).isDeath())
+					joinMessage = "";
+			} catch (UhcPlayerDoesNotExistException ignored) {}
+		}
+
+		event.setJoinMessage(joinMessage);
 		Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), () -> playerManager.playerJoinsTheGame(event.getPlayer()), 1);
 	}
 
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onPlayerDisconnect(PlayerQuitEvent event){
-		event.setQuitMessage("");
+		String quitMessage = Lang.GAME_PLAYER_LEFT.replace("%player%", event.getPlayer().getName());
+		if (gameManager.getGameState() != GameState.WAITING) {
+			Player player = event.getPlayer();
+			try {
+				if (!playerManager.doesPlayerExist(player) || playerManager.getUhcPlayer(player.getUniqueId()).isDeath())
+					quitMessage = "";
+			} catch (UhcPlayerDoesNotExistException ignored) {}
+		}
+
+		event.setQuitMessage(quitMessage);
 		if(gameManager.getGameState().equals(GameState.WAITING) || gameManager.getGameState().equals(GameState.STARTING)){
 			UhcPlayer uhcPlayer = playerManager.getUhcPlayer(event.getPlayer());
 
 			if(gameManager.getGameState().equals(GameState.STARTING)){
 				playerManager.setPlayerSpectateAtLobby(uhcPlayer);
-				gameManager.broadcastInfoMessage(uhcPlayer.getName()+" has left while the game was starting and has been killed.");
+//				gameManager.broadcastInfoMessage(uhcPlayer.getName()+" has left while the game was starting and has been killed.");
 				if (gameManager.getConfig().get(MainConfig.STRIKE_LIGHTNING_ON_DEATH)) {
 					playerManager.strikeLightning(uhcPlayer);
 				}
 			}
 
-			if (!gameManager.getConfig().get(MainConfig.PRACTICE_MODE) && uhcPlayer.getTeam() != null)
+			if (gameManager.getConfig().get(MainConfig.PRACTICE_MODE) && uhcPlayer.getTeam() != null)
 				uhcPlayer.getTeam().leave(uhcPlayer);
 
 			// Update player tab

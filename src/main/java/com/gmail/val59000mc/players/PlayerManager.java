@@ -54,7 +54,7 @@ public class PlayerManager {
 
 		switch(gm.getGameState()){
 			case LOADING:
-				throw new UhcPlayerJoinException(Lang.KICK_LOADING);
+				throw new UhcPlayerJoinException(Lang.KICK_LOADING.replace("%percent%", gm.getMapLoader().getActiveLoaderThread().getChunksLoaded() + "%"));
 
 			case WAITING:
 				return true;
@@ -187,6 +187,13 @@ public class PlayerManager {
 				.collect(Collectors.toSet());
 	}
 
+	public Set<UhcPlayer> getAliveOnlinePlayers() {
+		return players.stream()
+				.filter(UhcPlayer::isOnline)
+				.filter(uhcPlayer -> !uhcPlayer.isDeath())
+				.collect(Collectors.toSet());
+	}
+
 	public void playerJoinsTheGame(Player player){
 		UhcPlayer uhcPlayer;
 
@@ -226,6 +233,7 @@ public class PlayerManager {
 
 					// Remove lobby potion effects.
 					player.removePotionEffect(PotionEffectType.BLINDNESS);
+					player.setLevel(0);
 
 					// Call event
 					Bukkit.getPluginManager().callEvent(new PlayerStartsPlayingEvent(uhcPlayer));
@@ -248,6 +256,13 @@ public class PlayerManager {
 				if (gm.isWithering())
 					player.addPotionEffect(GameManager.witherEffect);
 
+				try {
+					for (UhcPlayer uPlayer : getOnlinePlayers()) {
+						if (!uPlayer.isPlaying())
+							player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
+					}
+				} catch (UhcPlayerNotOnlineException ignored) {}
+
 				break;
 			case DEAD:
 				setPlayerSpectateAtLobby(uhcPlayer);
@@ -259,14 +274,18 @@ public class PlayerManager {
 		GameManager gm = GameManager.getGameManager();
 
 		for(UhcTeam team : listUhcTeams()){
-			if(team != uhcPlayer.getTeam() && team.getMembers().size() < gm.getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)){
+			if (team != uhcPlayer.getTeam() && team.getMembers().size() < gm.getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)){
 				try {
 					team.join(uhcPlayer);
 				} catch (UhcTeamException ignored) {
 				}
-				break;
+				return;
 			}
 		}
+
+		try {
+			uhcPlayer.getPlayer().kickPlayer("Nav vairs vietas komandās, pievienojies pēc spēles sākuma!");
+		} catch (UhcPlayerNotOnlineException ignored) {}
 	}
 
 	public void setPlayerWaitsAtLobby(UhcPlayer uhcPlayer){
@@ -282,6 +301,7 @@ public class PlayerManager {
 			player.setExhaustion(20);
 			player.setFoodLevel(20);
 			player.setExp(0);
+			player.setLevel(0);
 
 			UhcItems.giveLobbyItemsTo(player);
 		} catch (UhcPlayerNotOnlineException e) {
@@ -310,6 +330,7 @@ public class PlayerManager {
 				}
 				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 1), false);
 				player.setGameMode(GameMode.SURVIVAL);
+				player.setLevel(0);
 				if(cfg.get(MainConfig.ENABLE_EXTRA_HALF_HEARTS)){
 					VersionUtils.getVersionUtils().setPlayerMaxHealth(player, 20+((double) cfg.get(MainConfig.EXTRA_HALF_HEARTS)));
 					player.setHealth(20+((double) cfg.get(MainConfig.EXTRA_HALF_HEARTS)));
@@ -469,7 +490,8 @@ public class PlayerManager {
 
 		// Fore solo players to join teams
 		if (gm.getConfig().get(MainConfig.FORCE_ASSIGN_SOLO_PLAYER_TO_TEAM_WHEN_STARTING)){
-			for (UhcPlayer uhcPlayer : getPlayersList()){
+			List<UhcPlayer> onlinePlayers = new ArrayList<>(getPlayersList());
+			for (UhcPlayer uhcPlayer : onlinePlayers) {
 				// If player is spectating don't assign player.
 				if (uhcPlayer.getState() == PlayerState.DEAD){
 					continue;

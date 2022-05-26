@@ -42,13 +42,19 @@ public class WorldBorderThread implements Runnable{
 	}
 	
 	private void startMoving(){
-		GameManager.getGameManager().broadcastInfoMessage(Lang.GAME_BORDER_START_SHRINKING);
+		GameManager gameManager = GameManager.getGameManager();
+		gameManager.broadcastInfoMessage(Lang.GAME_BORDER_START_SHRINKING);
+		gameManager.getPlayerManager().sendTitleAll(
+				" ",
+				Lang.GAME_BORDER_START_SHRINKING,
+				5, 60, 5
+		);
 		
-		World overworld = GameManager.getGameManager().getMapLoader().getUhcWorld(World.Environment.NORMAL);
+		World overworld = gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL);
 		WorldBorder overworldBorder = overworld.getWorldBorder();
 		overworldBorder.setSize(2*endSize, timeToShrink);
 		
-		World nether = GameManager.getGameManager().getMapLoader().getUhcWorld(World.Environment.NETHER);
+		World nether = gameManager.getMapLoader().getUhcWorld(World.Environment.NETHER);
 		if (nether != null) {
 			WorldBorder netherBorder = nether.getWorldBorder();
 			netherBorder.setSize(endSize, timeToShrink);

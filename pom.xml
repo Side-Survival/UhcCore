@@ -136,6 +136,7 @@
                     <include>flowerpower-1.8.yml</include>
                     <include>flowerpower-1.13.yml</include>
                     <include>scenario-descriptions.json</include>
+                    <include>scenario-data.yml</include>
                     <include>scenarios.yml</include>
                     <include>scoreboard.yml</include>
                     <include>storage.yml</include>

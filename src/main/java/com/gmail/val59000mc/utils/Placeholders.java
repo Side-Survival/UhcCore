@@ -2,9 +2,11 @@ package com.gmail.val59000mc.utils;
 
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.players.UhcTeam;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -49,6 +51,31 @@ public class Placeholders extends PlaceholderExpansion {
             Player onlinePlayer = player.getPlayer();
 
             return getTeamPrefixFormatted(onlinePlayer);
+        } else if (identifier.equalsIgnoreCase("motd")) {
+            GameManager gm = GameManager.getGameManager();
+            if (gm == null){
+                return "0/48;" + Lang.DISPLAY_MOTD_LOADING;
+            }
+
+            String online = gm.getPlayerManager().getAliveOnlinePlayers().size() + "/48;";
+
+            switch(gm.getGameState()){
+                case ENDED:
+                    return online + Lang.DISPLAY_MOTD_ENDED;
+
+                case DEATHMATCH:
+                case PLAYING:
+                    return online + Lang.DISPLAY_MOTD_PLAYING;
+
+                case STARTING:
+                    return online + Lang.DISPLAY_MOTD_STARTING;
+
+                case WAITING:
+                    return online + Lang.DISPLAY_MOTD_WAITING;
+
+                default:
+                    return "0/48;" + Lang.DISPLAY_MOTD_LOADING;
+            }
         }
         return null;
     }
