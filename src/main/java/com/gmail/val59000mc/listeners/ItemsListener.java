@@ -26,6 +26,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -239,5 +241,21 @@ public class ItemsListener implements Listener {
 	public void onItemPickup(PlayerPickupItemEvent event) {
 		if (event.getPlayer().getGameMode() == GameMode.ADVENTURE)
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onVehicleEnter(VehicleEnterEvent event) {
+		if (event.getEntered() instanceof Player) {
+			if (((Player) event.getEntered()).getGameMode() != GameMode.SURVIVAL)
+				event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onVehicleDamage(VehicleDamageEvent event) {
+		if (event.getAttacker() instanceof Player) {
+			if (((Player) event.getAttacker()).getGameMode() != GameMode.SURVIVAL)
+				event.setCancelled(true);
+		}
 	}
 }

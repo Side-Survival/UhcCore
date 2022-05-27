@@ -194,6 +194,13 @@ public class PlayerManager {
 				.collect(Collectors.toSet());
 	}
 
+	public Set<UhcPlayer> getOnlineSpectators() {
+		return players.stream()
+				.filter(UhcPlayer::isOnline)
+				.filter(UhcPlayer::isDeath)
+				.collect(Collectors.toSet());
+	}
+
 	public void playerJoinsTheGame(Player player){
 		UhcPlayer uhcPlayer;
 

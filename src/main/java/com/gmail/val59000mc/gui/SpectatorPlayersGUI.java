@@ -35,7 +35,7 @@ public class SpectatorPlayersGUI implements InventoryProvider {
     }
 
     public void load(int playerCount) {
-        int size = playerCount / 9 + 1;
+        int size = (int) Math.ceil(playerCount / 9.0);
         this.inventory = SmartInventory.builder()
                 .manager(invManager)
                 .provider(new SpectatorPlayersGUI())

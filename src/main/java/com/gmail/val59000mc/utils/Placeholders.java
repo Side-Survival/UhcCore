@@ -58,6 +58,9 @@ public class Placeholders extends PlaceholderExpansion {
             }
 
             String online = gm.getPlayerManager().getAliveOnlinePlayers().size() + "/48;";
+            int spectateCount = gm.getPlayerManager().getOnlineSpectators().size();
+            if (spectateCount > 0)
+                online = online.substring(0, online.length() - 1) + " (" + spectateCount + " vēro);";
 
             switch(gm.getGameState()){
                 case ENDED:

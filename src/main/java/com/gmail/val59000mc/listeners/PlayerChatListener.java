@@ -59,7 +59,8 @@ public class PlayerChatListener implements Listener{
 				prefix = Lang.DISPLAY_SPECTATOR_CHAT;
 				if (isPublic && player.hasPermission("uhccore.chat.all")) {
 					prefix = "&c";
-					event.setMessage(event.getMessage().substring(1));
+					if (uhcPlayer.getTeam() == null)
+						event.setMessage(event.getMessage().substring(1));
 				} else {
 					event.getRecipients().clear();
 					event.getRecipients().addAll(GameManager.getGameManager().getPlayerManager().getOnlinePlayers().stream().filter(UhcPlayer::isDeath).map(UhcPlayer::getPlayerForce).toList());
