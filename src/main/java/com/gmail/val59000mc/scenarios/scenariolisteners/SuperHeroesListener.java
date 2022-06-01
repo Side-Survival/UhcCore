@@ -3,6 +3,7 @@ package com.gmail.val59000mc.scenarios.scenariolisteners;
 import com.gmail.val59000mc.events.PlayerStartsPlayingEvent;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.players.UhcPlayer;
+import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import com.gmail.val59000mc.utils.RandomUtils;
 import com.gmail.val59000mc.utils.VersionUtils;
@@ -28,6 +29,9 @@ public class SuperHeroesListener extends ScenarioListener{
             // No effect for offline player
             return;
         }
+
+        if (getScenarioManager().isEnabled(Scenario.WEAKEST_LINK) && effect == 4)
+            effect = 3;
 
         switch (effect){
             case 0:

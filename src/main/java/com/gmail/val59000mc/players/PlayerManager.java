@@ -495,7 +495,7 @@ public class PlayerManager {
 		World world = gm.getMapLoader().getUhcWorld(World.Environment.NORMAL);
 		double maxDistance = 0.9 * gm.getConfig().get(MainConfig.BORDER_START_SIZE);
 
-		// Fore solo players to join teams
+		// For solo players to join teams
 		if (gm.getConfig().get(MainConfig.FORCE_ASSIGN_SOLO_PLAYER_TO_TEAM_WHEN_STARTING)){
 			List<UhcPlayer> onlinePlayers = new ArrayList<>(getPlayersList());
 			for (UhcPlayer uhcPlayer : onlinePlayers) {

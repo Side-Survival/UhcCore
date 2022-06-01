@@ -4,6 +4,7 @@ import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.scenarios.ScenarioListener;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -42,10 +43,11 @@ public class ChildrenLeftUnattended extends ScenarioListener{
         ItemStack potion = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
         meta.setMainEffect(PotionEffectType.SPEED);
+        meta.setColor(Color.AQUA);
         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 8*60*20, 0);
         meta.addCustomEffect(potionEffect, true);
 
-        meta.setDisplayName(ChatColor.WHITE + "Potion of Swiftness");
+        meta.setDisplayName(ChatColor.WHITE + "Ātruma dzira");
 
         potion.setItemMeta(meta);
 

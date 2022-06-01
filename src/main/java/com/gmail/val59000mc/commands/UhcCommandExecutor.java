@@ -137,14 +137,9 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 				}
 				return true;
 
-			case "skiptime":
-				if (args.length == 2) {
-					int toSkip = Integer.parseInt(args[1]);
-					gameManager.setElapsedTime(gameManager.getElapsedTime() + toSkip);
-					sender.sendMessage("Skipped time by " + toSkip);
-				}else {
-					sender.sendMessage("Invalid skiptime command");
-				}
+			case "clearsavedscen":
+				gameManager.getScenarioManager().clearPrevious();
+				sender.sendMessage("Cleared previous scenario times!");
 				return true;
 		}
 
@@ -193,7 +188,7 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 				completions.add("pause");
 				completions.add("force");
 				completions.add("location");
-				completions.add("skiptime");
+				completions.add("clearsavedscen");
 			}
 		}
 

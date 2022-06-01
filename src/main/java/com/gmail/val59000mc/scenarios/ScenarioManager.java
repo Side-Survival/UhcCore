@@ -345,4 +345,15 @@ public class ScenarioManager {
             e.printStackTrace();
         }
     }
+
+    public void clearPrevious() {
+        previousScenarios.clear();
+        scenarioData.set("previous", null);
+
+        try {
+            scenarioData.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

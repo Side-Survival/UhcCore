@@ -403,4 +403,11 @@ public class UhcPlayer {
 	public void setDeathLocation(Location deathLocation) {
 		this.deathLocation = deathLocation;
 	}
+
+	@Override
+	public String toString() {
+		return "UhcPlayer{" +
+				"name='" + name + '\'' +
+				'}';
+	}
 }

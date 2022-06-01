@@ -81,7 +81,7 @@ public class CutCleanListener extends ScenarioListener{
 
         Optional<OreType> oreType = OreType.valueOf(type);
 
-        if (oreType.isPresent() && (!checkTool || oreType.get().isCorrectTool(tool))) {
+        if (oreType.isPresent() && oreType.get() != OreType.LAPIS_LAZULi && (!checkTool || oreType.get().isCorrectTool(tool))) {
             int xp = oreType.get().getXpPerBlock();
             int count = (oreType.get() != OreType.GOLD && oreType.get() != OreType.DIAMOND) ? 2 : 1;
 

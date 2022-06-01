@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class GameManager{
 
@@ -265,6 +266,11 @@ public class GameManager{
 		setGameState(GameState.PLAYING);
 
 		for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
+			if (team.getStartingLocation() == null) {
+				UhcCore.getPlugin().getLogger().log(Level.SEVERE, "Could not find start location for team " + team.getTeamName() + " (" + team.getMembers().get(0));
+				continue;
+			}
+
 			Location location = team.getStartingLocation().clone().add(0, 6, 0);
 			CageUtils.removeCage(location);
 

@@ -24,7 +24,10 @@ public class TimberListener extends ScenarioListener {
             if (calculateAxeDamage) {
                 ItemStack tool = e.getPlayer().getItemInHand();
                 if (UniversalMaterial.isAxe(tool.getType())) {
-                    tool.setDurability((short) (tool.getDurability() + brokenLogs));
+                    if (tool.getDurability() + brokenLogs >= tool.getType().getMaxDurability())
+                        e.getPlayer().setItemInHand(null);
+                    else
+                        tool.setDurability((short) (tool.getDurability() + brokenLogs));
                 }
             }
         }
