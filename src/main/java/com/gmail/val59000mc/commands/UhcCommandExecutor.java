@@ -141,6 +141,10 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 				gameManager.getScenarioManager().clearPrevious();
 				sender.sendMessage("Cleared previous scenario times!");
 				return true;
+
+			case "stop":
+				gameManager.endGame();
+				return true;
 		}
 
 		sender.sendMessage("Unknown sub command " + args[0]);

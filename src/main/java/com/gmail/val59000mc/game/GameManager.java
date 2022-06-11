@@ -25,7 +25,12 @@ import com.gmail.val59000mc.scenarios.scenariolisteners.TimberListener;
 import com.gmail.val59000mc.scoreboard.ScoreboardLayout;
 import com.gmail.val59000mc.scoreboard.ScoreboardManager;
 import com.gmail.val59000mc.threads.*;
+import com.gmail.val59000mc.tournament.AssignManager;
+import com.gmail.val59000mc.tournament.MatchListeners;
+import com.gmail.val59000mc.tournament.PointManager;
 import com.gmail.val59000mc.utils.*;
+import lv.side.objects.EventMatch;
+import lv.side.objects.SimpleTeam;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
@@ -40,6 +45,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class GameManager{
@@ -69,9 +76,12 @@ public class GameManager{
 	private boolean glowing;
 	private boolean withering;
 	private boolean gameIsEnding;
+	private boolean isDeathmatch = false;
 	private int episodeNumber;
 	private long remainingTime;
 	private long elapsedTime;
+
+	private UUID lastFight = null;
 
 	public static PotionEffect witherEffect;
 
@@ -243,13 +253,16 @@ public class GameManager{
 
 		Bukkit.getLogger().info(Lang.DISPLAY_MESSAGE_PREFIX+" Players are now allowed to join");
 		Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), new PreStartThread(this),0);
+
+		if (!GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE))
+			AssignManager.get().updateAvailableArenas();
 	}
 
 	public void startGame() {
 		setGameState(GameState.STARTING);
 
 		// scenario voting
-		if (config.get(MainConfig.ENABLE_SCENARIO_VOTING)) {
+		if (config.get(MainConfig.ENABLE_SCENARIO_VOTING) && GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE)) {
 			scenarioManager.countVotes();
 		}
 
@@ -262,7 +275,8 @@ public class GameManager{
 	}
 
 	public void startWatchingEndOfGame(){
-		scenarioManager.updatePrevious();
+		if (GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE))
+			scenarioManager.updatePrevious();
 		setGameState(GameState.PLAYING);
 
 		for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
@@ -316,12 +330,33 @@ public class GameManager{
 
 		Bukkit.getPluginManager().callEvent(new UhcStartedEvent());
 		statsHandler.addGameToStatistics();
+
+		for (UhcPlayer uhcPlayer : playerManager.getOnlineSpectators()) {
+			playerManager.setPlayerSpectateAtLobby(uhcPlayer);
+		}
+
+		PointManager.get().init(GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams());
+
+		if (!GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE) && AssignManager.get().assignedMatch != null) {
+			EventMatch match = AssignManager.get().assignedMatch;
+
+			AssignManager.get().callMatchStartEvent(match.getCount(), 1);
+
+			PointManager.get().getHistory().add("----------------");
+			PointManager.get().getHistory().add("Komandas:");
+			for (Map.Entry<UhcTeam, SimpleTeam> entry : AssignManager.get().assignedTeams.entrySet()) {
+				PointManager.get().getHistory().add(entry.getKey().getTeamName() + " - " + entry.getValue().getName());
+				UhcCore.getPlugin().getLogger().info(entry.getKey().getTeamName() + " - " + entry.getValue().getName());
+			}
+			PointManager.get().getHistory().add("----------------");
+		}
 	}
 
 	public void broadcastMessage(String message){
 		for(UhcPlayer player : playerManager.getPlayersList()){
 			player.sendMessage(message);
 		}
+		UhcCore.getPlugin().getLogger().info(message);
 	}
 
 	public void broadcastInfoMessage(String message){
@@ -392,6 +427,9 @@ public class GameManager{
 		for(Listener listener : listeners){
 			Bukkit.getServer().getPluginManager().registerEvents(listener, UhcCore.getPlugin());
 		}
+
+		if (!GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE))
+			Bukkit.getServer().getPluginManager().registerEvents(new MatchListeners(), UhcCore.getPlugin());
 	}
 
 	private void registerCommands(){
@@ -408,6 +446,9 @@ public class GameManager{
 		registerCommand("spectate", new SpectateCommandExecutor(this, scoreboardHandler));
 //		registerCommand("upload", new UploadCommandExecutor());
 		registerCommand("deathmatch", new DeathmatchCommandExecutor(this, deathmatchHandler));
+		registerCommand("deathmatch", new DeathmatchCommandExecutor(this, deathmatchHandler));
+		registerCommand("gotofight", new GoToFightCmd(this));
+		registerCommand("gototeam", new GoToTeamCmd(this));
 	}
 
 	private void registerCommand(String commandName, CommandExecutor executor){
@@ -421,7 +462,7 @@ public class GameManager{
 	}
 
 	public void endGame() {
-		if(gameState.equals(GameState.PLAYING) || gameState.equals(GameState.DEATHMATCH)){
+		if (gameState.equals(GameState.PLAYING) || gameState.equals(GameState.DEATHMATCH)){
 			setGameState(GameState.ENDED);
 			pvp = false;
 			gameIsEnding = true;
@@ -437,6 +478,30 @@ public class GameManager{
 			playerManager.playSoundToAll(UniversalSound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
 			playerManager.setAllPlayersEndGame();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), new StopRestartThread(),20);
+
+			// POINTS AND HISTORY
+
+			if (!GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE)) {
+				Map<UhcTeam, Integer> points = PointManager.get().getPoints();
+				List<String> history = PointManager.get().getHistory();
+
+				for (String s : history) {
+					UhcCore.getPlugin().getLogger().info(s);
+				}
+
+				EventMatch match = AssignManager.get().assignedMatch;
+				if (match != null) {
+					match.setLog(history);
+					for (Map.Entry<UhcTeam, Integer> entry : points.entrySet()) {
+						SimpleTeam simpleTeam = AssignManager.get().assignedTeams.get(entry.getKey());
+						if (simpleTeam != null) {
+							match.getTeams().put(simpleTeam, entry.getValue());
+						}
+					}
+
+					AssignManager.get().callMatchFinishedEvent(match);
+				}
+			}
 		}
 	}
 
@@ -460,5 +525,21 @@ public class GameManager{
 
 	public DeathmatchHandler getDeathmatchHandler() {
 		return deathmatchHandler;
+	}
+
+	public void setDeathmatch(boolean deathmatch) {
+		isDeathmatch = deathmatch;
+	}
+
+	public boolean isDeathmatch() {
+		return isDeathmatch;
+	}
+
+	public UUID getLastFight() {
+		return lastFight;
+	}
+
+	public void setLastFight(UUID lastFight) {
+		this.lastFight = lastFight;
 	}
 }

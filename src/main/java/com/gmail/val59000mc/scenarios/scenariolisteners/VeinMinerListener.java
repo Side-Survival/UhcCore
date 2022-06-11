@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
+import java.util.Random;
 
 public class VeinMinerListener extends ScenarioListener{
 
@@ -56,6 +57,12 @@ public class VeinMinerListener extends ScenarioListener{
         vein.process();
 
         int amount = vein.getOres() * getVeinMultiplier(oreType.get());
+
+        if (oreType.get() == OreType.LAPIS_LAZULi) {
+            Random rand = new Random();
+            amount = amount * (4 + rand.nextInt(6));
+        }
+
         ItemStack drops = new ItemStack(oreType.get().getDrop(), amount);
         Location loc = player.getLocation().getBlock().getLocation().add(.5,.5,.5);
         loc.getWorld().dropItem(loc, drops);
@@ -85,7 +92,7 @@ public class VeinMinerListener extends ScenarioListener{
         int multiplier = 1;
         if (getScenarioManager().isEnabled(Scenario.TRIPLE_ORES)) {
             multiplier *= 3;
-        } else if (oreType != OreType.GOLD && oreType != OreType.DIAMOND) {
+        } else if (oreType == OreType.IRON) {
             multiplier *= 2;
         } else if (oreType == OreType.GOLD && getScenarioManager().isEnabled(Scenario.DOUBLE_GOLD)) {
             multiplier *= 2;

@@ -72,6 +72,7 @@ public class DeathmatchHandler {
         }
 
         gameManager.setGameState(GameState.DEATHMATCH);
+        gameManager.setDeathmatch(true);
         gameManager.setPvp(false);
         gameManager.broadcastInfoMessage(Lang.GAME_START_DEATHMATCH);
         playerManager.playSoundToAll(UniversalSound.ENDERDRAGON_GROWL);

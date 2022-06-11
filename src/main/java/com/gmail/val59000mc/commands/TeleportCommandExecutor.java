@@ -11,9 +11,17 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class TeleportCommandExecutor implements CommandExecutor{
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public class TeleportCommandExecutor implements CommandExecutor, TabCompleter {
 
 	private final GameManager gameManager;
 
@@ -83,14 +91,19 @@ public class TeleportCommandExecutor implements CommandExecutor{
 		}
 
 		Player target = Bukkit.getPlayer(args[0]);
-		if(target == null){
+		if (target == null) {
 			uhcPlayer.sendMessage(Lang.COMMAND_SPECTATING_TELEPORT_ERROR);
 			return true;
 		}
 
 		UhcPlayer uhcTarget = gameManager.getPlayerManager().getUhcPlayer(target);
 
-		if(!uhcTarget.getState().equals(PlayerState.PLAYING) && !player.hasPermission("uhc-core.commands.teleport-admin")){
+		if (!uhcTarget.getState().equals(PlayerState.PLAYING) && !player.hasPermission("uhc-core.commands.teleport-admin")){
+			uhcPlayer.sendMessage(Lang.COMMAND_SPECTATING_TELEPORT_ERROR);
+			return true;
+		}
+
+		if ((uhcPlayer.getTeam() == null || !Objects.equals(uhcPlayer.getTeam(), uhcTarget.getTeam())) && !player.hasPermission("uhc-core.commands.teleport-admin")) {
 			uhcPlayer.sendMessage(Lang.COMMAND_SPECTATING_TELEPORT_ERROR);
 			return true;
 		}
@@ -100,4 +113,24 @@ public class TeleportCommandExecutor implements CommandExecutor{
 		return true;
 	}
 
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+		List<String> completions = new ArrayList<>();
+
+		if (args.length == 1) {
+			if (sender.hasPermission("uhc-core.commands.teleport-admin"))
+				return null;
+
+			Player player = (Player) sender;
+			UhcPlayer uhcPlayer = gameManager.getPlayerManager().getUhcPlayer(player);
+
+			if (uhcPlayer.getTeam() != null) {
+				for (UhcPlayer member : uhcPlayer.getTeam().getOnlinePlayingMembers()) {
+					completions.add(member.getName());
+				}
+			}
+		}
+
+		return StringUtil.copyPartialMatches(args[args.length - 1], completions, new ArrayList<>());
+	}
 }

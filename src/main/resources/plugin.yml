@@ -3,7 +3,7 @@ main: com.gmail.val59000mc.UhcCore
 version: "1.20"
 description: Automates UHC games on a dedicated server
 author: val59000mc, Mezy
-softdepend: [WorldEdit, Vault, ProtocolLib, PlaceholderAPI]
+softdepend: [WorldEdit, Vault, ProtocolLib, PlaceholderAPI, LESLMinecraftArena]
 api-version: 1.17
 commands:
   uhccore:
@@ -47,3 +47,7 @@ commands:
     description: "This command can be used to force-start the deathmatch."
     usage: /<command> start
     permission: "uhc-core.commands.deathmatch"
+  gotofight:
+    permission: "uhc-core.commands.gotofight"
+  gototeam:
+    permission: "uhc-core.commands.gototeam"

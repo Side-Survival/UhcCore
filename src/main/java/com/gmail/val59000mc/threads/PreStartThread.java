@@ -6,7 +6,6 @@ import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcTeam;
 import com.gmail.val59000mc.utils.RandomUtils;
-import com.gmail.val59000mc.utils.UniversalSound;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -66,7 +65,8 @@ public class PreStartThread implements Runnable{
 				(!pause && (remainingTime < 5 || (playersNumber >= minPlayers)))
 		){
 			if (remainingTime == timeBeforeStart+1) {
-				gameManager.broadcastInfoMessage(Lang.GAME_ENOUGH_TEAMS_READY);
+				if (gameManager.getConfig().get(MainConfig.PRACTICE_MODE))
+					gameManager.broadcastInfoMessage(Lang.GAME_ENOUGH_TEAMS_READY);
 				broadcastStart();
 			}else if (RandomUtils.isAnnounceStartTimer(remainingTime)) {
 				broadcastStart();

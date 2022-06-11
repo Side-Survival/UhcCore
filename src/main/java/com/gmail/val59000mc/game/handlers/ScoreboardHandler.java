@@ -82,14 +82,14 @@ public class ScoreboardHandler {
     }
 
     public ScoreboardType getPlayerScoreboardType(UhcPlayer uhcPlayer) {
-        if (uhcPlayer.getState().equals(PlayerState.DEAD)){
-            return ScoreboardType.SPECTATING;
-        }
-
         GameState gameState = gameManager.getGameState();
 
         if (gameState.equals(GameState.WAITING)){
             return ScoreboardType.WAITING;
+        }
+
+        if (uhcPlayer.getState().equals(PlayerState.DEAD) && uhcPlayer.getKills() <= 0) {
+            return ScoreboardType.SPECTATING;
         }
 
         if (gameState.equals(GameState.PLAYING) || gameState.equals(GameState.ENDED)){

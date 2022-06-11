@@ -62,6 +62,9 @@ public class Placeholders extends PlaceholderExpansion {
             if (spectateCount > 0)
                 online = online.substring(0, online.length() - 1) + " (" + spectateCount + " vēro);";
 
+            if (gm.getGameState() == null)
+                return "0/48;" + Lang.DISPLAY_MOTD_LOADING;
+
             switch(gm.getGameState()){
                 case ENDED:
                     return online + Lang.DISPLAY_MOTD_ENDED;

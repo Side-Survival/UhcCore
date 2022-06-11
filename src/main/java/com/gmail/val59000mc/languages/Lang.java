@@ -245,6 +245,7 @@ public class Lang{
 	public static String DEATH_MOB;
 	public static String DEATH_PROJECTILE;
 	public static String DEATH_PLAYER;
+	public static String DEATH_PLAYER_PROJECTILE;
 	public static String DEATH_SUICIDE;
 	public static String DEATH_STARVATION;
 	public static String DEATH_OTHER_CAUSE;
@@ -551,6 +552,7 @@ public class Lang{
 		DEATH_MOB = getString(lang, "death.mob", "%player% &fdied by %mob%");
 		DEATH_PROJECTILE = getString(lang, "death.projectile", "%player% &fwas shot");
 		DEATH_PLAYER = getString(lang, "death.player", "%killer% &fkilled %player%");
+		DEATH_PLAYER_PROJECTILE = getString(lang, "death.player-projectile", "%killer% &fkilled %player% with an arrow");
 		DEATH_SUICIDE = getString(lang, "death.suicide", "%player% &fdied");
 		DEATH_STARVATION = getString(lang, "death.starvation", "%player% &fdied from starvation");
 		DEATH_OTHER_CAUSE = getString(lang, "death.other-cause", "%player% &fdied");

@@ -28,12 +28,10 @@ public class DoubleOresListener extends ScenarioListener {
         ItemStack drop = null;
 
         Optional<OreType> oreType = OreType.valueOf(type);
-        System.out.println("mining!!! " + e.getPlayer() + " " + oreType + " " + oreType.isPresent());
 
         if (oreType.isPresent()) {
             int xp = oreType.get().getXpPerBlock() * 2;
             int count = oreType.get() != OreType.GOLD ? 2 : 1;
-            System.out.println("oretype = " + oreType.get());
 
             if (oreType.get() == OreType.GOLD && isEnabled(Scenario.DOUBLE_GOLD)) {
                 count *= 2;

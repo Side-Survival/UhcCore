@@ -125,7 +125,7 @@ public class UhcTeam {
 	}
 
 	public void join(UhcPlayer player) throws UhcTeamException {
-		if(isFull()){
+		if(isFull() && GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE)) {
 			player.sendPrefixedMessage(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
 			throw new UhcTeamException(Lang.TEAM_MESSAGE_FULL.replace("%player%", player.getName()).replace("%limit%", ""+ GameManager.getGameManager().getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM)));
 		}else{

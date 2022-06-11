@@ -48,7 +48,7 @@ public class ScenarioManager {
         }
 
         previousScenarios = new HashMap<>();
-        if (scenarioData.getConfigurationSection("previous") == null)
+        if (scenarioData.getConfigurationSection("previous") == null || !GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE))
             return;
 
         for (String key : scenarioData.getConfigurationSection("previous").getKeys(false)) {

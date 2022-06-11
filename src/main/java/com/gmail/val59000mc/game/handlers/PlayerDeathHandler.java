@@ -27,6 +27,7 @@ import org.bukkit.block.Lidded;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -143,11 +144,9 @@ public class PlayerDeathHandler {
 
         if (uhcPlayer.isOnline()) {
             EntityDamageEvent event = uhcPlayer.getPlayerForce().getLastDamageCause();
-            System.out.println("is event? " + (event == null));
             if (event != null) {
                 cause = event.getCause();
-                System.out.println("cause? " + cause);
-                if (cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK || cause == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) {
+                if (cause == EntityDamageEvent.DamageCause.ENTITY_ATTACK || cause == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK || cause == EntityDamageEvent.DamageCause.PROJECTILE) {
                     Entity damagerEntity = ((EntityDamageByEntityEvent) event).getDamager();
                     if (damagerEntity instanceof Player) {
                         damagerPlayer = true;
@@ -160,6 +159,17 @@ public class PlayerDeathHandler {
                                 damager = damagerEntity.getName();
                         } catch (UhcPlayerDoesNotExistException e) {
                             damager = damagerEntity.getName();
+                        }
+                    } else if (damagerEntity instanceof Projectile) {
+                        if (damagerEntity.hasMetadata("shoot-origin")) {
+                            damagerPlayer = true;
+                            damager = damagerEntity.getMetadata("shoot-origin").get(0).asString();
+
+                            try {
+                                UhcPlayer damagerUPlayer = playerManager.getUhcPlayer(damager);
+                                if (damagerUPlayer.getTeam() != null)
+                                    damager = damagerUPlayer.getTeam().getTeamColor() + damagerUPlayer.getName();
+                            } catch (UhcPlayerDoesNotExistException ignored) {}
                         }
                     } else {
                         damager = damagerEntity.getName().toLowerCase().replace("_", " ");
@@ -241,6 +251,9 @@ public class PlayerDeathHandler {
                 else
                     return Lang.DEATH_MOB.replace("%player%", player).replace("%mob%", attacker);
             case PROJECTILE:
+                if (attackerPlayer && attacker != null)
+                    return Lang.DEATH_PLAYER_PROJECTILE.replace("%player%", player).replace("%killer%", attacker);
+
                 return Lang.DEATH_PROJECTILE.replace("%player%", player);
             case SUICIDE:
                 return Lang.DEATH_SUICIDE.replace("%player%", player);

@@ -8,7 +8,10 @@ import com.gmail.val59000mc.game.PointType;
 import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.players.UhcTeam;
+import com.gmail.val59000mc.tournament.AssignManager;
+import com.gmail.val59000mc.tournament.PointManager;
 import com.gmail.val59000mc.utils.RandomUtils;
+import lv.side.objects.SimpleTeam;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,14 +25,13 @@ public class PointHandler {
     public Map<UhcTeam, Integer> points = new HashMap<>();
     public Map<UhcTeam, List<UhcTeam>> kills = new HashMap<>();
     public Map<Integer, Integer> placementPoints = new HashMap<>();
-    public List<String> history = new ArrayList<>();
     public int placement = 0;
     public int addedPlace;
     private long startTime;
 
     public void init() {
         for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
-            points.put(team, 0);
+            points.put(team, 1);
             kills.put(team, new ArrayList<>());
             placement++;
         }
@@ -46,18 +48,19 @@ public class PointHandler {
         int toAdd = 0;
         String timeNow = formatSeconds(System.currentTimeMillis() - startTime);
         GameManager gm = GameManager.getGameManager();
+        PointManager pm = PointManager.get();
 
         if (type == PointType.KILL) {
             toAdd = gm.getConfig().get(MainConfig.POINTS_PER_KILL);
 
-            history.add(
+            pm.getHistory().add(
                     "[" + timeNow + " KILL punkti] " + team.getTeamName() + " +" + toAdd
             );
 
         } else if (type == PointType.TEAM_KILL) {
             toAdd = gm.getConfig().get(MainConfig.POINTS_PER_KILL) + gm.getConfig().get(MainConfig.POINTS_BONUS);
 
-            history.add(
+            pm.getHistory().add(
                     "[" + timeNow + " TEAM_KILL punkti] " + team.getTeamName() + " +" + toAdd
             );
 
@@ -74,10 +77,11 @@ public class PointHandler {
                 if (iUhcTeam != team && aliveCount > 0)
                     teamsAlive++;
 
+                pm.getPoints().put(iUhcTeam, pm.getPoints().getOrDefault(iUhcTeam, 0) + toAdd);
                 addPoints(iUhcTeam, toAdd);
 
                 if (iUhcTeam == team) {
-                    history.add(
+                    pm.getHistory().add(
                             "[" + timeNow + " PLACEMENT punkti] " + team.getTeamName() + " +" + placementPoints.get(placement)
                     );
                 }
@@ -85,16 +89,17 @@ public class PointHandler {
                 placement--;
             }
 
-//            if (!Config.practiceMode && AssignManager.get().assignedUhcTeams.containsKey(game)) {
-//                UhcTeam simpleUhcTeam = AssignManager.get().assignedUhcTeams.get(game).get(team);
-//                if (UhcTeam != null)
-//                    AssignManager.get().assignedMatches.get(game).getAliveMs().put(UhcTeam.getId(), (int) (System.currentTimeMillis() - pm.getStartTime(game)));
-//            }
+            if (!GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE)) {
+                SimpleTeam simpleTeam = AssignManager.get().assignedTeams.get(team);
+                if (simpleTeam != null)
+                    AssignManager.get().assignedMatch.getAliveMs().put(simpleTeam.getId(), (int) (System.currentTimeMillis() - pm.getStartTime()));
+            }
 
             placement = teamsAlive;
             return;
         }
 
+        pm.getPoints().put(team, pm.getPoints().getOrDefault(team, 0) + toAdd);
         addPoints(team, toAdd);
     }
 
@@ -125,7 +130,7 @@ public class PointHandler {
         for (Map.Entry<UhcTeam, Integer> entry : points.entrySet()) {
             if (entry.getValue() == 0 && !practiceMode && !points.containsKey(entry.getKey()))
                 continue;
-            result.add(getTeamPointsFormatted(entry.getKey(), i, entry.getValue(), !practiceMode));
+            result.add(getAdvTeamPointsFormatted(entry.getKey(), i, entry.getValue(), !practiceMode));
             i++;
         }
 
@@ -183,16 +188,16 @@ public class PointHandler {
         return -1;
     }
 
-//    private String getAdvTeamPointsFormatted(UhcTeam team, int place, int points, boolean added) {
-//        if (team == null)
-//            return "";
-//
-//        return ChatColor.translateAlternateColorCodes('&', GameManager.getGameManager().getScoreboardManager().getScoreboardLayout().getPointEntry()
-//                .replace("%place%", String.valueOf(place))
-//                .replace("%team%", team.getFullPrefix())
-//                .replace("%points%", String.valueOf(points)) + (added ? " &7&o" + AssignManager.get().assignedUhcTeams.get(game).get(team).getName() : "")
-//        );
-//    }
+    private String getAdvTeamPointsFormatted(UhcTeam team, int place, int points, boolean added) {
+        if (team == null)
+            return "";
+
+        return RandomUtils.color(GameManager.getGameManager().getScoreboardManager().getScoreboardLayout().getPointEntry()
+                .replace("%place%", String.valueOf(place))
+                .replace("%team%", team.getFullPrefix())
+                .replace("%points%", String.valueOf(points)) + (added ? " &7&o" + AssignManager.get().assignedTeams.get(team).getName() : "")
+        );
+    }
 
     private String getTeamPointsFormatted(UhcTeam team, int place, int points, boolean isPlayerTeam) {
         if (team == null)

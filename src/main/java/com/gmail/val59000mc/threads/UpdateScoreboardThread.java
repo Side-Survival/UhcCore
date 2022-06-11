@@ -16,16 +16,16 @@ public class UpdateScoreboardThread implements Runnable {
 	private static final long UPDATE_DELAY = 20L;
 	private final ScoreboardHandler scoreboardHandler;
 	private ScoreboardType scoreboardType;
-	private boolean practice;
 
 	public UpdateScoreboardThread(ScoreboardHandler scoreboardHandler) {
 		this.scoreboardHandler = scoreboardHandler;
-		this.practice = GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE);
 	}
 
 	@Override
 	public void run() {
 		TextComponent scenarioMessage = new TextComponent(Lang.SCENARIO_VOTE);
+
+		boolean practice = GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE);
 
 		for (UhcPlayer uhcPlayer : GameManager.getGameManager().getPlayerManager().getPlayersList()) {
 			if (!uhcPlayer.isOnline())
@@ -42,6 +42,9 @@ public class UpdateScoreboardThread implements Runnable {
 						scenarioMessage
 				);
 			}
+
+			if (uhcPlayer.isDeath())
+				uhcPlayer.getPlayerForce().setFireTicks(0);
 		}
 
 		Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(),this, UPDATE_DELAY);

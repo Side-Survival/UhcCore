@@ -71,6 +71,8 @@ public class PlayerChatListener implements Listener{
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				if (p.hasPermission("uhccore.chat.all") && !event.getRecipients().contains(p))
 					p.sendMessage(event.getFormat().replace("%2$s", event.getMessage()));
+				else if (p.hasPermission("uhccore.chat.hide"))
+					event.getRecipients().remove(p);
 			}
 
 			if (uhcPlayer.getTeam() != null && !isPublic && !tipReceived.contains(player.getUniqueId()) && !uhcPlayer.isDeath()) {

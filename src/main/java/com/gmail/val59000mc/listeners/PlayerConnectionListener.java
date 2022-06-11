@@ -71,6 +71,9 @@ public class PlayerConnectionListener implements Listener{
 			} catch (UhcPlayerDoesNotExistException ignored) {}
 		}
 
+		if (event.getPlayer().hasPermission("uhc-core.global-spectate"))
+			joinMessage = "";
+
 		event.setJoinMessage(joinMessage);
 		Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), () -> playerManager.playerJoinsTheGame(event.getPlayer()), 1);
 	}
@@ -85,6 +88,9 @@ public class PlayerConnectionListener implements Listener{
 					quitMessage = "";
 			} catch (UhcPlayerDoesNotExistException ignored) {}
 		}
+
+		if (event.getPlayer().hasPermission("uhc-core.global-spectate"))
+			quitMessage = "";
 
 		event.setQuitMessage(quitMessage);
 		if(gameManager.getGameState().equals(GameState.WAITING) || gameManager.getGameState().equals(GameState.STARTING)){

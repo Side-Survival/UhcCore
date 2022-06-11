@@ -1,5 +1,6 @@
 package com.gmail.val59000mc.listeners;
 
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.customitems.*;
@@ -21,16 +22,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -141,7 +141,7 @@ public class ItemsListener implements Listener {
 			case SPECTATOR_SPAWN:
 				if (uhcPlayer.isDeath()) {
 					Location loc;
-					if (gameManager.getGameState() == GameState.DEATHMATCH || gameManager.getGameState() == GameState.ENDED)
+					if (gameManager.getGameState() == GameState.DEATHMATCH || (gameManager.getGameState() == GameState.ENDED && gameManager.isDeathmatch()))
 						loc = Bukkit.getWorld("uhc_arena").getSpawnLocation();
 					else
 						loc = RandomUtils.getSafePoint(gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
@@ -257,5 +257,18 @@ public class ItemsListener implements Listener {
 			if (((Player) event.getAttacker()).getGameMode() != GameMode.SURVIVAL)
 				event.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void onBowShoot(EntityShootBowEvent event) {
+		if (event.getEntity() instanceof Player) {
+			event.getProjectile().setMetadata("shoot-origin", new FixedMetadataValue(UhcCore.getPlugin(), event.getEntity().getName()));
+		}
+	}
+
+	@EventHandler
+	public void onExpPickup(PlayerPickupExperienceEvent event) {
+		if (event.getPlayer().getGameMode() == GameMode.ADVENTURE)
+			event.setCancelled(true);
 	}
 }

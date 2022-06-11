@@ -17,6 +17,7 @@ import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.threads.*;
+import com.gmail.val59000mc.tournament.AssignManager;
 import com.gmail.val59000mc.utils.*;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -26,6 +27,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -214,6 +216,9 @@ public class PlayerManager {
 		GameManager gm = GameManager.getGameManager();
 		scoreboardHandler.setUpPlayerScoreboard(uhcPlayer, player);
 
+		if (!GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE))
+			AssignManager.get().playerJoin(player);
+
 		switch(uhcPlayer.getState()){
 			case WAITING:
 				setPlayerWaitsAtLobby(uhcPlayer);
@@ -221,7 +226,9 @@ public class PlayerManager {
 				if(gm.getConfig().get(MainConfig.AUTO_ASSIGN_PLAYER_TO_TEAM)){
 					autoAssignPlayerToTeam(uhcPlayer);
 				}
-				uhcPlayer.sendPrefixedMessage(Lang.PLAYERS_WELCOME_NEW);
+
+				if (GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE))
+					uhcPlayer.sendPrefixedMessage(Lang.PLAYERS_WELCOME_NEW);
 				break;
 			case PLAYING:
 				setPlayerStartPlaying(uhcPlayer);
@@ -265,8 +272,9 @@ public class PlayerManager {
 
 				try {
 					for (UhcPlayer uPlayer : getOnlinePlayers()) {
-						if (!uPlayer.isPlaying())
+						if (!uPlayer.isPlaying()) {
 							player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
+						}
 					}
 				} catch (UhcPlayerNotOnlineException ignored) {}
 
@@ -310,7 +318,23 @@ public class PlayerManager {
 			player.setExp(0);
 			player.setLevel(0);
 
-			UhcItems.giveLobbyItemsTo(player);
+			if (player.hasPermission("uhc-core.global-spectate")) {
+				player.setGameMode(GameMode.SPECTATOR);
+				uhcPlayer.setState(PlayerState.DEAD);
+				for (Player oPlayer : Bukkit.getOnlinePlayers()) {
+					oPlayer.hidePlayer(UhcCore.getPlugin(), player);
+				}
+			}
+			if (gm.getGameState() == GameState.WAITING) {
+				for (Player oPlayer : Bukkit.getOnlinePlayers()) {
+					if (oPlayer.getGameMode() == GameMode.SPECTATOR) {
+						player.hidePlayer(UhcCore.getPlugin(), oPlayer);
+					}
+				}
+			}
+
+			if (GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE))
+				UhcItems.giveLobbyItemsTo(player);
 		} catch (UhcPlayerNotOnlineException e) {
 			// Do nothing because WAITING is a safe state
 		}
@@ -379,18 +403,23 @@ public class PlayerManager {
 			player.setGameMode(GameMode.ADVENTURE);
 			player.setAllowFlight(true);
 			player.setFlying(true);
+			player.setExp(0);
+			player.setLevel(0);
 			player.getEquipment().clear();
 			clearPlayerInventory(player);
 
 			for (UhcPlayer uPlayer : getOnlinePlayers()) {
 				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
-				if (!uPlayer.isPlaying())
+				if (!uPlayer.isPlaying()) {
 					player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
+				}
 			}
 
-			UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
-			if (player.hasPermission("uhc-core.spectator-players"))
-				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
+			if (!player.hasPermission("uhc-core.hide-items")) {
+				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
+				if (player.hasPermission("uhc-core.spectator-players"))
+					UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
+			}
 		} catch (UhcPlayerNotOnlineException ignored) {}
 	}
 
@@ -401,7 +430,7 @@ public class PlayerManager {
 		if (uhcPlayer.getTeam() != null)
 			uhcPlayer.sendPrefixedMessage(Lang.PLAYERS_WELCOME_BACK_SPECTATING);
 
-		if(gm.getConfig().get(MainConfig.SPECTATING_TELEPORT)) {
+		if(gm.getConfig().get(MainConfig.SPECTATING_TELEPORT) && uhcPlayer.getTeam() != null && uhcPlayer.getTeam().getOnlinePlayingMembers().size() > 0) {
 			uhcPlayer.sendPrefixedMessage(Lang.COMMAND_SPECTATING_HELP);
 		}
 
@@ -414,11 +443,13 @@ public class PlayerManager {
 
 			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 
-			UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
-			if (player.hasPermission("uhc-core.spectator-players"))
-				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
+			if (!player.hasPermission("uhc-core.hide-items")) {
+				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
+				if (player.hasPermission("uhc-core.spectator-players"))
+					UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
+			}
 
-			if(gm.getGameState().equals(GameState.DEATHMATCH) || gm.getGameState().equals(GameState.ENDED)) {
+			if(gm.getGameState().equals(GameState.DEATHMATCH) || (gm.getGameState().equals(GameState.ENDED) && gm.isDeathmatch())) {
 				player.teleport(Bukkit.getWorld("uhc_arena").getSpawnLocation());
 			}else{
 				Location loc = RandomUtils.getSafePoint(gm.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
@@ -429,8 +460,9 @@ public class PlayerManager {
 
 			for (UhcPlayer uPlayer : getOnlinePlayers()) {
 				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
-				if (!uPlayer.isPlaying())
+				if (!uPlayer.isPlaying()) {
 					player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
+				}
 			}
 
 		} catch (UhcPlayerNotOnlineException ignored) {}
@@ -444,13 +476,13 @@ public class PlayerManager {
 
 		if (!winners.isEmpty()) {
 			UhcPlayer player1 = winners.get(0);
-			gm.broadcastInfoMessage(Lang.PLAYERS_WON_TEAM.replace("%team%", player1.getTeam().getTeamName()));
+//			gm.broadcastInfoMessage(Lang.PLAYERS_WON_TEAM.replace("%team%", player1.getTeam().getTeamName()));
 			gm.getPointHandler().setPlacement(1);
 			gm.getPointHandler().addGamePoints(player1.getTeam(), PointType.PLACEMENT);
 		}
 
 		// send to bungee
-		if(cfg.get(MainConfig.ENABLE_BUNGEE_SUPPORT) && cfg.get(MainConfig.TIME_BEFORE_SEND_BUNGEE_AFTER_END) >= 0){
+		if (cfg.get(MainConfig.ENABLE_BUNGEE_SUPPORT) && cfg.get(MainConfig.TIME_BEFORE_SEND_BUNGEE_AFTER_END) >= 0){
 			for(UhcPlayer player : getPlayersList()){
 				Bukkit.getScheduler().runTaskAsynchronously(UhcCore.getPlugin(), new TimeBeforeSendBungeeThread(this, player, cfg.get(MainConfig.TIME_BEFORE_SEND_BUNGEE_AFTER_END)));
 			}
@@ -500,7 +532,7 @@ public class PlayerManager {
 			List<UhcPlayer> onlinePlayers = new ArrayList<>(getPlayersList());
 			for (UhcPlayer uhcPlayer : onlinePlayers) {
 				// If player is spectating don't assign player.
-				if (uhcPlayer.getState() == PlayerState.DEAD){
+				if (uhcPlayer.getState() == PlayerState.DEAD) {
 					continue;
 				}
 
@@ -513,7 +545,7 @@ public class PlayerManager {
 		gm.getPointHandler().init();
 
 		List<Location> locations = new ArrayList<>();
-		List<UhcTeam> notEmptyTeams = GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams();
+		List<UhcTeam> notEmptyTeams = gm.getTeamManager().getNotEmptyUhcTeams();
 		double minDistanceBetween = (maxDistance * 2) / (Math.sqrt(notEmptyTeams.size()) + 1);
 		if (minDistanceBetween > 30)
 			minDistanceBetween -= 30;
@@ -564,7 +596,7 @@ public class PlayerManager {
 			if (!team.isOnline())
 				continue;
 
-			Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), new TeleportPlayersThread(GameManager.getGameManager(), team), delayTeleportByTeam);
+			Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), new TeleportPlayersThread(gm, team), delayTeleportByTeam);
 			Bukkit.getLogger().info("[UhcCore] Teleporting a team in "+delayTeleportByTeam+" ticks");
 			delayTeleportByTeam += 10; // ticks
 		}
@@ -760,7 +792,7 @@ public class PlayerManager {
 		if (uhcPlayer.getDeathLocation() == null) {
 			GameManager gm = GameManager.getGameManager();
 			Location loc;
-			if (gm.getGameState() == GameState.DEATHMATCH || gm.getGameState() == GameState.ENDED)
+			if (gm.getGameState() == GameState.DEATHMATCH || (gm.getGameState() == GameState.ENDED && gm.isDeathmatch()))
 				loc = Bukkit.getWorld("uhc_arena").getSpawnLocation();
 			else
 				loc = RandomUtils.getSafePoint(gm.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());

@@ -49,6 +49,7 @@ public class WorldBorderThread implements Runnable{
 				Lang.GAME_BORDER_START_SHRINKING,
 				5, 60, 5
 		);
+		gameManager.getPlayerManager().playSoundAll(Sound.ENTITY_VILLAGER_CELEBRATE, 1f, 1f);
 		
 		World overworld = gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL);
 		WorldBorder overworldBorder = overworld.getWorldBorder();

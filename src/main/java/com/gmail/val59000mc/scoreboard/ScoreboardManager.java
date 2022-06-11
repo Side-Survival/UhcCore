@@ -48,7 +48,14 @@ public class ScoreboardManager {
             int minPlayers = cfg.get(MainConfig.MIN_PLAYERS_TO_START) - Bukkit.getOnlinePlayers().size();
             if (minPlayers < 0)
                 minPlayers = 0;
-            returnString = returnString.replace("%online%", String.valueOf(Bukkit.getOnlinePlayers().size())).replace("%needed%", minPlayers < 1000 ? minPlayers + " " : "");
+
+            int onlinePlayers = 0;
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if (onlinePlayer.getGameMode() != GameMode.SPECTATOR)
+                    onlinePlayers++;
+            }
+
+            returnString = returnString.replace("%online%", String.valueOf(onlinePlayers)).replace("%needed%", minPlayers < 1000 ? minPlayers + " " : "");
         }
 
         if (returnString.contains("%kills%")){

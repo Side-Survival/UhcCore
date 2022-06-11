@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
+import java.util.Random;
 
 public class TripleOresListener extends ScenarioListener {
 
@@ -32,6 +33,11 @@ public class TripleOresListener extends ScenarioListener {
         if (oreType.isPresent()) {
             int xp = oreType.get().getXpPerBlock() * 3;
             int count = 3;
+
+            if (oreType.get() == OreType.LAPIS_LAZULi) {
+                Random rand = new Random();
+                count = (4 + rand.nextInt(6)) * 3;
+            }
 
             drop = new ItemStack(oreType.get().getDrop(), count);
             UhcItems.spawnExtraXp(loc,xp);
