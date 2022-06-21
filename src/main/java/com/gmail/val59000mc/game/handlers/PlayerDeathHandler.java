@@ -7,6 +7,7 @@ import com.gmail.val59000mc.events.UhcPlayerKillEvent;
 import com.gmail.val59000mc.exceptions.UhcPlayerDoesNotExistException;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.game.PointType;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.PlayerManager;
@@ -79,6 +80,7 @@ public class PlayerDeathHandler {
     }
 
     public void handleOfflinePlayerDeath(UhcPlayer uhcPlayer, @Nullable Location location, @Nullable Player killer) {
+        System.out.println("handling offline death for " + uhcPlayer.getName());
         Set<ItemStack> modifiedDrops = handlePlayerDeath(uhcPlayer, location, new HashSet<>(uhcPlayer.getStoredItems()), killer);
         List<ItemStack> resultDrops = new ArrayList<>(modifiedDrops);
         resultDrops = uhcPlayer.getStoredArmorOffhand(resultDrops);
@@ -115,7 +117,8 @@ public class PlayerDeathHandler {
                     break;
                 }
             }
-            gameManager.getPointHandler().addGamePoints(uhcKiller.getTeam(), alive ? PointType.KILL : PointType.TEAM_KILL);
+            if (gameManager.getGameState() != GameState.ENDED)
+                gameManager.getPointHandler().addGamePoints(uhcKiller.getTeam(), alive ? PointType.KILL : PointType.TEAM_KILL);
         }
 
         // Drop the team inventory if the last player on a team was killed
@@ -203,7 +206,7 @@ public class PlayerDeathHandler {
                 break;
             }
         }
-        if (!alive) {
+        if (!alive && gameManager.getGameState() != GameState.ENDED) {
             gameManager.getPointHandler().addGamePoints(uhcPlayer.getTeam(), PointType.PLACEMENT);
         }
 

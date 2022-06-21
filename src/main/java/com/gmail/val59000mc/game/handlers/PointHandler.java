@@ -99,6 +99,10 @@ public class PointHandler {
             return;
         }
 
+        pm.getHistory().add(
+                "[" + timeNow + " end punkti] " + team.getTeamName() + " +" + toAdd
+        );
+
         pm.getPoints().put(team, pm.getPoints().getOrDefault(team, 0) + toAdd);
         addPoints(team, toAdd);
     }
