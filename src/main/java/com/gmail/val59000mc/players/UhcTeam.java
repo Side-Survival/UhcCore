@@ -36,7 +36,7 @@ public class UhcTeam {
 		this.prefix = "#" + teamNumber;
 		this.color = color;
 		this.teamColor = RandomUtils.color(String.format("&#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
-		teamInventory = Bukkit.createInventory(null, 27, ChatColor.BOLD + "Komandas lāde");
+		teamInventory = Bukkit.createInventory(null, 27, ChatColor.BOLD + "Team Inventory");
 	}
 
 	public int getTeamNumber() {

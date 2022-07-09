@@ -80,6 +80,7 @@ public class GameManager{
 	private long remainingTime;
 	private long elapsedTime;
 	private int startPlayerAmount = 0;
+	private int maxBorderSize;
 
 	private UUID lastFight = null;
 
@@ -266,17 +267,17 @@ public class GameManager{
 			scenarioManager.countVotes();
 		}
 
-		int borderSize = config.get(MainConfig.BORDER_START_SIZE) * 2;
+		maxBorderSize = config.get(MainConfig.BORDER_START_SIZE) * 2;
 		int teamCount = getTeamManager().getNotEmptyUhcTeams().size();
 		if (teamCount < 36) {
 			if (teamCount <= 18)
-				borderSize = borderSize / 3;
+				maxBorderSize = maxBorderSize / 3;
 			else
-				borderSize = borderSize / 3 * 2;
+				maxBorderSize = maxBorderSize / 3 * 2;
 		}
 
 		World overworld = getMapLoader().getUhcWorld(Environment.NORMAL);
-		getMapLoader().setBorderSize(overworld, 0, 0, borderSize);
+		getMapLoader().setBorderSize(overworld, 0, 0, maxBorderSize);
 
 		Bukkit.getPluginManager().callEvent(new UhcStartingEvent());
 
@@ -558,5 +559,9 @@ public class GameManager{
 
 	public int getStartPlayerAmount() {
 		return startPlayerAmount;
+	}
+
+	public int getMaxBorderSize() {
+		return maxBorderSize;
 	}
 }
