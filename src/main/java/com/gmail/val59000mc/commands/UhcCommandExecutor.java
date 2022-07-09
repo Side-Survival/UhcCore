@@ -1,13 +1,17 @@
 package com.gmail.val59000mc.commands;
 
 import com.gmail.val59000mc.UhcCore;
+import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
+import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.PlayerManager;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.players.UhcTeam;
 import com.gmail.val59000mc.threads.PreStartThread;
+import com.gmail.val59000mc.utils.RandomUtils;
+import com.gmail.val59000mc.utils.color.ColorUtils;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,6 +22,7 @@ import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 
@@ -49,8 +54,8 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 		}
 
 		// debug commands
-		if (!sender.hasPermission("uhc-core.commands.debug")){
-			sender.sendMessage(ChatColor.RED + "You don't have the permission to use UHC-Core debug commands");
+		if (!sender.hasPermission("uhc-core.commands.admin")){
+			sender.sendMessage(ChatColor.RED + "You don't have the permission to use UHC-Core admin commands");
 			return true;
 		}
 
@@ -67,7 +72,7 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 					try{
 						GameState gameState = GameState.valueOf(args[1].toUpperCase());
 						gameManager.setGameState(gameState);
-						sender.sendMessage("Changed gamestate to: " + gameState.toString());
+						sender.sendMessage("Changed gamestate to: " + gameState);
 						return true;
 					}catch(IllegalArgumentException e){
 						sender.sendMessage(args[1]+" is not a valid game state");
@@ -145,6 +150,49 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 			case "stop":
 				gameManager.endGame();
 				return true;
+
+			case "teamsize":
+				if (args.length == 2) {
+					try {
+						int newSize = Integer.parseInt(args[1]);
+						gameManager.getConfig().setTeamSize(newSize);
+						sender.sendMessage("Changed team size to " + newSize + " members!");
+					} catch (NumberFormatException e) {
+						sender.sendMessage("Invalid number!");
+					}
+				} else {
+					sender.sendMessage("Current team size: " + gameManager.getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM));
+				}
+				return true;
+
+			case "teamamount":
+				if (args.length == 2) {
+					try {
+						int newAmount = Integer.parseInt(args[1]);
+						gameManager.getConfig().setTeamAmount(newAmount);
+						sender.sendMessage("Changed total team amount to " + newAmount + " teams!");
+					} catch (NumberFormatException e) {
+						sender.sendMessage("Invalid number!");
+					}
+				} else {
+					sender.sendMessage("Current total team amount: " + gameManager.getConfig().get(MainConfig.TEAM_AMOUNT));
+				}
+				return true;
+
+			case "test":
+				try {
+					int amount = Integer.parseInt(args[1]);
+					List<java.awt.Color> colors = ColorUtils.generateVisuallyDistinctColors(amount, .8f, .3f);
+
+					for (java.awt.Color color : colors) {
+						String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+						sender.sendMessage(RandomUtils.color("&" + hex + "Color (" + hex + ")"));
+					}
+				} catch (NumberFormatException e) {
+					sender.sendMessage("Invalid number!");
+				}
+
+				return true;
 		}
 
 		sender.sendMessage("Unknown sub command " + args[0]);
@@ -183,7 +231,9 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 		if (args.length == 1) {
 			if (sender.hasPermission("uhc-core.commands.reload"))
 				completions.add("reload");
-			if (sender.hasPermission("uhc-core.commands.debug")) {
+			if (sender.hasPermission("uhc-core.commands.admin")) {
+				completions.add("teamsize");
+				completions.add("teamamount");
 				completions.add("gamestate");
 				completions.add("playerstate");
 				completions.add("pvp");
@@ -197,5 +247,44 @@ public class UhcCommandExecutor implements CommandExecutor, TabCompleter {
 		}
 
 		return StringUtil.copyPartialMatches(args[args.length - 1], completions, new ArrayList<>());
+	}
+
+	public static Color hslColor(float h, float s, float l) {
+		float q, p, r, g, b;
+
+		if (s == 0) {
+			r = g = b = l; // achromatic
+		} else {
+			q = l < 0.5 ? (l * (1 + s)) : (l + s - l * s);
+			p = 2 * l - q;
+			r = hue2rgb(p, q, h + 1.0f / 3);
+			g = hue2rgb(p, q, h);
+			b = hue2rgb(p, q, h - 1.0f / 3);
+		}
+		return Color.fromRGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+	}
+
+	private static float hue2rgb(float p, float q, float h) {
+		if (h < 0) {
+			h += 1;
+		}
+
+		if (h > 1) {
+			h -= 1;
+		}
+
+		if (6 * h < 1) {
+			return p + ((q - p) * 6 * h);
+		}
+
+		if (2 * h < 1) {
+			return q;
+		}
+
+		if (3 * h < 2) {
+			return p + ((q - p) * 6 * ((2.0f / 3.0f) - h));
+		}
+
+		return p;
 	}
 }

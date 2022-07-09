@@ -9,8 +9,11 @@ minimal-ready-teams-to-start: 2
 #Choose the minimum number of players connected  to start the countdown when team are ready (in combination with the two above options)
 min-players-to-start: 20
 
-#Choose how much players can be in the same team, set it to 1 to play a game with no teams
+#[DEFAULT]Choose how much players can be in the same team, set it to 1 to play a game with no teams
 max-players-per-team: 2
+
+#[DEFAULT]Choose team amount
+team-amount: 48
 
 #If true every team will get a random team color (This color may be changed in the team color selector).
 #When disabled enemies will be red, team members green.

@@ -1,15 +1,19 @@
 package com.gmail.val59000mc.configuration;
 
+import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.options.*;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.gui.TeamGUI;
 import com.gmail.val59000mc.scenarios.Scenario;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
 import com.gmail.val59000mc.utils.CompareUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.EntityType;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -21,6 +25,7 @@ public class MainConfig extends YamlFile {
 	public static final BasicOption<Integer> MINIMAL_READY_TEAMS_TO_START = new BasicOption<>("minimal-ready-teams-to-start",2);
 	public static final BasicOption<Integer> MIN_PLAYERS_TO_START = new BasicOption<>("min-players-to-start",20);
 	public static final BasicOption<Integer> MAX_PLAYERS_PER_TEAM = new BasicOption<>("max-players-per-team",2);
+	public static final BasicOption<Integer> TEAM_AMOUNT = new BasicOption<>("team-amount",48);
 	public static final BasicOption<Boolean> TEAM_COLORS = new BasicOption<>("use-team-colors",true);
 	public static final BasicOption<Boolean> CHANGE_DISPLAY_NAMES = new BasicOption<>("change-display-names",false);
 	public static final BasicOption<Integer> TIME_BEFORE_START_WHEN_READY = new BasicOption<>("time-to-start-when-ready",15);
@@ -285,4 +290,24 @@ public class MainConfig extends YamlFile {
 		return options;
 	}
 
+	public void setTeamSize(int newSize) {
+		set("max-players-per-team", newSize);
+
+		try {
+			saveWithComments();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void setTeamAmount(int newAmount) {
+		set("team-amount", newAmount);
+		GameManager.getGameManager().getTeamManager().update();
+
+		try {
+			saveWithComments();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
 }

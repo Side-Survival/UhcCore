@@ -1,8 +1,12 @@
 package com.gmail.val59000mc.players;
 
+import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.exceptions.UhcTeamException;
+import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.gui.TeamGUI;
 import com.gmail.val59000mc.languages.Lang;
+import com.gmail.val59000mc.utils.color.ColorUtils;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -11,17 +15,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TeamManager{
+public class TeamManager {
 
+    private final GameManager gameManager = GameManager.getGameManager();
     private Map<Integer, UhcTeam> teams = new HashMap<>();
     private TeamGUI teamGUI;
 
     public void init() {
-        for (int i = 1; i < 25; i++) {
-            teams.put(i, new UhcTeam(i, Lang.TEAM_NAMES.get(i)));
-        }
         teamGUI = new TeamGUI();
-        teamGUI.load();
+        update();
+    }
+
+    public void update() {
+        teams.clear();
+        int teamAmount = gameManager.getConfig().get(MainConfig.TEAM_AMOUNT);
+        teamGUI.load(teamAmount);
+
+        List<java.awt.Color> colors = ColorUtils.generateVisuallyDistinctColors(teamAmount, .8f, .3f);
+
+        for (int i = 1; i <= teamAmount; i++) {
+            teams.put(i, new UhcTeam(i, Color.fromRGB(colors.get(i - 1).getRed(), colors.get(i - 1).getGreen(), colors.get(i - 1).getBlue())));
+        }
+        TeamGUI.updateColorMap();
     }
 
     public List<UhcTeam> getPlayingUhcTeams(){

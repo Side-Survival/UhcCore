@@ -26,6 +26,7 @@
 #  %scenarios% = The active scenarios.
 # Only on game waiting:
 #  %online% = Show number of players.
+#  %max% = Show number of max possible players.
 #  %needed% = Show number of needed players to start the game.
 # On game started or waiting:
 #  %teamColor% = The color of the team on tab. (Only a color so you need to put text behind it inorder for it to show.)

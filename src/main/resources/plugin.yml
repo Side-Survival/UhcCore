@@ -7,12 +7,17 @@ softdepend: [WorldEdit, Vault, ProtocolLib, PlaceholderAPI, LESLMinecraftArena]
 api-version: 1.17
 commands:
   uhccore:
+    aliases: [uhc]
     description: "Type '/uhccore help' to see a list of commands"
     usage: "/uhccore <sub-command> (Debug command only!)"
   teleport:
     description: "Type '/teleport <player>' to teleport to your teammates while spectating"
     usage: "/teleport <player>"
     aliases: [tp]
+  autostart:
+    description: "This command is used to schedule starting of the game"
+    usage: /<command>
+    permission: "uhc-core.commands.start"
   start:
     description: "This command is used to toggle force starting of the game"
     usage: /<command>

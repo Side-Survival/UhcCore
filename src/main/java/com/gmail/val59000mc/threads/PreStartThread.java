@@ -10,11 +10,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
 import java.util.List;
 
 public class PreStartThread implements Runnable{
 
-	private static PreStartThread instance;
+	private static PreStartThread instance = null;
 
 	private final GameManager gameManager;
 	private final int timeBeforeStart;
@@ -43,6 +44,18 @@ public class PreStartThread implements Runnable{
 	public static String toggleForce(){
 		instance.force = !instance.force;
 		return "pause:"+instance.pause+"  "+"force:"+instance.force;
+	}
+
+	public static void startUntil(long startTime) {
+		instance.force = true;
+		instance.remainingTime = (int) (startTime - Instant.now().getEpochSecond());
+	}
+
+	public static int getRemainingTime() {
+		if (instance == null)
+			return -1;
+
+		return instance.remainingTime;
 	}
 	
 	@Override
@@ -80,9 +93,11 @@ public class PreStartThread implements Runnable{
 					onlinePlayer.setLevel(0);
 				}
 			}
-			else{
-				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-					onlinePlayer.setLevel(remainingTime + 1);
+			else {
+				if (remainingTime < 60) {
+					for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+						onlinePlayer.setLevel(remainingTime + 1);
+					}
 				}
 				Bukkit.getScheduler().runTaskLater(UhcCore.getPlugin(), this, 20);
 			}

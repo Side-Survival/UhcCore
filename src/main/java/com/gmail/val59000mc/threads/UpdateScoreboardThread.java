@@ -4,12 +4,15 @@ import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
+import com.gmail.val59000mc.gui.ScenarioVoteGUI;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.scoreboard.ScoreboardType;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 
 public class UpdateScoreboardThread implements Runnable {
 
@@ -36,8 +39,9 @@ public class UpdateScoreboardThread implements Runnable {
 				scoreboardType = newType;
 
 			scoreboardHandler.updatePlayerSidebar(uhcPlayer, scoreboardType);
-			if (practice && scoreboardType == ScoreboardType.WAITING) {
-				uhcPlayer.getPlayerForce().spigot().sendMessage(
+			Player player = uhcPlayer.getPlayerForce();
+			if (practice && scoreboardType == ScoreboardType.WAITING && player.getGameMode() == GameMode.ADVENTURE && !ScenarioVoteGUI.hasVoted.contains(uhcPlayer.getUuid())) {
+				player.spigot().sendMessage(
 						ChatMessageType.ACTION_BAR,
 						scenarioMessage
 				);

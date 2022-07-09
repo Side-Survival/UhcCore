@@ -31,6 +31,7 @@ public class ScenarioVoteGUI implements InventoryProvider {
     private SmartInventory inventory;
     private static long updated = System.currentTimeMillis();
     private long localUpdated = System.currentTimeMillis();
+    public static List<UUID> hasVoted = new ArrayList<>();
 
     public ScenarioVoteGUI() {
         this.plugin = UhcCore.getPlugin();
@@ -107,6 +108,7 @@ public class ScenarioVoteGUI implements InventoryProvider {
                     }
                     uhcPlayer.getScenarioVotes().add(scenario);
                     updated = System.currentTimeMillis();
+                    hasVoted.add(uhcPlayer.getUuid());
                 }
             }));
         }
@@ -174,6 +176,7 @@ public class ScenarioVoteGUI implements InventoryProvider {
                     }
                     uhcPlayer.getScenarioVotes().add(scenario);
                     updated = System.currentTimeMillis();
+                    hasVoted.add(uhcPlayer.getUuid());
                 }
             }));
             i++;

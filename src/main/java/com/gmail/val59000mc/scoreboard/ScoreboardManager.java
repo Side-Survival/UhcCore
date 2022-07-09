@@ -7,6 +7,7 @@ import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
 import com.gmail.val59000mc.players.*;
 import com.gmail.val59000mc.scoreboard.placeholders.TimersPlaceholder;
+import com.gmail.val59000mc.threads.PreStartThread;
 import com.gmail.val59000mc.utils.TimeUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -55,7 +56,14 @@ public class ScoreboardManager {
                     onlinePlayers++;
             }
 
-            returnString = returnString.replace("%online%", String.valueOf(onlinePlayers)).replace("%needed%", minPlayers < 1000 ? minPlayers + " " : "");
+            int maxPlayers = cfg.get(MainConfig.MAX_PLAYERS_PER_TEAM) * cfg.get(MainConfig.TEAM_AMOUNT);
+            int startingIn = PreStartThread.getRemainingTime();
+
+            returnString = returnString
+                    .replace("%online%", String.valueOf(onlinePlayers))
+                    .replace("%max%", String.valueOf(maxPlayers))
+                    .replace("%starting-in%", startingIn >= 0 ? TimeUtils.getFormattedTime(startingIn) : "?")
+                    .replace("%needed%", minPlayers < 1000 ? minPlayers + " " : "");
         }
 
         if (returnString.contains("%kills%")){
@@ -128,6 +136,10 @@ public class ScoreboardManager {
 
         if (returnString.contains("%alive%")){
             returnString = returnString.replace("%alive%",gm.getPlayerManager().getOnlinePlayingPlayers().size() + "");
+        }
+
+        if (returnString.contains("%alive-start%")){
+            returnString = returnString.replace("%alive-start%",gm.getStartPlayerAmount() + "");
         }
 
         if (returnString.contains("%teamAlive%")){

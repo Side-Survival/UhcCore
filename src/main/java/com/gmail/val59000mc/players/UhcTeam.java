@@ -5,8 +5,10 @@ import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.exceptions.UhcTeamException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
+import com.gmail.val59000mc.utils.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -24,16 +26,16 @@ public class UhcTeam {
 	private boolean readyToStart = false;
 	private Location startingLocation = null;
 	private final int teamNumber;
-	private String teamName;
+	private Color color;
 	private String teamColor;
 	private String prefix;
 	private final Inventory teamInventory;
 
-	public UhcTeam(int teamNumber, String prefix) {
+	public UhcTeam(int teamNumber, Color color) {
 		this.teamNumber = teamNumber;
-		teamName = Lang.TEAM_NAMES.get(teamNumber);
-		teamColor = Lang.TEAM_COLORS.get(teamNumber);
-		this.prefix = prefix;
+		this.prefix = "#" + teamNumber;
+		this.color = color;
+		this.teamColor = RandomUtils.color(String.format("&#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
 		teamInventory = Bukkit.createInventory(null, 27, ChatColor.BOLD + "Komandas lāde");
 	}
 
@@ -42,7 +44,11 @@ public class UhcTeam {
 	}
 
 	public String getTeamName() {
-		return teamName;
+		return prefix;
+	}
+
+	public Color getColor() {
+		return color;
 	}
 
 	public String getTeamColor() {
@@ -58,7 +64,7 @@ public class UhcTeam {
 	}
 
 	public String getFullPrefix(boolean bold) {
-		return teamColor + (bold ? "&l" : "") + prefix;
+		return teamColor + prefix;
 	}
 
 	public Inventory getTeamInventory() {

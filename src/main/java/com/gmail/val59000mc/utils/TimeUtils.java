@@ -13,7 +13,7 @@ public class TimeUtils{
 			return "";
 
 		int h = (int) time / (60 * 60);
-		int m = (int) time / 60;
+		int m = (int) (time / 60) % 60;
 		int s = (int) time % 60;
 		if (s < 0)
 			s = 0;

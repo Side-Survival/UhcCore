@@ -253,8 +253,6 @@ public class Lang{
 	public static String TEAM_FULL_NAME;
 	public static String TEAM_GUI_TITLE;
 	public static List<String> TEAM_GUI_LORE;
-	public static Map<Integer, String> TEAM_NAMES = new HashMap<>();
-	public static Map<Integer, String> TEAM_COLORS = new HashMap<>();
 
 	public Lang(){
 		loadLangConfig();
@@ -560,10 +558,6 @@ public class Lang{
 		TEAM_FULL_NAME = getString(lang, "team.name_full", "%color%&7 Team");
 		TEAM_GUI_TITLE = getString(lang, "team.gui_title", "Choose team");
 		TEAM_GUI_LORE = getStringList(lang, "team.gui_lore", new ArrayList<>(List.of("&7Members:")));
-		for (int i = 1; i < 25; i++) {
-			TEAM_NAMES.put(i, getString(lang, "team.names." + i, "Team " + i));
-			TEAM_COLORS.put(i, getString(lang, "team.colors." + i, "&f"));
-		}
 
 		if (lang.addedDefaultValues() || pathChanges) {
 			try {

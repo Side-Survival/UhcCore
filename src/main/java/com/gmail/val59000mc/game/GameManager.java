@@ -19,7 +19,6 @@ import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.players.UhcTeam;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
 import com.gmail.val59000mc.scenarios.scenariolisteners.CutCleanListener;
-import com.gmail.val59000mc.scenarios.scenariolisteners.DoubleOresListener;
 import com.gmail.val59000mc.scenarios.scenariolisteners.FastLeavesDecayListener;
 import com.gmail.val59000mc.scenarios.scenariolisteners.TimberListener;
 import com.gmail.val59000mc.scoreboard.ScoreboardLayout;
@@ -80,6 +79,7 @@ public class GameManager{
 	private int episodeNumber;
 	private long remainingTime;
 	private long elapsedTime;
+	private int startPlayerAmount = 0;
 
 	private UUID lastFight = null;
 
@@ -266,6 +266,18 @@ public class GameManager{
 			scenarioManager.countVotes();
 		}
 
+		int borderSize = config.get(MainConfig.BORDER_START_SIZE) * 2;
+		int teamCount = getTeamManager().getNotEmptyUhcTeams().size();
+		if (teamCount < 36) {
+			if (teamCount <= 18)
+				borderSize = borderSize / 3;
+			else
+				borderSize = borderSize / 3 * 2;
+		}
+
+		World overworld = getMapLoader().getUhcWorld(Environment.NORMAL);
+		getMapLoader().setBorderSize(overworld, 0, 0, borderSize);
+
 		Bukkit.getPluginManager().callEvent(new UhcStartingEvent());
 
 //		broadcastInfoMessage(Lang.GAME_STARTING);
@@ -438,6 +450,7 @@ public class GameManager{
 //		registerCommand("chat", new ChatCommandExecutor(playerManager));
 		registerCommand("teleport", new TeleportCommandExecutor(this));
 		registerCommand("start", new StartCommandExecutor());
+		registerCommand("autostart", new AutoStartCommandExecutor());
 		registerCommand("scenarios", new ScenarioCommandExecutor(scenarioManager));
 		registerCommand("teaminventory", new TeamInventoryCommandExecutor(playerManager, scenarioManager));
 //		registerCommand("iteminfo", new ItemInfoCommandExecutor());
@@ -541,5 +554,9 @@ public class GameManager{
 
 	public void setLastFight(UUID lastFight) {
 		this.lastFight = lastFight;
+	}
+
+	public int getStartPlayerAmount() {
+		return startPlayerAmount;
 	}
 }
