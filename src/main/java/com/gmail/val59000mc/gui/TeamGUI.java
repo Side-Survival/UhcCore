@@ -49,7 +49,9 @@ public class TeamGUI implements InventoryProvider {
     }
 
     public void load(int amount) {
-        int size = amount / 9 + 1;
+        int size = amount / 9;
+        if (size < 0)
+            size = 1;
         this.inventory = SmartInventory.builder()
                 .manager(invManager)
                 .provider(new TeamGUI())

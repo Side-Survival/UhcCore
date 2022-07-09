@@ -18,7 +18,7 @@ public class PointManager {
 
     public void init(List<UhcTeam> teams) {
         for (UhcTeam uhcTeam : teams) {
-            points.put(uhcTeam, 1);
+            points.put(uhcTeam, 0);
         }
         arenaStartTime = System.currentTimeMillis();
     }

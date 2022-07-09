@@ -302,7 +302,9 @@ public class MapLoader {
 		}
 
 		if (config.get(MainConfig.LOBBY_IN_DEFAULT_WORLD)){
-			lobby = new Lobby(new Location(Bukkit.getWorlds().get(0), .5, 100,.5));
+			Location loc = new Location(Bukkit.getWorlds().get(0), .5, 100,.5);
+			loc.setYaw(130f);
+			lobby = new Lobby(loc);
 		}else {
 			lobby = new Lobby(new Location(overworld, 0.5, 200, 0.5));
 			lobby.build();

@@ -48,7 +48,9 @@ public class PreStartThread implements Runnable{
 
 	public static void startUntil(long startTime) {
 		instance.force = true;
-		instance.remainingTime = (int) (startTime - Instant.now().getEpochSecond());
+		int toStart = (int) (startTime - Instant.now().getEpochSecond());
+		if (toStart > 0)
+			instance.remainingTime = toStart;
 	}
 
 	public static int getRemainingTime() {

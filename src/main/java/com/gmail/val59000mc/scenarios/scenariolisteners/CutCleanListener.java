@@ -106,7 +106,7 @@ public class CutCleanListener extends ScenarioListener{
     @EventHandler
     public void onItemSpawn(ItemSpawnEvent event) {
         if (event.getEntity().getItemStack().getType() == Material.SUGAR_CANE) {
-            event.getEntity().getItemStack().setType(Material.BOOK);
+//            event.getEntity().getItemStack().setType(Material.BOOK);
             if (getScenarioManager().isEnabled(Scenario.FLY_HIGH))
                 event.getEntity().getWorld().dropItem(event.getLocation(), new ItemStack(Material.PAPER));
         }

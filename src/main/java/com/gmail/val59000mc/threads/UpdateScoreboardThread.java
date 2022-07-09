@@ -19,6 +19,7 @@ public class UpdateScoreboardThread implements Runnable {
 	private static final long UPDATE_DELAY = 20L;
 	private final ScoreboardHandler scoreboardHandler;
 	private ScoreboardType scoreboardType;
+	private GameManager gm = GameManager.getGameManager();
 
 	public UpdateScoreboardThread(ScoreboardHandler scoreboardHandler) {
 		this.scoreboardHandler = scoreboardHandler;
@@ -28,9 +29,9 @@ public class UpdateScoreboardThread implements Runnable {
 	public void run() {
 		TextComponent scenarioMessage = new TextComponent(Lang.SCENARIO_VOTE);
 
-		boolean practice = GameManager.getGameManager().getConfig().get(MainConfig.PRACTICE_MODE);
+		boolean practice = gm.getConfig().get(MainConfig.PRACTICE_MODE);
 
-		for (UhcPlayer uhcPlayer : GameManager.getGameManager().getPlayerManager().getPlayersList()) {
+		for (UhcPlayer uhcPlayer : gm.getPlayerManager().getPlayersList()) {
 			if (!uhcPlayer.isOnline())
 				continue;
 
@@ -40,11 +41,16 @@ public class UpdateScoreboardThread implements Runnable {
 
 			scoreboardHandler.updatePlayerSidebar(uhcPlayer, scoreboardType);
 			Player player = uhcPlayer.getPlayerForce();
-			if (practice && scoreboardType == ScoreboardType.WAITING && player.getGameMode() == GameMode.ADVENTURE && !ScenarioVoteGUI.hasVoted.contains(uhcPlayer.getUuid())) {
-				player.spigot().sendMessage(
-						ChatMessageType.ACTION_BAR,
-						scenarioMessage
-				);
+			if (scoreboardType == ScoreboardType.WAITING && player.getGameMode() == GameMode.ADVENTURE) {
+				if (practice && !ScenarioVoteGUI.hasVoted.contains(uhcPlayer.getUuid())){
+					player.spigot().sendMessage(
+							ChatMessageType.ACTION_BAR,
+							scenarioMessage
+					);
+				}
+
+				if (player.getLocation().getY() < 90)
+					player.teleport(gm.getMapLoader().getLobby().getLocation());
 			}
 
 			if (uhcPlayer.isDeath())

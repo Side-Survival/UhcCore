@@ -97,6 +97,6 @@ public class Placeholders extends PlaceholderExpansion {
         if (uhcTeam == null)
             return nickColor;
 
-        return uhcTeam.getTeamColor() + "&l" + uhcTeam.getPrefix() + nickColor + " ";
+        return uhcTeam.getTeamColor() + uhcTeam.getPrefix() + nickColor + " ";
     }
 }

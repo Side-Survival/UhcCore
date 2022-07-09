@@ -73,8 +73,10 @@ public class SkyHighListener extends ScenarioListener{
                         Player player = uhcPlayer.getPlayer();
                         if (player.getLocation().getBlockY() < listener.yLayer) {
                             player.sendMessage(Lang.SCENARIO_SKYHIGH_DAMAGE);
-                            player.setHealth(player.getHealth() - 1);
+                            player.setHealth(player.getHealth() - 2);
                             player.getWorld().playSound(player.getLocation(), UniversalSound.PLAYER_HURT.getSound(), 1, 1);
+                            if (player.getHealth() <= 0)
+                                player.damage(9999);
                         }
                     } catch (UhcPlayerNotOnlineException ex) {
                         // No los of hp for offline players.
