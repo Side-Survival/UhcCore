@@ -62,6 +62,7 @@ public class TeleportCommandExecutor implements CommandExecutor, TabCompleter {
 
 			Location loc = new Location(player.getWorld(), x, y, z);
 			player.teleport(loc);
+			player.setAllowFlight(true);
 
 			player.sendMessage(Lang.COMMAND_SPECTATING_TELEPORT.replace("%player%", x + "/" + y + "/" + z));
 			return true;
@@ -108,8 +109,10 @@ public class TeleportCommandExecutor implements CommandExecutor, TabCompleter {
 			return true;
 		}
 
-		uhcPlayer.sendMessage(Lang.COMMAND_SPECTATING_TELEPORT.replace("%player%", uhcTarget.getName()));
 		player.teleport(target);
+		player.setAllowFlight(true);
+
+		uhcPlayer.sendMessage(Lang.COMMAND_SPECTATING_TELEPORT.replace("%player%", uhcTarget.getName()));
 		return true;
 	}
 

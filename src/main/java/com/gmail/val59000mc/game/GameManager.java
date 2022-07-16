@@ -267,17 +267,17 @@ public class GameManager{
 			scenarioManager.countVotes();
 		}
 
-		maxBorderSize = config.get(MainConfig.BORDER_START_SIZE) * 2;
-		int teamCount = getTeamManager().getNotEmptyUhcTeams().size();
-		if (teamCount < 36) {
-			if (teamCount <= 18)
-				maxBorderSize = maxBorderSize / 3;
-			else
-				maxBorderSize = maxBorderSize / 3 * 2;
-		}
+//		maxBorderSize = config.get(MainConfig.BORDER_START_SIZE) * 2;
+//		int teamCount = getTeamManager().getNotEmptyUhcTeams().size();
+//		if (teamCount < 36) {
+//			if (teamCount <= 18)
+//				maxBorderSize = maxBorderSize / 3;
+//			else
+//				maxBorderSize = maxBorderSize / 3 * 2;
+//		}
 
-		World overworld = getMapLoader().getUhcWorld(Environment.NORMAL);
-		getMapLoader().setBorderSize(overworld, 0, 0, maxBorderSize);
+//		World overworld = getMapLoader().getUhcWorld(Environment.NORMAL);
+//		getMapLoader().setBorderSize(overworld, 0, 0, maxBorderSize);
 
 		Bukkit.getPluginManager().callEvent(new UhcStartingEvent());
 
@@ -293,6 +293,9 @@ public class GameManager{
 		setGameState(GameState.PLAYING);
 
 		for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
+			startPlayerAmount += team.getMemberCount();
+			UhcCore.getPlugin().getLogger().info("Team " + team.getPrefix() + ": " + String.join(", ", team.getMembersNames()));
+
 			if (team.getStartingLocation() == null) {
 				UhcCore.getPlugin().getLogger().log(Level.SEVERE, "Could not find start location for team " + team.getTeamName() + " (" + team.getMembers().get(0));
 				continue;
@@ -492,6 +495,14 @@ public class GameManager{
 			playerManager.playSoundToAll(UniversalSound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
 			playerManager.setAllPlayersEndGame();
 			Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), new StopRestartThread(),20);
+
+			// TOP 3 IN CHAT
+
+			broadcastMessage(Lang.COMMAND_TOP_HEADER);
+
+			for (String place : gameManager.getPointHandler().getTop3()) {
+				broadcastMessage(place);
+			}
 
 			// POINTS AND HISTORY
 

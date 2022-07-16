@@ -51,6 +51,14 @@ public class Placeholders extends PlaceholderExpansion {
             Player onlinePlayer = player.getPlayer();
 
             return getTeamPrefixFormatted(onlinePlayer);
+        } else if (identifier.equalsIgnoreCase("team_number")) {
+            if (!player.isOnline())
+                return "";
+
+            UhcPlayer uhcPlayer = GameManager.getGameManager().getPlayerManager().getUhcPlayer(player.getPlayer());
+            UhcTeam uhcTeam = uhcPlayer.getTeam();
+
+            return uhcTeam.getPrefix().substring(1);
         } else if (identifier.equalsIgnoreCase("motd")) {
             GameManager gm = GameManager.getGameManager();
             if (gm == null){

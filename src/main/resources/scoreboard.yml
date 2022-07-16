@@ -34,6 +34,7 @@
 # Title of the scoreboard
 title: '&6&lUHC-Core'
 point-entry: ' %place%. %team%: %points%'
+point-entry-full: ' %place%. %team%: %points (%members%)'
 
 # Scoreboard while waiting...
 waiting:

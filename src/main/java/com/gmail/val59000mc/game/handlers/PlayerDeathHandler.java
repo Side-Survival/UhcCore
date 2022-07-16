@@ -157,7 +157,7 @@ public class PlayerDeathHandler {
                         try {
                             UhcPlayer damagerUPlayer = playerManager.getUhcPlayer(damagerEntity.getUniqueId());
                             if (damagerUPlayer.getTeam() != null)
-                                damager = damagerUPlayer.getTeam().getTeamColor() + damagerEntity.getName();
+                                damager = damagerUPlayer.getTeam().getFullPrefix() + " " + damagerEntity.getName();
                             else
                                 damager = damagerEntity.getName();
                         } catch (UhcPlayerDoesNotExistException e) {
@@ -171,7 +171,7 @@ public class PlayerDeathHandler {
                             try {
                                 UhcPlayer damagerUPlayer = playerManager.getUhcPlayer(damager);
                                 if (damagerUPlayer.getTeam() != null)
-                                    damager = damagerUPlayer.getTeam().getTeamColor() + damagerUPlayer.getName();
+                                    damager = damagerUPlayer.getTeam().getFullPrefix() + " " + damagerUPlayer.getName();
                             } catch (UhcPlayerDoesNotExistException ignored) {}
                         }
                     } else {
@@ -181,7 +181,7 @@ public class PlayerDeathHandler {
             }
         }
 
-        String playerName = uhcPlayer.getTeam() != null ? uhcPlayer.getTeam().getTeamColor() + uhcPlayer.getName() : uhcPlayer.getName();
+        String playerName = uhcPlayer.getTeam() != null ? uhcPlayer.getTeam().getFullPrefix() + " " + uhcPlayer.getName() : uhcPlayer.getName();
         String deathMessage = getDeathMessage(cause, playerName, damager, damagerPlayer);
         gameManager.broadcastRedMessage(deathMessage);
 

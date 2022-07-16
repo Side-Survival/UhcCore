@@ -31,7 +31,7 @@ public class PointHandler {
 
     public void init() {
         for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
-            points.put(team, 1);
+            points.put(team, 0);
             kills.put(team, new ArrayList<>());
             placement++;
         }
@@ -125,6 +125,21 @@ public class PointHandler {
         return null;
     }
 
+    public List<String> getTop3() {
+        List<String> result = new ArrayList<>();
+
+        int place = 1;
+        for (Map.Entry<UhcTeam, Integer> entry : points.entrySet()) {
+            result.add(getAdvTeamPointsFormatted(entry.getKey(), place, entry.getValue(), false));
+
+            place++;
+            if (place == 3)
+                break;
+        }
+
+        return result;
+    }
+
     public ArrayList<String> getAll() {
         ArrayList<String> result = new ArrayList<>();
 
@@ -196,9 +211,10 @@ public class PointHandler {
         if (team == null)
             return "";
 
-        return RandomUtils.color(GameManager.getGameManager().getScoreboardManager().getScoreboardLayout().getPointEntry()
+        return RandomUtils.color(GameManager.getGameManager().getScoreboardManager().getScoreboardLayout().getFullPointEntry()
                 .replace("%place%", String.valueOf(place))
                 .replace("%team%", team.getFullPrefix())
+                .replace("%members%", String.join(", ", team.getMembersNames()))
                 .replace("%points%", String.valueOf(points)) + (added ? " &7&o" + AssignManager.get().assignedTeams.get(team).getName() : "")
         );
     }

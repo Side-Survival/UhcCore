@@ -525,7 +525,8 @@ public class PlayerManager {
 	public void randomTeleportTeams() {
 		GameManager gm = GameManager.getGameManager();
 		World world = gm.getMapLoader().getUhcWorld(World.Environment.NORMAL);
-		double maxDistance = 0.9 * gm.getMaxBorderSize();
+//		double maxDistance = 0.9 * gm.getMaxBorderSize();
+		double maxDistance = 0.9 * gm.getConfig().get(MainConfig.BORDER_START_SIZE);
 
 		// For solo players to join teams
 		if (gm.getConfig().get(MainConfig.FORCE_ASSIGN_SOLO_PLAYER_TO_TEAM_WHEN_STARTING)){

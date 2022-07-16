@@ -18,6 +18,7 @@ public class ScoreboardLayout {
     private List<String> spectating;
     private String title;
     private String pointEntry;
+    private String fullPointEntry;
 
     public void loadFile(){
         YamlFile cfg;
@@ -42,6 +43,7 @@ public class ScoreboardLayout {
         spectating = RandomUtils.color(cfg.getStringList("spectating"));
         title = RandomUtils.color(cfg.getString("title", ""));
         pointEntry = cfg.getString("point-entry", "");
+        fullPointEntry = cfg.getString("point-entry-full", "");
     }
 
     public List<String> getLines(ScoreboardType scoreboardType){
@@ -66,5 +68,9 @@ public class ScoreboardLayout {
 
     public String getPointEntry() {
         return pointEntry;
+    }
+
+    public String getFullPointEntry() {
+        return fullPointEntry;
     }
 }

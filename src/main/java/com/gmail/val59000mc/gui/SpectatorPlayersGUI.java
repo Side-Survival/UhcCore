@@ -1,6 +1,7 @@
 package com.gmail.val59000mc.gui;
 
 import com.gmail.val59000mc.UhcCore;
+import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.exceptions.UhcPlayerNotOnlineException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.languages.Lang;
@@ -55,7 +56,7 @@ public class SpectatorPlayersGUI implements InventoryProvider {
         List<UhcTeam> aliveTeams = tm.getAliveUhcTeams();
         ItemMeta itemMeta;
 
-        for (int i = 1; i < 25; i++) {
+        for (int i = 1; i <= GameManager.getGameManager().getConfig().get(MainConfig.TEAM_AMOUNT); i++) {
             UhcTeam team = tm.getTeamById(i);
             if (team == null || !aliveTeams.contains(team))
                 continue;

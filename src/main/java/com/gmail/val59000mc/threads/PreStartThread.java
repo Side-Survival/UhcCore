@@ -80,7 +80,7 @@ public class PreStartThread implements Runnable{
 				(!pause && (remainingTime < 5 || (playersNumber >= minPlayers)))
 		){
 			if (remainingTime == timeBeforeStart+1) {
-				if (gameManager.getConfig().get(MainConfig.PRACTICE_MODE))
+				if (gameManager.getConfig().get(MainConfig.PRACTICE_MODE) && minPlayers < 999)
 					gameManager.broadcastInfoMessage(Lang.GAME_ENOUGH_TEAMS_READY);
 				broadcastStart();
 			}else if (RandomUtils.isAnnounceStartTimer(remainingTime)) {

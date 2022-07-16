@@ -39,7 +39,7 @@ public class PlayerChatListener implements Listener{
 		try {
 			if (uhcPlayer.getTeam() != null) {
 				// Game chat
-				prefix = RandomUtils.color("&8[" + uhcPlayer.getTeam().getTeamColor() + (!isPublic ? Lang.TEAM_CHAT_PREFIX : uhcPlayer.getTeam().getTeamName().charAt(0)) + "&8] &7");
+				prefix = RandomUtils.color("&8[" + uhcPlayer.getTeam().getTeamColor() + (!isPublic ? Lang.TEAM_CHAT_PREFIX : uhcPlayer.getTeam().getTeamName()) + "&8] &7");
 
 				if (!isPublic) {
 					event.getRecipients().clear();
