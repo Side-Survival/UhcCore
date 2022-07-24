@@ -235,7 +235,7 @@ public class PlayerManager {
 
 				if (!uhcPlayer.getHasBeenTeleportedToLocation()) {
 					// Apply start potion effect.
-					if (uhcPlayer.getDeathLocation() == null) {
+					if (uhcPlayer.getDeathLocation() == null && !gm.getPvp()) {
 						for (PotionEffect effect : GameManager.getGameManager().getConfig().get(MainConfig.POTION_EFFECT_ON_START)) {
 							player.addPotionEffect(effect);
 						}
@@ -445,8 +445,11 @@ public class PlayerManager {
 
 			if (!player.hasPermission("uhc-core.hide-items")) {
 				UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_SPAWN);
-				if (player.hasPermission("uhc-core.spectator-players"))
+				if (player.hasPermission("uhc-core.spectator-players")) {
 					UhcItems.giveGameItemTo(player, GameItem.SPECTATOR_PLAYERS);
+					UhcItems.giveGameItemTo(player, GameItem.RANDOM_PLAYER);
+					UhcItems.giveGameItemTo(player, GameItem.OPEN_INV);
+				}
 			}
 
 			if(gm.getGameState().equals(GameState.DEATHMATCH) || (gm.getGameState().equals(GameState.ENDED) && gm.isDeathmatch())) {

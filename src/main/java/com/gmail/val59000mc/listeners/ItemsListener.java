@@ -14,8 +14,10 @@ import com.gmail.val59000mc.players.*;
 import com.gmail.val59000mc.scenarios.ScenarioManager;
 import com.gmail.val59000mc.threads.EnableGlowingThread;
 import com.gmail.val59000mc.utils.RandomUtils;
+import com.lishid.openinv.IOpenInv;
 import org.bukkit.*;
 import org.bukkit.block.BrewingStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +37,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class ItemsListener implements Listener {
 
 	private final GameManager gameManager;
@@ -43,6 +48,7 @@ public class ItemsListener implements Listener {
 	private final TeamManager teamManager;
 	private final ScenarioManager scenarioManager;
 	private final ScoreboardHandler scoreboardHandler;
+	private final Map<UUID, List<UUID>> randomPlayerItemTargets = new HashMap<>();
 
 	public ItemsListener(
 			GameManager gameManager,
@@ -131,13 +137,16 @@ public class ItemsListener implements Listener {
 			case TEAM_LIST:
 				teamManager.openTeamSelection(player);
 				break;
+
 			case SCENARIO_VIEWER:
 				ScenarioVoteGUI scenarioVoteGUI = new ScenarioVoteGUI();
 				scenarioVoteGUI.open(player);
 				break;
+
 			case COMPASS_ITEM:
 				uhcPlayer.pointCompassToNextPlayer();
 				break;
+
 			case SPECTATOR_SPAWN:
 				if (uhcPlayer.isDeath()) {
 					Location loc;
@@ -145,17 +154,64 @@ public class ItemsListener implements Listener {
 						loc = Bukkit.getWorld("uhc_arena").getSpawnLocation();
 					else
 						loc = RandomUtils.getSafePoint(gameManager.getMapLoader().getUhcWorld(World.Environment.NORMAL).getBlockAt(0, 70, 0).getLocation());
+					loc.add(0.5, 0, 0.5);
 					player.teleport(loc);
 					player.setAllowFlight(true);
 					player.setFlying(true);
 				}
 				break;
+
 			case SPECTATOR_PLAYERS:
 				if (uhcPlayer.isDeath() && player.hasPermission("uhc-core.spectator-players")) {
 					SpectatorPlayersGUI gui = new SpectatorPlayersGUI();
 					gui.open(player, gameManager.getPlayerManager().getAliveOnlinePlayers().size());
 				}
 				break;
+
+			case RANDOM_PLAYER:
+				if (uhcPlayer.isDeath() && player.hasPermission("uhc-core.spectator-players")) {
+					if (!randomPlayerItemTargets.containsKey(player.getUniqueId()))
+						randomPlayerItemTargets.put(player.getUniqueId(), new ArrayList<>());
+
+					List<Player> available = new ArrayList<>();
+					for (UhcPlayer playingPlayer : gameManager.getPlayerManager().getAllPlayingPlayers()) {
+						if (!randomPlayerItemTargets.get(player.getUniqueId()).contains(playingPlayer.getUuid())) {
+							available.add(playingPlayer.getPlayerForce());
+						}
+					}
+
+					if (!available.isEmpty()) {
+						Player target = available.remove(new Random().nextInt(available.size()));
+						player.teleport(target);
+						player.setAllowFlight(true);
+						player.setFlying(true);
+
+						if (available.isEmpty()) {
+							randomPlayerItemTargets.get(player.getUniqueId()).clear();
+						} else {
+							randomPlayerItemTargets.get(player.getUniqueId()).add(target.getUniqueId());
+						}
+					}
+				}
+				break;
+
+			case OPEN_INV:
+				if (uhcPlayer.isDeath() && player.hasPermission("uhc-core.spectator-players")) {
+					Entity targetEntity = player.getTargetEntity(40);
+					if (!(targetEntity instanceof Player))
+						return;
+
+					IOpenInv openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
+					if (openInv != null) {
+						try {
+							openInv.openInventory(player, openInv.getSpecialInventory((Player) targetEntity, true));
+						} catch (InstantiationException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				break;
+
 			case TEAM_CHEST:
 				if (uhcPlayer.getState() != PlayerState.PLAYING){
 					player.sendMessage(Lang.SCENARIO_TEAMINVENTORY_ERROR);

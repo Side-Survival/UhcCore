@@ -33,6 +33,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -197,7 +198,12 @@ public class PlayerDeathHandler {
             UhcItems.spawnExtraXp(location, config.get(MainConfig.EXP_DROP_ON_DEATH));
         }
 
-        playerManager.setPlayerSpectating(uhcPlayer);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                playerManager.setPlayerSpectating(uhcPlayer);
+            }
+        }.runTask(UhcCore.getPlugin());
 
         boolean alive = false;
         for (UhcPlayer member : uhcPlayer.getTeam().getMembers()) {

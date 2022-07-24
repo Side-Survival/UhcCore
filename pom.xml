@@ -6,7 +6,7 @@
 
     <groupId>com.gmail.val59000mc</groupId>
     <artifactId>UhcCore</artifactId>
-    <version>1.20</version>
+    <version>1.21</version>
     <packaging>jar</packaging>
 
     <name>UhcCore</name>
@@ -58,21 +58,21 @@
     </repositories>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>org.spigotmc</groupId>-->
+<!--            <artifactId>spigot-api</artifactId>-->
+<!--            <version>1.17.1-R0.1-SNAPSHOT</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
@@ -134,6 +134,21 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/LESLMinecraftArena.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jikoo.OpenInv</groupId>
+            <artifactId>openinvapi</artifactId>
+            <version>4.1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comphenix.packetwrapper</groupId>
+            <artifactId>PacketWrapper</artifactId>
+            <version>1.13-R0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

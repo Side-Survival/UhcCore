@@ -34,6 +34,8 @@ public class MapLoader {
 	public final static String LOG_ADMIN_COMMANDS = "logAdminCommands";
 	public final static String SEND_COMMAND_FEEDBACK = "sendCommandFeedback";
 	public final static String SHOW_DEATH_MESSAGES = "showDeathMessages";
+	public final static String DO_WEATHER_CYCLE = "doWeatherCycle";
+	public final static String PLAYERS_SLEEPING_PERCENTAGE = "playersSleepingPercentage";
 
 	private final MainConfig config;
 	private final Map<Environment, String> worldUuids;
@@ -204,6 +206,8 @@ public class MapLoader {
 		World world = Bukkit.getServer().createWorld(new WorldCreator("uhc_arena"));
 		VersionUtils.getVersionUtils().setGameRuleValue(world, NATURAL_REGENERATION, false);
 		VersionUtils.getVersionUtils().setGameRuleValue(world, SHOW_DEATH_MESSAGES, false);
+		VersionUtils.getVersionUtils().setGameRuleValue(world, DO_WEATHER_CYCLE, false);
+		VersionUtils.getVersionUtils().setGameRuleValue(world, PLAYERS_SLEEPING_PERCENTAGE, 9999);
 	}
 
 	public void loadWorldUuids(){
@@ -286,7 +290,9 @@ public class MapLoader {
 		prepareWorld(overworld, difficulty, healthRegen, announceAdvancements, startSize*2);
 
 		VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_DAYLIGHT_CYCLE, false);
+		VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_WEATHER_CYCLE, false);
 		VersionUtils.getVersionUtils().setGameRuleValue(overworld, DO_MOB_SPAWNING, false);
+		VersionUtils.getVersionUtils().setGameRuleValue(overworld, PLAYERS_SLEEPING_PERCENTAGE, 9999);
 
 		overworld.setTime(14000);
 		overworld.setWeatherDuration(999999999);

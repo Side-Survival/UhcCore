@@ -68,6 +68,7 @@ public enum UniversalMaterial{
     COPPER_INGOT,
     NETHERITE_SCRAP,
     COAL_ORE,
+    FIRE_CHARGE,
     COPPER_ORE,
     NETHER_GOLD_ORE,
     ANCIENT_DEBRIS,

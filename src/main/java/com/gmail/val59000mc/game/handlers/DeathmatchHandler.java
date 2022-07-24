@@ -88,7 +88,6 @@ public class DeathmatchHandler {
         mapLoader.setBorderSize(world, center.getBlockX(), center.getBlockZ(), config.get(MainConfig.DEATHMATCH_START_SIZE)*2);
 
         // Teleport players
-        List<Location> spots = new ArrayList<>();
         List<UhcTeam> teams = gameManager.getTeamManager().getAliveUhcTeams();
 
         double deg = (2 * Math.PI) / teams.size();
@@ -100,12 +99,9 @@ public class DeathmatchHandler {
             double z = (30 * Math.cos(ang));
             ang += deg;
 
-            Location paste = new Location(center.getWorld(), center.getX() + x, 80, center.getZ() + z);
-            paste = getGround(paste).getBlock().getLocation();
-            pasteCage(paste);
-            spots.add(paste);
-
-            paste.add(0.5, 0, 0.5);
+            Location loc = new Location(center.getWorld(), center.getX() + x, 80, center.getZ() + z);
+            loc = getGround(loc).getBlock().getLocation();
+            loc.add(0.5, 0, 0.5);
 
             visited.add(team);
 
@@ -125,7 +121,8 @@ public class DeathmatchHandler {
 
                 if (player.getState().equals(PlayerState.PLAYING)) {
                     player.freezePlayer();
-                    bukkitPlayer.teleport(i == 0 ? paste : paste.clone().add(0, 3, 0));
+                    bukkitPlayer.teleport(loc);
+                    FreezeHandler.get().freeze(bukkitPlayer);
                     i++;
                 } else {
                     bukkitPlayer.teleport(center);
@@ -152,7 +149,7 @@ public class DeathmatchHandler {
         }
 
         // Start Enable pvp thread
-        Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), new StartDeathmatchThread(gameManager, true, spots), 20);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(UhcCore.getPlugin(), new StartDeathmatchThread(gameManager, true), 20);
     }
 
     private Location getGround(Location loc) {

@@ -466,6 +466,8 @@ public class GameManager{
 		registerCommand("deathmatch", new DeathmatchCommandExecutor(this, deathmatchHandler));
 		registerCommand("gotofight", new GoToFightCmd(this));
 		registerCommand("gototeam", new GoToTeamCmd(this));
+		registerCommand("freeze", new FreezeCommandExecutor(this));
+		registerCommand("unfreeze", new UnfreezeCommandExecutor(this));
 	}
 
 	private void registerCommand(String commandName, CommandExecutor executor){

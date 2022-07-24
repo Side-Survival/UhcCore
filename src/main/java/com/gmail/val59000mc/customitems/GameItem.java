@@ -42,6 +42,8 @@ public enum GameItem{
     COMPASS_ITEM(UniversalMaterial.COMPASS),
     SPECTATOR_SPAWN(UniversalMaterial.EMERALD),
     SPECTATOR_PLAYERS(UniversalMaterial.PLAYER_HEAD),
+    RANDOM_PLAYER(UniversalMaterial.FIRE_CHARGE),
+    OPEN_INV(UniversalMaterial.CHEST),
 
     // Scenario GUI items
     SCENARIOS_EDIT(UniversalMaterial.RED_STAINED_GLASS_PANE),
@@ -142,6 +144,10 @@ public enum GameItem{
                 return Lang.ITEMS_SPECTATOR_SPAWN;
             case SPECTATOR_PLAYERS:
                 return Lang.ITEMS_SPECTATOR_PLAYERS;
+            case RANDOM_PLAYER:
+                return Lang.ITEMS_RANDOM_PLAYER;
+            case OPEN_INV:
+                return Lang.ITEMS_OPEN_INV;
             case TEAM_SETTINGS:
                 return Lang.TEAM_ITEM_SETTINGS;
             case TEAM_RENAME:

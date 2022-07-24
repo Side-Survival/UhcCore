@@ -7,6 +7,7 @@ import com.gmail.val59000mc.exceptions.UhcPlayerJoinException;
 import com.gmail.val59000mc.exceptions.UhcTeamException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
+import com.gmail.val59000mc.game.handlers.FreezeHandler;
 import com.gmail.val59000mc.game.handlers.PlayerDeathHandler;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
@@ -69,6 +70,12 @@ public class PlayerConnectionListener implements Listener{
 				if (!playerManager.doesPlayerExist(player) || playerManager.getUhcPlayer(player.getUniqueId()).isDeath())
 					joinMessage = "";
 			} catch (UhcPlayerDoesNotExistException ignored) {}
+
+
+			if (FreezeHandler.get().isFrozen(event.getPlayer())) {
+				FreezeHandler.get().unfreeze(player);
+				FreezeHandler.get().freeze(player);
+			}
 		}
 
 		if (event.getPlayer().hasPermission("uhc-core.global-spectate"))

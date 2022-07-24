@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import com.gmail.val59000mc.adapters.VersionAdapter;
 import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.game.handlers.FreezeHandler;
 import com.gmail.val59000mc.utils.FileUtils;
 
 import com.gmail.val59000mc.utils.Placeholders;
@@ -83,6 +84,7 @@ public class UhcCore extends JavaPlugin{
 	@Override
 	public void onDisable(){
 		gameManager.getScenarioManager().disableAllScenarios();
+		FreezeHandler.get().removeAllStands();
 
 		Bukkit.getLogger().info("[UhcCore] Plugin disabled");
 	}

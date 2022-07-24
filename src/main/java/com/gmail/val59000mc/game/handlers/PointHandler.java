@@ -128,11 +128,11 @@ public class PointHandler {
     public List<String> getTop3() {
         List<String> result = new ArrayList<>();
 
-        int place = 1;
+        int place = 0;
         for (Map.Entry<UhcTeam, Integer> entry : points.entrySet()) {
+            place++;
             result.add(getAdvTeamPointsFormatted(entry.getKey(), place, entry.getValue(), false));
 
-            place++;
             if (place == 3)
                 break;
         }
