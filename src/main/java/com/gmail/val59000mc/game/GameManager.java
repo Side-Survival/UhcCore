@@ -468,6 +468,7 @@ public class GameManager{
 		registerCommand("gototeam", new GoToTeamCmd(this));
 		registerCommand("freeze", new FreezeCommandExecutor(this));
 		registerCommand("unfreeze", new UnfreezeCommandExecutor(this));
+		registerCommand("staffchat", new StaffChatCmd());
 	}
 
 	private void registerCommand(String commandName, CommandExecutor executor){

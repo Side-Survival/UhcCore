@@ -58,7 +58,10 @@ public class Placeholders extends PlaceholderExpansion {
             UhcPlayer uhcPlayer = GameManager.getGameManager().getPlayerManager().getUhcPlayer(player.getPlayer());
             UhcTeam uhcTeam = uhcPlayer.getTeam();
 
-            return uhcTeam.getPrefix().substring(1);
+            int num = uhcTeam.getTeamNumber();
+            String chars = "abcdefghijklmnopqrstuvwxyz";
+
+            return String.valueOf(chars.charAt(num / 9) + (num % 9 > 0 ? num % 9 : 9));
         } else if (identifier.equalsIgnoreCase("motd")) {
             GameManager gm = GameManager.getGameManager();
             if (gm == null){

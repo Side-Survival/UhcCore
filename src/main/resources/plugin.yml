@@ -59,3 +59,6 @@ commands:
     permission: "uhc-core.commands.freeze"
   unfreeze:
     permission: "uhc-core.commands.freeze"
+  staffchat:
+    aliases: [staffc, schat, sc]
+    permission: "uhc-core.commands.staffchat"

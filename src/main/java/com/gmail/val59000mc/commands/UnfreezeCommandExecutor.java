@@ -58,7 +58,7 @@ public class UnfreezeCommandExecutor implements CommandExecutor, TabCompleter {
 		List<String> completions = new ArrayList<>();
 
 		if (args.length == 1) {
-			if (sender.hasPermission("uhc-core.commands.freeze-admin"))
+			if (!sender.hasPermission("uhc-core.commands.freeze-admin"))
 				return completions;
 
 			for (UhcPlayer uhcPlayer : gameManager.getPlayerManager().getOnlinePlayingPlayers()) {

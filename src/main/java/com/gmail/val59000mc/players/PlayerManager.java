@@ -321,8 +321,10 @@ public class PlayerManager {
 			if (player.hasPermission("uhc-core.global-spectate")) {
 				player.setGameMode(GameMode.SPECTATOR);
 				uhcPlayer.setState(PlayerState.DEAD);
-				for (Player oPlayer : Bukkit.getOnlinePlayers()) {
-					oPlayer.hidePlayer(UhcCore.getPlugin(), player);
+				if (!player.hasPermission("uhc-core.spectate-see")) {
+					for (Player oPlayer : Bukkit.getOnlinePlayers()) {
+						oPlayer.hidePlayer(UhcCore.getPlugin(), player);
+					}
 				}
 			}
 			if (gm.getGameState() == GameState.WAITING) {
@@ -410,7 +412,7 @@ public class PlayerManager {
 
 			for (UhcPlayer uPlayer : getOnlinePlayers()) {
 				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
-				if (!uPlayer.isPlaying()) {
+				if (!uPlayer.isPlaying() && !player.hasPermission("uhc-core.spectate-see")) {
 					player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
 				}
 			}
@@ -463,7 +465,7 @@ public class PlayerManager {
 
 			for (UhcPlayer uPlayer : getOnlinePlayers()) {
 				uPlayer.getPlayer().hidePlayer(UhcCore.getPlugin(), player);
-				if (!uPlayer.isPlaying()) {
+				if (!uPlayer.isPlaying() && !player.hasPermission("uhc-core.spectate-see")) {
 					player.hidePlayer(UhcCore.getPlugin(), uPlayer.getPlayer());
 				}
 			}

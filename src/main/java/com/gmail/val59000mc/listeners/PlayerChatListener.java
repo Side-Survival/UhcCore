@@ -23,6 +23,7 @@ public class PlayerChatListener implements Listener{
 	private final PlayerManager playerManager;
 	private final MainConfig configuration;
 	private final List<UUID> tipReceived = new ArrayList<>();
+	public static final List<UUID> staffChatToggled = new ArrayList<>();
 
 	public PlayerChatListener(PlayerManager playerManager, MainConfig configuration){
 		this.playerManager = playerManager;
@@ -35,6 +36,15 @@ public class PlayerChatListener implements Listener{
 		Player player = event.getPlayer();
 		UhcPlayer uhcPlayer = playerManager.getUhcPlayer(player);
 		boolean isPublic = event.getMessage().startsWith("@");
+
+		if (staffChatToggled.contains(player.getUniqueId())) {
+			String msg = RandomUtils.color("&4&l[STAFF] &c" + player.getName() + " &8» &c" + event.getMessage());
+			for (Player oPlayer : Bukkit.getOnlinePlayers()) {
+				if (oPlayer.hasPermission("uhc-core.commands.staffchat"))
+					oPlayer.sendMessage(msg);
+			}
+			return;
+		}
 
 		try {
 			if (uhcPlayer.getTeam() != null) {

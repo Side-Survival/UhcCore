@@ -198,13 +198,16 @@ public class ItemsListener implements Listener {
 			case OPEN_INV:
 				if (uhcPlayer.isDeath() && player.hasPermission("uhc-core.spectator-players")) {
 					Entity targetEntity = player.getTargetEntity(40);
-					if (!(targetEntity instanceof Player))
+					if (!(targetEntity instanceof Player target))
+						return;
+
+					if (target.getGameMode() != GameMode.SURVIVAL)
 						return;
 
 					IOpenInv openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
 					if (openInv != null) {
 						try {
-							openInv.openInventory(player, openInv.getSpecialInventory((Player) targetEntity, true));
+							openInv.openInventory(player, openInv.getSpecialInventory(target, true));
 						} catch (InstantiationException e) {
 							e.printStackTrace();
 						}

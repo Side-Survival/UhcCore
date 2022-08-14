@@ -28,6 +28,8 @@ public class PointHandler {
     public int placement = 0;
     public int addedPlace;
     private long startTime;
+    private int pointsPerKill;
+    private int pointsBonus;
 
     public void init() {
         for (UhcTeam team : GameManager.getGameManager().getTeamManager().getNotEmptyUhcTeams()) {
@@ -36,9 +38,33 @@ public class PointHandler {
             placement++;
         }
 
+        // todo: add to config
+        double elimCoef = 0.75;
+        double maxPointCoef = 1.25;
+
+        int maxPoints = (int) ((placement / 25.0) * 125);
+        int maxPointElim = (int) Math.floor(maxPoints / 10.0 * maxPointCoef);
+        GameManager gm = GameManager.getGameManager();
+
+        int teamSize = gm.getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM);
+        pointsPerKill = (int) Math.ceil(maxPointElim/(teamSize + elimCoef));
+        pointsBonus = maxPointElim - (pointsPerKill * (teamSize-1)) - pointsPerKill;
+
         placementPoints.clear();
-        for (Map.Entry<String, Integer> entry : GameManager.getGameManager().getConfig().getMap(MainConfig.POINTS_PLACEMENT).entrySet()) {
-            placementPoints.put(Integer.valueOf(entry.getKey()), entry.getValue());
+        double part = (maxPoints/2.0 / (placement - 5));
+
+        for (int i = 1; i <= placement; i++) {
+            int fin;
+            if (i < 6) {
+                if (i == 1)
+                    fin = (int) Math.floor(maxPoints / 10.0 * 10);
+                else
+                    fin = (int) Math.floor(maxPoints / 10.0 * ((10 - i)));
+            } else {
+                fin = (int) Math.floor( part * (placement - i) );
+            }
+
+            placementPoints.put(i, fin);
         }
 
         startTime = System.currentTimeMillis();
@@ -51,14 +77,14 @@ public class PointHandler {
         PointManager pm = PointManager.get();
 
         if (type == PointType.KILL) {
-            toAdd = gm.getConfig().get(MainConfig.POINTS_PER_KILL);
+            toAdd = pointsPerKill;
 
             pm.getHistory().add(
                     "[" + timeNow + " KILL punkti] " + team.getTeamName() + " +" + toAdd
             );
 
         } else if (type == PointType.TEAM_KILL) {
-            toAdd = gm.getConfig().get(MainConfig.POINTS_PER_KILL) + gm.getConfig().get(MainConfig.POINTS_BONUS);
+            toAdd = pointsPerKill + pointsBonus;
 
             pm.getHistory().add(
                     "[" + timeNow + " TEAM_KILL punkti] " + team.getTeamName() + " +" + toAdd
