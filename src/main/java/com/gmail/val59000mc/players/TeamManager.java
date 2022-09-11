@@ -100,4 +100,8 @@ public class TeamManager {
     public void openTeamSelection(Player player) {
         teamGUI.open(player);
     }
+
+    public void openTeamSelection(Player player, int page) {
+        teamGUI.open(player, page);
+    }
 }

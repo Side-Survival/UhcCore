@@ -43,6 +43,7 @@ public class Lang{
 	public static String GAME_STAGE_GLOWING;
 	public static String GAME_PLAYER_JOINED;
 	public static String GAME_PLAYER_LEFT;
+	public static String GAME_FULL;
 
 	public static String PLAYERS_NETHER_OFF;
 	public static String PLAYERS_BUILD_HEIGHT;
@@ -307,6 +308,7 @@ public class Lang{
 		GAME_STAGE_GLOWING = getString(lang, "game.stage.glowing", "Glowing");
 		GAME_PLAYER_JOINED = getString(lang, "game.player-join", "%player% joined the game");
 		GAME_PLAYER_LEFT = getString(lang, "game.player-quit", "%player% left the game");
+		GAME_FULL = getString(lang, "game.full", "Server is full!");
 
 		// Players
 		PLAYERS_NETHER_OFF = getString(lang, "players.nether-off", "&cThe nether has been deactivated for this game.");

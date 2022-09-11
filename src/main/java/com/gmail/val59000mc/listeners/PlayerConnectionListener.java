@@ -4,22 +4,23 @@ import com.gmail.val59000mc.UhcCore;
 import com.gmail.val59000mc.configuration.MainConfig;
 import com.gmail.val59000mc.exceptions.UhcPlayerDoesNotExistException;
 import com.gmail.val59000mc.exceptions.UhcPlayerJoinException;
-import com.gmail.val59000mc.exceptions.UhcTeamException;
 import com.gmail.val59000mc.game.GameManager;
 import com.gmail.val59000mc.game.GameState;
 import com.gmail.val59000mc.game.handlers.FreezeHandler;
 import com.gmail.val59000mc.game.handlers.PlayerDeathHandler;
 import com.gmail.val59000mc.game.handlers.ScoreboardHandler;
 import com.gmail.val59000mc.languages.Lang;
-import com.gmail.val59000mc.players.PlayerState;
 import com.gmail.val59000mc.players.PlayerManager;
 import com.gmail.val59000mc.players.UhcPlayer;
 import com.gmail.val59000mc.threads.KillDisconnectedPlayerThread;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
@@ -59,6 +60,28 @@ public class PlayerConnectionListener implements Listener{
 			event.setKickMessage(e.getMessage());
 			event.setResult(Result.KICK_OTHER);
 		}
+	}
+
+	@EventHandler
+	public void onPreJoin(final AsyncPlayerPreLoginEvent event) {
+		if (gameManager.getGameState() != GameState.WAITING)
+			return;
+
+		for (OfflinePlayer operator : Bukkit.getOperators()) {
+			if (operator.getName() != null && operator.getName().equalsIgnoreCase(event.getName()))
+				return;
+		}
+
+		int maxPlayers = gameManager.getConfig().get(MainConfig.MAX_PLAYERS_PER_TEAM) * gameManager.getConfig().get(MainConfig.TEAM_AMOUNT);
+
+		int onlinePlayers = 0;
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+			if (onlinePlayer.getGameMode() != GameMode.SPECTATOR)
+				onlinePlayers++;
+		}
+
+		if (onlinePlayers >= maxPlayers)
+			event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Lang.GAME_FULL);
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
